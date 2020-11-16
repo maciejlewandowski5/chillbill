@@ -67,7 +67,7 @@
                     app:srcCompat="@drawable/grey_line_divder" />
 
                 <TextView
-                    android:id="@+id/wydatki"
+                    android:id="@+id/expenses"
                     android:layout_width="144dp"
                     android:layout_height="28dp"
                     android:layout_alignParentLeft="true"
@@ -88,7 +88,7 @@
                     android:layout_marginVertical="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/wydatki"
+                    app:layout_constraintTop_toBottomOf="@+id/expenses"
                     app:srcCompat="@drawable/dummy_chart" />
 
                 <Space
@@ -271,6 +271,52 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <Button
+                    android:id="@+id/add_bill"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/grey"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingStart="40dp"
+                    android:paddingEnd="40dp"
+                    android:text="@string/add_recept"
+                    app:cornerRadius="50dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+                    app:rippleColor="#FFFFFF" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="22dp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/imageView15"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/grey_line_divder" />
+
+                <TextView
+                    android:id="@+id/history"
+                    android:layout_width="144dp"
+                    android:layout_height="28dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginVertical="5dp"
+                    android:gravity="center_horizontal|top"
+                    android:text="@string/history"
+                    android:textAlignment="textStart"
+                    android:textAppearance="@style/header"
+                    tools:layout_editor_absoluteX="16dp" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>

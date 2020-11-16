@@ -59,14 +59,14 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/add_bill"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/light_grey"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:text="Zaloguj z google"
+            android:text="@string/log_with_google"
             app:cornerRadius="50dp"
             app:icon="@drawable/google_logo"
             app:iconTint="#FFFFFF"

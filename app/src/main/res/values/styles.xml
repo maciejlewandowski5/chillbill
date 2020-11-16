@@ -20,4 +20,26 @@
         </item>
     </style>
 
+    <style name="item_history_title"><item name="android:textSize">
+        18sp
+    </item>
+
+        <item name="android:textColor">
+            #848484
+        </item>
+        <item name="android:textAllCaps">true</item>
+    <item name="android:textFontWeight">600</item>
+    </style>
+
+    <style name="bold_price">
+        <item name="android:textSize">
+            18sp
+        </item>
+
+        <item name="android:textColor">
+            #A0A0A0
+        </item>
+    </style>
+
+
 </resources>
