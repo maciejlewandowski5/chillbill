@@ -6,10 +6,10 @@
     android:viewportHeight="353">
     <group>
         <path
-            android:fillColor="#C4C4C4"
+            android:fillColor="@color/grey"
             android:pathData="M4 76c0-41.97 34.03-76 76-76h159c41.97 0 76 34.03 76 76v193c0 41.97-34.03 76-76 76h-159c-41.97 0-76-34.03-76-76z"/>
         <path
-            android:strokeColor="#000"
+            android:strokeColor="@color/black"
             android:strokeWidth="1"
             android:pathData="M4.5 76c0-41.7 33.8-75.5 75.5-75.5h159c41.7 0 75.5 33.8 75.5 75.5v193c0 41.7-33.8 75.5-75.5 75.5h-159c-41.7 0-75.5-33.8-75.5-75.5z"/>
     </group>

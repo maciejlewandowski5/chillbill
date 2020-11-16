@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">chillbill</string>
+    <string name="title">ChillBill</string>
+    <string name="expenses">Wydatki</string>
+    <string name="yellow_category">Żywność</string>
+    <string name="blue_category">Multimedia</string>
+    <string name="green_category">Elektronika</string>
+    <string name="orange_category">Ubrania</string>
+    <string name="purple_category">Meble</string>
 </resources>
