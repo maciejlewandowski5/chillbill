@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".StartScreen">
 
     <ScrollView
@@ -34,7 +35,6 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginVertical="5dp"
                     android:layout_marginStart="16dp"
-                    android:gravity="center_horizontal|center_vertical"
                     android:text="@string/title"
                     android:textAlignment="textStart"
                     android:textAppearance="@style/chillbill"
@@ -61,6 +61,8 @@
                     android:id="@+id/imageView4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -68,13 +70,12 @@
 
                 <TextView
                     android:id="@+id/expenses"
-                    android:layout_width="144dp"
-                    android:layout_height="28dp"
+                    android:layout_width="140dp"
+                    android:layout_height="35dp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginVertical="5dp"
                     android:layout_marginStart="16dp"
-                    android:gravity="center_horizontal|top"
                     android:text="@string/expenses"
                     android:textAlignment="textStart"
                     android:textAppearance="@style/header"
@@ -86,6 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="20dp"
+
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/expenses"
@@ -131,6 +133,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10sp"
                             android:text="@string/purple_category"
+                            android:textColor="@color/very_dark_grey"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/imageView14"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -159,6 +162,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10sp"
                             android:text="@string/blue_category"
+                            android:textColor="@color/very_dark_grey"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/imageView12"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -190,6 +194,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10sp"
                             android:text="@string/yellow_category"
+                            android:textColor="@color/very_dark_grey"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/imageView8"
@@ -212,6 +217,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10sp"
                             android:text="@string/orange_category"
+                            android:textColor="@color/very_dark_grey"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/imageView11"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -254,6 +260,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10sp"
                             android:text="@string/green_category"
+                            android:textColor="@color/very_dark_grey"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/imageView10"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -297,26 +304,130 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/imageView15"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/grey_line_divder" />
 
                 <TextView
                     android:id="@+id/history"
                     android:layout_width="144dp"
-                    android:layout_height="28dp"
+                    android:layout_height="0dp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginVertical="5dp"
-                    android:gravity="center_horizontal|top"
+                    android:layout_marginStart="16dp"
                     android:text="@string/history"
                     android:textAlignment="textStart"
                     android:textAppearance="@style/header"
-                    tools:layout_editor_absoluteX="16dp" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView15" />
+
+                <Space
+                    android:id="@+id/space2"
+                    android:layout_width="match_parent"
+                    android:layout_height="22dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/history" />
+
+                <fragment
+                    android:id="@+id/fragment2"
+                    android:name="com.example.chillbill.HistoryItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/space2" />
+
+                <fragment
+                    android:id="@+id/fragment3"
+                    android:name="com.example.chillbill.HistoryItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.501"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fragment2" />
+
+                <fragment
+                    android:id="@+id/fragment4"
+                    android:name="com.example.chillbill.HistoryItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.501"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fragment3" />
+
+                <Button
+                    android:id="@+id/see_more"
+                    style="@android:style/Widget.Holo.Button.Borderless.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="@string/see_more"
+                    android:textColor="@color/middle_dark_grey"
+                    android:textSize="11dp"
+                    app:layout_constraintEnd_toEndOf="@+id/fragment4"
+                    app:layout_constraintTop_toBottomOf="@+id/fragment4" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="22dp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/imageView9"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/grey_line_divder" />
+
+                <TextView
+                    android:id="@+id/fit"
+                    android:layout_width="144dp"
+                    android:layout_height="0dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginVertical="5dp"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/fit"
+                    android:textAlignment="textStart"
+                    android:textAppearance="@style/header"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.synnapps.carouselview.CarouselView
+                    android:id="@+id/carouselView"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    app:fillColor="#FFDDDDDD"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fit"
+                    app:pageColor="#88AAAAAA"
+                    app:radius="6dp"
+                    app:slideInterval="3000"
+                    app:strokeColor="#00777777"
+                    app:strokeWidth="1dp" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
