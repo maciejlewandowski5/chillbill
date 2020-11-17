@@ -67,15 +67,15 @@ public class HistoryItem extends Fragment {
         super.onCreate(savedInstanceState);
         float sum = 0;
 
-        // 268 dp is 300dp(historyItem Width) - 16dp*2(for margins start and end)
+        float barWidthInDp = 338.f;
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
-            purpleFloat = 268.0f*getArguments().getFloat("purpleFloat")/100.0f;
-            yellowFloat = 268.0f*getArguments().getFloat("yellowFloat")/100.0f;
-            greenFloat = 268.0f*getArguments().getFloat("greenFloat")/100.0f;
-            orangeFloat = 268.0f*getArguments().getFloat("orangeFloat")/100.0f;
-            blueFloat = 268.0f*getArguments().getFloat("blueFloat")/100.0f;
+            purpleFloat = barWidthInDp*getArguments().getFloat("purpleFloat")/100.0f;
+            yellowFloat = barWidthInDp*getArguments().getFloat("yellowFloat")/100.0f;
+            greenFloat = barWidthInDp*getArguments().getFloat("greenFloat")/100.0f;
+            orangeFloat = barWidthInDp*getArguments().getFloat("orangeFloat")/100.0f;
+            blueFloat = barWidthInDp*getArguments().getFloat("blueFloat")/100.0f;
             sum = purpleFloat + yellowFloat + greenFloat + orangeFloat + blueFloat;
         }
 
@@ -97,7 +97,7 @@ public class HistoryItem extends Fragment {
         blue = (ProgressBar) RootView.findViewById(R.id.progressBar7);
 
 
-        float heightDp = 10f;
+        float heightDp = 5f;
         float heightPx = DptoPx(heightDp);
         ConstraintLayout constraintLayout = RootView.findViewById(R.id.constrainViewHistoryFragment);
 
@@ -106,7 +106,7 @@ public class HistoryItem extends Fragment {
         ConstraintSet purpleConstrainSet = new ConstraintSet();
         purpleConstrainSet.clone(constraintLayout);
         purpleConstrainSet.connect(purple.getId(),ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM);
-        purpleConstrainSet.connect(purple.getId(),ConstraintSet.START,ConstraintSet.PARENT_ID,ConstraintSet.START,DptoPx(16.0f));
+        purpleConstrainSet.connect(purple.getId(),ConstraintSet.START,ConstraintSet.PARENT_ID,ConstraintSet.START);
         purpleConstrainSet.applyTo(constraintLayout);
 
         /// Yellow
