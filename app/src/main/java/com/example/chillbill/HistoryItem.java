@@ -12,6 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import java.text.DecimalFormat;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,8 +29,6 @@ public class HistoryItem extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     ProgressBar purple;
     ProgressBar yellow;
     ProgressBar green;
@@ -38,6 +39,8 @@ public class HistoryItem extends Fragment {
     float greenFloat;
     float orangeFloat;
     float blueFloat;
+    String name;
+    float price;
 
 
     public HistoryItem() {
@@ -45,12 +48,14 @@ public class HistoryItem extends Fragment {
     }
 
 
-    public static HistoryItem newInstance(float purpleCategory, float yellowCategory, float greenCategory, float orangeCategory, float blueCategory) {
+    public static HistoryItem newInstance(String name,float price,float purpleCategory, float yellowCategory, float greenCategory, float orangeCategory, float blueCategory) {
         HistoryItem fragment = new HistoryItem();
         Bundle args = new Bundle();
 
 
         // Shoud be in percentage where 100% is purpleFloat + ... + blueFloat
+        args.putString("name",name);
+        args.putFloat("price",price);
         args.putFloat("purpleFloat", purpleCategory);
         args.putFloat("yellowFloat", yellowCategory);
         args.putFloat("greenFloat", greenCategory);
@@ -69,8 +74,8 @@ public class HistoryItem extends Fragment {
 
         float barWidthInDp = 338.f;
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            name = getArguments().getString("name");
+            price = getArguments().getFloat("price");
             purpleFloat = barWidthInDp*getArguments().getFloat("purpleFloat")/100.0f;
             yellowFloat = barWidthInDp*getArguments().getFloat("yellowFloat")/100.0f;
             greenFloat = barWidthInDp*getArguments().getFloat("greenFloat")/100.0f;
@@ -140,6 +145,13 @@ public class HistoryItem extends Fragment {
         blueConstraintSet.connect(blue.getId(),ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM);
         blueConstraintSet.connect(blue.getId(),ConstraintSet.START,orange.getId(),ConstraintSet.END);
         blueConstraintSet.applyTo(constraintLayout);
+
+        TextView priceTextView = RootView.findViewById(R.id.price);
+        TextView titleTextView = RootView.findViewById(R.id.shop_name);
+
+
+        priceTextView.setText(String.format("%.2f", price));
+        titleTextView.setText(name);
 
 
         return RootView;

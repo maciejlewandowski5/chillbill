@@ -20,15 +20,16 @@
         </item>
     </style>
 
-    <style name="item_history_title"><item name="android:textSize">
-        18sp
-    </item>
+    <style name="item_history_title">
+        <item name="android:textSize">
+            18sp
+        </item>
 
         <item name="android:textColor">
             @color/dark_grey
         </item>
         <item name="android:textAllCaps">true</item>
-    <item name="android:textFontWeight">600</item>
+        <item name="android:textFontWeight">600</item>
         <item name="android:textAlignment">center</item>
     </style>
 
@@ -42,6 +43,35 @@
         </item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textFontWeight">700</item>
+    </style>
+
+    <style name="title_fit">
+
+        <item name="android:textSize">
+            18sp
+        </item>
+
+        <item name="android:textColor">
+            @color/light_grey
+        </item>
+
+    </style>
+
+    <style name="text_fit">
+
+        <item name="android:textSize">
+            9sp
+        </item>
+
+        <item name="android:textColor">
+            @color/light_grey
+        </item>
+
+    </style>
+
+    <style name="Xlogo" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
 

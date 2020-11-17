@@ -10,10 +10,10 @@
     <string name="add_recept">Dodaj paragon</string>
     <string name="log_with_google">Zaloguj z google</string>
     <string name="history">Historia</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="example_shop_name">Biedronka</string>
     <string name="example_price">253,15</string>
     <string name="see_more">zobacz więcej</string>
     <string name="fit">Fit</string>
+    <string name="food">Jedzenie</string>
 </resources>
