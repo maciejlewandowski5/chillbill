@@ -16,4 +16,7 @@
     <string name="see_more">zobacz więcej</string>
     <string name="fit">Fit</string>
     <string name="food">Jedzenie</string>
+    <string name="search">szukaj</string>
+    <string name="example_date">2020-01-01</string>
+    <string name="example_category_name">Podstawowe wydatki</string>
 </resources>

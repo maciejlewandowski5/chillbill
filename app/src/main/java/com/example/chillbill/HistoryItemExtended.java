@@ -1,12 +1,10 @@
 package com.example.chillbill;
 
-
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
-
 
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -15,26 +13,21 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link HistoryItem#newInstance} factory method to
+ * Use the {@link HistoryItemExtended#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HistoryItem extends Fragment {
+public class HistoryItemExtended extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+
     ProgressBar purple;
     ProgressBar yellow;
     ProgressBar green;
@@ -50,15 +43,11 @@ public class HistoryItem extends Fragment {
     Date date;
     String category;
 
-
-    public HistoryItem() {
-        // Required empty public constructor
-    }
-
-    public static HistoryItem newInstance(String name,float price,float purpleCategory, float yellowCategory, float greenCategory, float orangeCategory, float blueCategory) {
-        HistoryItem fragment = new HistoryItem();
+    public static HistoryItemExtended newInstance(String name, float price, float purpleCategory, float yellowCategory, float greenCategory, float orangeCategory, float blueCategory, Date date, String category) {
+        HistoryItemExtended fragment = new HistoryItemExtended();
         Bundle args = new Bundle();
 
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 
         // Shoud be in percentage where 100% is purpleFloat + ... + blueFloat
@@ -69,12 +58,16 @@ public class HistoryItem extends Fragment {
         args.putFloat("greenFloat", greenCategory);
         args.putFloat("orangeFloat", orangeCategory);
         args.putFloat("blueFloat", blueCategory);
+        args.putString("date", formatter.format(date));
+        args.putString("category",category);
 
 
         fragment.setArguments(args);
         return fragment;
     }
-
+    public HistoryItemExtended() {
+        // Required empty public constructor
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,6 +83,13 @@ public class HistoryItem extends Fragment {
             greenFloat = barWidthInDp*getArguments().getFloat("greenFloat")/100.0f;
             orangeFloat = barWidthInDp*getArguments().getFloat("orangeFloat")/100.0f;
             blueFloat = barWidthInDp*getArguments().getFloat("blueFloat")/100.0f;
+            try {
+                date = new SimpleDateFormat().parse(getArguments().getString("date"));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                date = new Date();
+            }
+            category = getArguments().getString("category");
             sum = purpleFloat + yellowFloat + greenFloat + orangeFloat + blueFloat;
         }
 
@@ -157,10 +157,18 @@ public class HistoryItem extends Fragment {
 
         TextView priceTextView = RootView.findViewById(R.id.price);
         TextView titleTextView = RootView.findViewById(R.id.shop_name);
+        TextView categoryTextView = RootView.findViewById(R.id.textView2);
+        TextView dateTextView = RootView.findViewById(R.id.textView6);
 
 
         priceTextView.setText(String.format("%.2f", price));
         titleTextView.setText(name);
+
+        SimpleDateFormat formatter = new SimpleDateFormat();
+
+        categoryTextView.setText(category);
+        dateTextView.setText(formatter.format(date));
+
 
 
         return RootView;
@@ -168,7 +176,8 @@ public class HistoryItem extends Fragment {
 
     }
 
+
     int DptoPx(float dp){
-        return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
     }
 }

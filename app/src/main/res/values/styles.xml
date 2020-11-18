@@ -73,6 +73,16 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
+    <style name="text_item_history_extended">
 
+        <item name="android:textSize">
+            9sp
+        </item>
+
+        <item name="android:textColor">
+            @color/light_black
+        </item>
+
+    </style>
 
 </resources>
