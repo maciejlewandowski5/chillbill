@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".History">
 
 
@@ -14,7 +15,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            >
+
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="22dp" />
@@ -27,9 +30,9 @@
                     android:id="@+id/imageButton"
                     android:layout_width="43dp"
                     android:layout_height="43dp"
-                    android:layout_marginEnd="50dp"
                     android:background="#00000000"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/constraintLayout5"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/icon_filter" />
 
@@ -43,7 +46,8 @@
                     android:id="@+id/constraintLayout5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toStartOf="@+id/imageButton"
+                    android:layout_marginEnd="43dp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -63,6 +67,12 @@
                         android:layout_height="43dp"
                         android:layout_marginStart="10dp"
                         android:hint="@string/search"
+                        android:outlineAmbientShadowColor="@color/dark_grey"
+                        android:outlineSpotShadowColor="@color/dark_grey"
+                        android:shadowColor="@color/dark_grey"
+                        android:textColor="@color/light_black"
+                        android:textColorHint="@color/dark_grey"
+                        android:textColorLink="@color/light_black"
                         app:layout_constraintBottom_toBottomOf="@+id/imageView16"
                         app:layout_constraintStart_toEndOf="@+id/imageView19"
                         app:layout_constraintTop_toTopOf="@+id/imageView16" />
@@ -212,71 +222,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="22dp" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
+                android:id="@+id/linear_list_for_history_extended_item_object"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_gravity="center">
+
+            </LinearLayout>
+
+            <Space
                 android:layout_width="match_parent"
-                android:layout_height="200dp">
-
-                <fragment
-                    android:id="@+id/fragment14"
-                    android:name="com.example.chillbill.HistoryItemExtended"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <fragment
-                    android:id="@+id/fragment15"
-                    android:name="com.example.chillbill.HistoryItemExtended"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.501"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fragment14" />
-                <fragment
-                    android:id="@+id/fragment16"
-                    android:name="com.example.chillbill.HistoryItemExtended"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.501"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fragment15" />
-                <fragment
-                    android:id="@+id/fragment17"
-                    android:name="com.example.chillbill.HistoryItemExtended"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.501"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fragment16" />
-                <fragment
-                    android:id="@+id/fragment18"
-                    android:name="com.example.chillbill.HistoryItemExtended"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.501"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fragment17" />
-                <fragment
-                    android:id="@+id/fragment19"
-                    android:name="com.example.chillbill.HistoryItemExtended"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.501"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fragment18" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_height="22dp" />
 
         </LinearLayout>
     </ScrollView>

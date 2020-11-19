@@ -89,6 +89,7 @@
             android:id="@+id/imageViewOverlay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="#00FFFFFF"
             android:src="@drawable/overlay_history_item"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

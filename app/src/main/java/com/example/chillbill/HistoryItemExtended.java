@@ -102,18 +102,18 @@ public class HistoryItemExtended extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        View RootView = inflater.inflate(R.layout.fragment_history_item, container, false);
+        View RootView = inflater.inflate(R.layout.fragment_history_item__extended, container, false);
         // Inflate the layout for this fragment
-        purple = (ProgressBar) RootView.findViewById(R.id.progressBar5);
-        yellow = (ProgressBar) RootView.findViewById(R.id.progressBar4);
-        green = (ProgressBar) RootView.findViewById(R.id.progressBar2);
-        orange = (ProgressBar) RootView.findViewById(R.id.progressBar3);
-        blue = (ProgressBar) RootView.findViewById(R.id.progressBar7);
+        purple = (ProgressBar) RootView.findViewById(R.id.progressBar115);
+        yellow = (ProgressBar) RootView.findViewById(R.id.progressBar114);
+        green = (ProgressBar) RootView.findViewById(R.id.progressBar113);
+        orange = (ProgressBar) RootView.findViewById(R.id.progressBar112);
+        blue = (ProgressBar) RootView.findViewById(R.id.progressBar111);
 
 
         float heightDp = 5f;
         float heightPx = DptoPx(heightDp);
-        ConstraintLayout constraintLayout = RootView.findViewById(R.id.constrainViewHistoryFragment);
+        ConstraintLayout constraintLayout = RootView.findViewById(R.id.history_item_extended_container);
 
         /// Purple
         purple.setLayoutParams(new ConstraintLayout.LayoutParams((int) DptoPx(purpleFloat),(int)heightPx));
@@ -157,17 +157,17 @@ public class HistoryItemExtended extends Fragment {
 
         TextView priceTextView = RootView.findViewById(R.id.price);
         TextView titleTextView = RootView.findViewById(R.id.shop_name);
-        TextView categoryTextView = RootView.findViewById(R.id.textView2);
-        TextView dateTextView = RootView.findViewById(R.id.textView6);
+        TextView categoryTextView = RootView.findViewById(R.id.category_history_item);
+        TextView dateTextView = RootView.findViewById(R.id.date_history_item);
 
 
         priceTextView.setText(String.format("%.2f", price));
         titleTextView.setText(name);
 
-        SimpleDateFormat formatter = new SimpleDateFormat();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
         categoryTextView.setText(category);
-        dateTextView.setText(formatter.format(date));
+        dateTextView.setText(formatter.format(new Date()));
 
 
 
