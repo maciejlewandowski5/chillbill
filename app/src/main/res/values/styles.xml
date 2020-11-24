@@ -83,6 +83,18 @@
             @color/light_black
         </item>
 
+
+    </style>
+    <style name="table_element">
+
+        <item name="android:textSize">
+            14sp
+        </item>
+
+        <item name="android:textColor">
+            @color/light_black
+        </item>
+
     </style>
 
 </resources>
