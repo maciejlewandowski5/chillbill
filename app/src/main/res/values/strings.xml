@@ -20,4 +20,5 @@
     <string name="example_date">2020-01-01</string>
     <string name="example_category_name">Podstawowe wydatki</string>
     <string name="bill">Paragon</string>
+    <string name="shopping_list">Lista zakupów</string>
 </resources>

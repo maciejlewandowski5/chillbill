@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24.0"
+    android:viewportHeight="24.0">
+    <item>
+    <clip-path
+        android:name="square clip path"
+        android:pathData="M6,6 h12 v12 h-12 z"/>
+
+    <path
+        android:name="triangle"
+        android:fillColor="#FF000000"
+        android:pathData="M0,24 l12,-24 l12,24 z"/>
+    </item>
+    <item>
+        <shape
+            android:shape="oval"
+            >
+            <solid
+                android:colot="@color/white"/>
+            <size
+                android:width="20dp"
+                android:height="20dp"/>
+        </shape>
+    </item>
+</layer-list>
