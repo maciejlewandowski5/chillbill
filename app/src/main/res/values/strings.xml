@@ -21,4 +21,7 @@
     <string name="example_category_name">Podstawowe wydatki</string>
     <string name="bill">Paragon</string>
     <string name="shopping_list">Lista zakupów</string>
+    <string name="month_to_month_comparison">Porównanie miesięcy</string>
+    <string name="trends">Trendy</string>
+    <string name="savings">Oszczędzanie</string>
 </resources>

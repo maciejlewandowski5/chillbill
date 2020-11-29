@@ -20,7 +20,7 @@
             android:shape="oval"
             >
             <solid
-                android:colot="@color/white"/>
+                android:color="@color/white"/>
             <size
                 android:width="20dp"
                 android:height="20dp"/>
