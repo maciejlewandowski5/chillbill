@@ -3,12 +3,20 @@ package com.example.chillbill;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class Recepe extends AppCompatActivity {
+import com.example.chillbill.infos.RecipeInformation;
 
+import java.util.ArrayList;
+
+public class Recepe extends AppCompatActivity {
+    private final String ARG_RECEP_PARAM_OUT = "RECEPINFO";
+    RecipeInformation recipeInformation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,7 +24,12 @@ public class Recepe extends AppCompatActivity {
 
         LinearLayout linearLayout = findViewById(R.id.list_contaner);
 
-        Fragment foodItem = new FoodItem().newInstance("Sałatka z Avocado",R.drawable.food_item_background_image);
+        Intent intent = getIntent();
+
+        recipeInformation = (RecipeInformation) intent.getSerializableExtra(ARG_RECEP_PARAM_OUT);
+
+        // TODO: Implement photos from link
+        Fragment foodItem = new FoodItem().newInstance(recipeInformation.getTitle(),R.drawable.food_item_background_image);
 
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment5,foodItem);
@@ -26,24 +39,24 @@ public class Recepe extends AppCompatActivity {
         transaction = getSupportFragmentManager().beginTransaction();
 
 
+        ArrayList<String> products = new ArrayList<>();
+        products = recipeInformation.getProducts();
 
-        for(int i=0;i<10;i++) {
-            Fragment ingredient = new ShopItemList().newInstance("Pomidory 35kg" + i,i%2==0);
-
+        int i=0;
+        for(String product : products) {
+            Fragment ingredient = new ShopItemList().newInstance(product,i%2==0);
             transaction.add(linearLayout.getId(),ingredient);
+            i++;
         }
         transaction.commit();
 
         TextView recepeText = findViewById(R.id.recepeText);
 
-        recepeText.setText("Przykładowy tekst recepturyPrzykładowy " +
-                "" +
-                "Przykładowy tekst receptury" +
-                "Przykładowy tekst receptury" +
-                "Przykładowy tekst receptury" +
-                "Przykładowy tekst receptury" +
-                "Przykładowy tekst receptury" +
-                "Przykładowy tekst receptury" +
-                "tekst recepturyPrzykładowy tekst receptury");
+        recepeText.setText(recipeInformation.getShortDesc());
+    }
+
+    public void openURL(View view) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(recipeInformation.getRecipeURL().toString()));
+        startActivity(browserIntent);
     }
 }

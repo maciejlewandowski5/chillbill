@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1033291044365",
+    "project_id": "chillbill-297814",
+    "storage_bucket": "chillbill-297814.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1033291044365:android:f93c89fa9286e6b2ba2744",
+        "android_client_info": {
+          "package_name": "com.example.chillbill"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1033291044365-p1771rvfohm57lipqc30o2kstsvdfgb1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKS1Aefhe5y9Z4KqeMn5auxyerd4it1k0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1033291044365-p1771rvfohm57lipqc30o2kstsvdfgb1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -96,7 +96,8 @@
         android:textColor="@color/middle_dark_grey"
         android:textSize="11dp"
         app:layout_constraintEnd_toEndOf="@+id/recepeText"
-        app:layout_constraintTop_toBottomOf="@+id/recepeText" />
+        app:layout_constraintTop_toBottomOf="@+id/recepeText"
+        android:onClick="openURL"/>
 
     <Space
         android:id="@+id/space7"

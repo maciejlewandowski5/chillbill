@@ -279,6 +279,7 @@
                 android:layout_height="match_parent">
 
                 <Button
+                    android:onClick="dispatchTakePictureIntent"
                     android:id="@+id/add_bill"
                     style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="wrap_content"
@@ -467,8 +468,59 @@
                 android:layout_height="22dp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/constraintLayout5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/fit"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fit2">
+
+                    <ImageView
+                        android:id="@+id/imageView16"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/bacground_search_field" />
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textInputEditText"
+                        android:layout_width="214dp"
+                        android:layout_height="43dp"
+                        android:layout_marginStart="10dp"
+                        android:hint="@string/search"
+                        android:maxLines="1"
+                        android:outlineAmbientShadowColor="@color/dark_grey"
+                        android:outlineSpotShadowColor="@color/dark_grey"
+                        android:shadowColor="@color/dark_grey"
+                        android:singleLine="true"
+                        android:textColor="@color/light_black"
+                        android:textColorHint="@color/dark_grey"
+                        android:textColorLink="@color/light_black"
+                        app:layout_constraintBottom_toBottomOf="@+id/imageView16"
+                        app:layout_constraintStart_toEndOf="@+id/imageView19"
+                        app:layout_constraintTop_toTopOf="@+id/imageView16" />
+
+                    <ImageView
+                        android:id="@+id/imageView19"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imageView16"
+                        app:layout_constraintStart_toStartOf="@+id/imageView16"
+                        app:layout_constraintTop_toTopOf="@+id/imageView16"
+                        app:srcCompat="@drawable/search_icon" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <ImageView
                     android:id="@+id/imageView7"
@@ -500,85 +552,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="22dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fit2" />
+                    app:layout_constraintTop_toBottomOf="@+id/constraintLayout5" />
 
-                <fragment
-                    android:id="@+id/fragment6"
-                    android:name="com.example.chillbill.FoodItem"
+
+                <LinearLayout
+                    android:id="@+id/recipes_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/space4" />
-
-                <fragment
-                    android:id="@+id/fragment7"
-                    android:name="com.example.chillbill.FoodItem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fragment6" />
-
-                <fragment
-                    android:id="@+id/fragment8"
-                    android:name="com.example.chillbill.FoodItem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.502"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fragment7" />
-
-                <fragment
-                    android:id="@+id/fragment9"
-                    android:name="com.example.chillbill.FoodItem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fragment8" />
-
-                <fragment
-                    android:id="@+id/fragment10"
-                    android:name="com.example.chillbill.FoodItem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fragment11" />
-
-                <fragment
-                    android:id="@+id/fragment13"
-                    android:name="com.example.chillbill.FoodItem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.502"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fragment10" />
-
-                <fragment
-                    android:id="@+id/fragment11"
-                    android:name="com.example.chillbill.FoodItem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.502"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fragment9" />
+                    app:layout_constraintTop_toBottomOf="@+id/space4"></LinearLayout>
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="22dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fragment13" />
+                    app:layout_constraintTop_toBottomOf="@+id/recipes_container" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
