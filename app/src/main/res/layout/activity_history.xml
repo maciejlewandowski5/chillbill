@@ -247,15 +247,6 @@
 
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="100sp"
-        android:layout_height="100dp"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/dummy_chart"
-        android:onClick="addNextHistoryItem"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

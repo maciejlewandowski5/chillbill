@@ -43,6 +43,9 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.chillbill.infos.Bill;
+import com.example.chillbill.infos.Category;
+import com.example.chillbill.infos.Product;
 import com.example.chillbill.infos.RecipeInformation;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
@@ -60,20 +63,23 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class StartScreen extends AppCompatActivity {
 
     private static final int CAMERA_REQUEST = 1888;
-
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     LinearLayout recipesContainer;
+    LinearLayout historyContainer;
     ArrayList<RecipeInformation> recipeInformations;
-    private final String ARG_RECEP_PARAM_OUT = "RECEPINFO";
 
+    private final String ARG_RECEP_PARAM_OUT = "RECEPINFO";
+    private final String ARG_HIST_PARAM_OUT = "HISTINFO";
 
     int[] sampleImages = {R.drawable.image_1, R.drawable.image_2, R.drawable.image_3};
-    private static final int MY_CAMERA_REQUEST_CODE = 100;
+
     String currentPhotoPath;
 
     @Override
@@ -81,52 +87,34 @@ public class StartScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
-        HistoryItem first = HistoryItem.newInstance("LIDL", 621.50f, 20, 10, 20, 40, 10);
-        HistoryItem second = HistoryItem.newInstance("Biedronka", 128.12f, 10, 20, 30, 30, 10);
-        HistoryItem third = HistoryItem.newInstance("Empik", 12.50f, 5, 25, 35, 20, 15);
-
         FitItem fitItem = FitItem.newInstance("Aktywnosc fizyczna", "Lorem impsum dolores . . .", R.drawable.image_2);
         FitItem fitItem2 = FitItem.newInstance("Aktywnosc fizyczna", "Lorem impsum dolores . . .", R.drawable.image_2);
         FitItem fitItem3 = FitItem.newInstance("Aktywnosc fizyczna", "Lorem impsum dolores . . .", R.drawable.image_2);
 
-        FoodItem foodItem1 = FoodItem.newInstance("Rzepak", R.drawable.food_item_background_image);
-        FoodItem foodItem2 = FoodItem.newInstance("Szczaw", R.drawable.food_item_background_image);
-        FoodItem foodItem3 = FoodItem.newInstance("Pomidorowa", R.drawable.food_item_background_image);
-        FoodItem foodItem4 = FoodItem.newInstance("Salatka z Avocado", R.drawable.food_item_background_image);
-        FoodItem foodItem5 = FoodItem.newInstance("Zupa paprykowa", R.drawable.food_item_background_image);
-        FoodItem foodItem6 = FoodItem.newInstance("Cytrusy", R.drawable.food_item_background_image);
-        FoodItem foodItem7 = FoodItem.newInstance("Kiszonki", R.drawable.food_item_background_image);
 
 
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        transaction.replace(R.id.fragment2, first);
-        transaction.replace(R.id.fragment3, second);
-        transaction.replace(R.id.fragment4, third);
 
         transaction.replace(R.id.fragment, fitItem);
         transaction.replace(R.id.fragment1, fitItem2);
         transaction.replace(R.id.fragment12, fitItem3);
 
-
         transaction.commit();
 
 
-
-        StartScreen that = this;
-
-
-
+        //Camera permissons
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
         }
 
         recipesContainer = findViewById(R.id.recipes_container);
+        historyContainer = findViewById(R.id.linearLayout10);
 
         recipeInformations = new ArrayList<>();
         getRecipeInfos("naleśniki");
 
+        //Search recepes listner
         TextView textView = findViewById(R.id.textInputEditText);
         textView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -147,6 +135,29 @@ public class StartScreen extends AppCompatActivity {
                 return false;
             }
         });
+        ArrayList<Bill> billInfos = new ArrayList<>();
+
+        // here server should return only last three;
+        Bill bill = new Bill("Biedronka",326.12f,new Date());
+        Bill bill2 = new Bill("Empik",326.12f,new Date());
+        Bill bill3 = new Bill("Lidl",326.12f,new Date());
+
+        Product product = new Product("Mąka",5.50f, Category.BLUE);
+
+        for(int i=0;i<20;i++){
+            bill.addProduct(product);
+            bill2.addProduct(product);
+            bill3.addProduct(product);
+        }
+
+        billInfos.add(bill);
+        billInfos.add(bill2);
+        billInfos.add(bill3);
+
+        displayHistoryItems(billInfos)
+        ;
+
+
 
 
     }
@@ -181,6 +192,40 @@ public class StartScreen extends AppCompatActivity {
         ExampleRequestQueue.add(ExampleRequest);
     }
 
+    public void displayHistoryItems(ArrayList<Bill> bills){
+        FragmentTransaction  transaction = getSupportFragmentManager().beginTransaction();
+        int i=0;
+        for(Bill bill : bills){
+            i++;
+            ConstraintLayout constraintLayout = new ConstraintLayout(this);
+            Fragment fragment = HistoryItem.newInstance(bill.getShopName(),bill.getTotalAmount(),bill.getCategoryPercentage()[0]
+            ,bill.getCategoryPercentage()[1],bill.getCategoryPercentage()[2],bill.getCategoryPercentage()[3],bill.getCategoryPercentage()[4]);
+
+            constraintLayout.setId(View.generateViewId());
+            historyContainer.addView(constraintLayout);
+            Button button = new Button(this);
+            button.setId(View.generateViewId());
+            button.setBackgroundColor(Color.TRANSPARENT);
+            button.setLayoutParams(constraintLayout.getLayoutParams());
+            // Height of historyItem. 12 is height of a margin
+            button.setHeight(dpToPx(51 + 12,this));
+
+            StartScreen that = this;
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(that,BillPage.class);
+                    intent.putExtra(ARG_HIST_PARAM_OUT,bill);
+                    that.startActivity(intent);
+                }
+            });
+
+            constraintLayout.addView(button);
+            transaction.add(constraintLayout.getId(),fragment,bill.getShopName() + bill.getDate() + bill.getTotalAmount());
+        }
+        transaction.commit();
+    }
+
     public void displayFoodItems(ArrayList<RecipeInformation> recipes) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         int i = 0;
@@ -194,15 +239,10 @@ public class StartScreen extends AppCompatActivity {
 
             constraintLayout.setId(View.generateViewId());
 
-            System.out.println(previousId);
-
-
             recipesContainer.addView(constraintLayout);
 
             Button button = new Button(this);
             button.setId(View.generateViewId());
-
-
             button.setBackgroundColor(Color.TRANSPARENT);
             button.setLayoutParams(constraintLayout.getLayoutParams());
             //88 is height of food item with margins
@@ -305,5 +345,15 @@ public class StartScreen extends AppCompatActivity {
             sendPostRequest(byteArray);
 
         }
+    }
+
+    public void startHistory(View view) {
+        Intent intent = new Intent(this,History.class);
+        startActivity(intent);
+    }
+
+    public void startCharts(View view) {
+        Intent intent = new Intent(this,StatisticsActivity.class);
+        startActivity(intent);
     }
 }

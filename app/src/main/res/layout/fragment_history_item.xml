@@ -9,108 +9,119 @@
     tools:context=".HistoryItem">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:background="@color/light_grey"
-        android:id="@+id/constrainViewHistoryFragment">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp">
 
-
-        <TextView
-            android:id="@+id/price"
-            android:layout_width="84dp"
-            android:layout_height="23dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="16dp"
-            android:gravity="right|center_vertical"
-            android:text="@string/example_price"
-            android:textAppearance="@style/bold_price"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.428" />
-
-        <ProgressBar
-            android:id="@+id/progressBar7"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="138dp"
-            android:layout_height="10dp"
-            android:background="#00FFFFFF"
-            android:backgroundTint="#00B61E1E"
-            android:backgroundTintMode="add"
-            android:progressBackgroundTint="@color/blue"
-            android:progressBackgroundTintMode="src_over"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/progressBar3" />
-
-        <ProgressBar
-            android:id="@+id/progressBar3"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="20dp"
-            android:layout_height="10dp"
-            android:progressBackgroundTint="@color/orange"
-            android:progressBackgroundTintMode="src_over"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/progressBar2" />
-
-        <ProgressBar
-            android:id="@+id/progressBar2"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="70dp"
-            android:layout_height="10dp"
-            android:background="#00FFFFFF"
-            android:progressBackgroundTint="@color/green"
-            android:progressBackgroundTintMode="src_over"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/progressBar4" />
-
-        <ProgressBar
-            android:id="@+id/progressBar4"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="30dp"
-            android:layout_height="10dp"
-            android:progressBackgroundTint="@color/yellow"
-            android:progressBackgroundTintMode="src_over"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/progressBar5" />
-
-        <ProgressBar
-            android:id="@+id/progressBar5"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:layout_marginStart="16dp"
-            android:progressBackgroundTint="@color/purple"
-            android:progressBackgroundTintMode="src_over"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageViewOverlay"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constrainViewHistoryFragment"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="#00FFFFFF"
-            android:src="@drawable/overlay_history_item"
+            android:background="@color/light_grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/shop_name"
-            android:layout_width="124dp"
-            android:layout_height="23dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="20dp"
-            android:text="@string/example_shop_name"
-            android:textAppearance="@style/item_history_title"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.428" />
 
+            <TextView
+                android:id="@+id/price"
+                android:layout_width="84dp"
+                android:layout_height="23dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="16dp"
+                android:gravity="right|center_vertical"
+                android:text="@string/example_price"
+                android:textAppearance="@style/bold_price"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.428" />
+
+            <ProgressBar
+                android:id="@+id/progressBar7"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="138dp"
+                android:layout_height="10dp"
+                android:background="#00FFFFFF"
+                android:backgroundTint="#00B61E1E"
+                android:backgroundTintMode="add"
+                android:progressBackgroundTint="@color/blue"
+                android:progressBackgroundTintMode="src_over"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/progressBar3" />
+
+            <ProgressBar
+                android:id="@+id/progressBar3"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="20dp"
+                android:layout_height="10dp"
+                android:progressBackgroundTint="@color/orange"
+                android:progressBackgroundTintMode="src_over"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/progressBar2" />
+
+            <ProgressBar
+                android:id="@+id/progressBar2"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="70dp"
+                android:layout_height="10dp"
+                android:background="#00FFFFFF"
+                android:progressBackgroundTint="@color/green"
+                android:progressBackgroundTintMode="src_over"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/progressBar4" />
+
+            <ProgressBar
+                android:id="@+id/progressBar4"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="30dp"
+                android:layout_height="10dp"
+                android:progressBackgroundTint="@color/yellow"
+                android:progressBackgroundTintMode="src_over"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/progressBar5" />
+
+            <ProgressBar
+                android:id="@+id/progressBar5"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="16dp"
+                android:progressBackgroundTint="@color/purple"
+                android:progressBackgroundTintMode="src_over"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageViewOverlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#00FFFFFF"
+                android:src="@drawable/overlay_history_item"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/shop_name"
+                android:layout_width="124dp"
+                android:layout_height="23dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="20dp"
+                android:text="@string/example_shop_name"
+                android:textAppearance="@style/item_history_title"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.428" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </FrameLayout>
