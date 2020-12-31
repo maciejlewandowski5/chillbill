@@ -3,34 +3,24 @@ package com.example.chillbill;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.icu.text.IDNA;
-import android.icu.util.Calendar;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.preference.PreferenceFragment;
-import android.provider.MediaStore;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +37,8 @@ import com.example.chillbill.infos.Bill;
 import com.example.chillbill.infos.Category;
 import com.example.chillbill.infos.Product;
 import com.example.chillbill.infos.RecipeInformation;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageListener;
 
@@ -284,39 +276,36 @@ public class StartScreen extends AppCompatActivity {
     }
 
     private void sendPostRequest(byte[] postData) {
-        //  String urlParameters  = "param1=a&param2=b&param3=c";
-        //postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
-        int postDataLength = postData.length;
-        String request = "http://31.182.129.128/extractText";
-        URL url = null;
-        try {
-            url = new URL(request);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        HttpURLConnection conn = null;
-        try {
-            conn = (HttpURLConnection) url.openConnection();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //conn.addRequestProperty("image",postData);
-        conn.setDoOutput(true);
-        conn.setInstanceFollowRedirects(false);
-        try {
-            conn.setRequestMethod("POST");
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        }
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        conn.setRequestProperty("charset", "utf-8");
-        conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-        conn.setUseCaches(false);
-        try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
-            wr.write(postData);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //TODO: this request
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url ="https://chillbill-bv4675ezoa-ey.a.run.app//parseBill";
+
+        RequestQueue ExampleRequestQueue = Volley.newRequestQueue(this);
+        JsonArrayRequest ExampleRequest = new JsonArrayRequest(Request.Method.POST, url,null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                org.json.JSONArray jsonArray = response;
+                for(int i=0;i<jsonArray.length();i++){
+                    try {
+                        RecipeInformation recipeInformation = RecipeInformation.instantiate(new JSONObject(jsonArray.getString(i)));
+                        recipeInformations.add(recipeInformation);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                displayFoodItems(recipeInformations);
+            }
+
+        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //This code is executed if there is an error.
+            }
+
+        });
+
+        ExampleRequestQueue.add(ExampleRequest);
+
     }
 
     @Override
