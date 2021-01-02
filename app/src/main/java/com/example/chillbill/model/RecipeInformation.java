@@ -1,4 +1,4 @@
-package com.example.chillbill.infos;
+package com.example.chillbill.model;
 
 import org.json.JSONArray;
 import org.json.JSONException;

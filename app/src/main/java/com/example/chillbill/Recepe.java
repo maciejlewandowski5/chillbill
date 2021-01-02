@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.chillbill.infos.RecipeInformation;
+import com.example.chillbill.model.RecipeInformation;
 
 import java.util.ArrayList;
 

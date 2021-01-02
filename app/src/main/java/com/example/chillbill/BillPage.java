@@ -10,12 +10,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.example.chillbill.infos.Bill;
-import com.example.chillbill.infos.Category;
-import com.example.chillbill.infos.Product;
+import com.example.chillbill.model.Bill;
+import com.example.chillbill.model.Category;
+import com.example.chillbill.model.Product;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class BillPage extends AppCompatActivity {
 
@@ -66,7 +65,7 @@ public class BillPage extends AppCompatActivity {
         int i = 0;
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         for (Product product : products) {
-            Fragment fragment = new ListElment().newInstance(product.getName(), product.getPrice(), i % 2 != 0, product.getCategoryString());
+            Fragment fragment = new ListElment().newInstance(product.getName(), product.getPrice(),product.getQuantity(), i % 2 != 0, product.getCategoryString());
             transaction.add(linearLayout.getId(), fragment);
             i++;
         }
@@ -78,7 +77,7 @@ public class BillPage extends AppCompatActivity {
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         for (Product product : products) {
             if (product.getCategory() == category) {
-                Fragment fragment = new ListElment().newInstance(product.getName(), product.getPrice(), i % 2 != 0, product.getCategoryString());
+                Fragment fragment = new ListElment().newInstance(product.getName(), product.getPrice(),product.getQuantity(), i % 2 != 0, product.getCategoryString());
                 transaction.add(linearLayout.getId(), fragment);
                 i++;
             }

@@ -30,29 +30,17 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.chillbill.infos.Bill;
-import com.example.chillbill.infos.Category;
-import com.example.chillbill.infos.Product;
-import com.example.chillbill.infos.RecipeInformation;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.synnapps.carouselview.CarouselView;
-import com.synnapps.carouselview.ImageListener;
+import com.example.chillbill.model.Bill;
+import com.example.chillbill.model.Category;
+import com.example.chillbill.model.Product;
+import com.example.chillbill.model.RecipeInformation;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -134,7 +122,7 @@ public class StartScreen extends AppCompatActivity {
         Bill bill2 = new Bill("Empik",326.12f,new Date());
         Bill bill3 = new Bill("Lidl",326.12f,new Date());
 
-        Product product = new Product("Mąka",5.50f, Category.BLUE);
+        Product product = new Product("Mąka",5.50f,5.5f, Category.BLUE);
 
         for(int i=0;i<20;i++){
             bill.addProduct(product);
@@ -257,6 +245,7 @@ public class StartScreen extends AppCompatActivity {
         transaction.commit();
 
     }
+    //TODO: change initial photo to photo downloaded from web for food items
 
     public static int dpToPx(float dp, Context context) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());

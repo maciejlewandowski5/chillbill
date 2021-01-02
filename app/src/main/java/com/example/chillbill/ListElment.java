@@ -19,6 +19,7 @@ public class ListElment extends Fragment {
 
     private String title;
     private float price;
+    private float quantity;
     private boolean isEven;
     private String category;
 
@@ -27,11 +28,12 @@ public class ListElment extends Fragment {
     }
 
 
-    public static ListElment newInstance(String title, float price, boolean even, String category) {
+    public static ListElment newInstance(String title, float pricePerUnit,float quantity, boolean even, String category) {
         ListElment fragment = new ListElment();
         Bundle args = new Bundle();
         args.putString("elementListTitle", title);
-        args.putFloat("elementListPrice", price);
+        args.putFloat("elementListPrice", pricePerUnit);
+        args.putFloat("elementListQuantity", quantity);
         args.putBoolean("isEven", even);
         args.putString("elementListCategory", category);
         fragment.setArguments(args);
@@ -44,6 +46,7 @@ public class ListElment extends Fragment {
         if (getArguments() != null) {
             title = getArguments().getString("elementListTitle");
             price = getArguments().getFloat("elementListPrice");
+            quantity = getArguments().getFloat("elementListQuantity");
             isEven = getArguments().getBoolean("isEven");
             category = getArguments().getString("elementListCategory");
         }
@@ -58,6 +61,7 @@ public class ListElment extends Fragment {
         TextView priceTextView = root.findViewById(R.id.table_element_price);
         ImageView categoryImageView = root.findViewById(R.id.table_elment_category_color);
         ConstraintLayout constraintLayout = root.findViewById(R.id.table_elment_container);
+        TextView quantityTextView = root.findViewById(R.id.textView2);
 
         if (isEven) {
             constraintLayout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
@@ -66,6 +70,7 @@ public class ListElment extends Fragment {
         }
         titleTextView.setText(title);
         priceTextView.setText(String.format("%.2f", price));
+        quantityTextView.setText(String.format("%.2f", price));
         if(category=="purple"){
             categoryImageView.setImageResource(R.drawable.purple_small_circle);
         }else if(category == "yellow"){

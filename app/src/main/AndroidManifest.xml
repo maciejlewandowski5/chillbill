@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.chillbill">
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="ANDROID.PERMISSION.READ_EXTERNAL_STORAGE" />
@@ -12,6 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Chillbill">
+        <activity android:name=".ProductPropertiesEditor"
+            android:exported="true"></activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.android.fileprovider"
@@ -19,12 +23,12 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths" />
         </provider>
-        <activity android:name=".CameraActivity"
-            android:exported="true">
 
-        </activity>
+        <activity
+            android:name=".CameraActivity"
+            android:exported="true"></activity>
         <activity
             android:name=".StatisticsActivity"
             android:exported="true" />
@@ -39,12 +43,12 @@
             android:exported="true" />
         <activity
             android:name=".StartScreen"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_MOUNTED" />
+
                 <data android:scheme="file" />
             </intent-filter>
-
         </activity>
         <activity android:name=".MainActivity">
             <intent-filter>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="categories">
+        <item>@string/blue_category</item>
+        <item>@string/purple_category</item>
+        <item>@string/green_category</item>
+        <item>@string/yellow_category</item>
+        <item>@string/orange_category</item>
+
+    </string-array>
+
+</resources>

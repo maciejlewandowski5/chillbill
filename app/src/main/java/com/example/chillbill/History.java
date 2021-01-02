@@ -2,7 +2,6 @@ package com.example.chillbill;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,9 +13,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import com.example.chillbill.infos.Bill;
-import com.example.chillbill.infos.Category;
-import com.example.chillbill.infos.Product;
+import com.example.chillbill.model.Bill;
+import com.example.chillbill.model.Category;
+import com.example.chillbill.model.Product;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -100,7 +99,7 @@ public class History extends AppCompatActivity {
                         else{
                             category = Category.YELLOW;
                         }
-                        Product product = new Product("Product nr" + j,(j+i)*1.57f,category);
+                        Product product = new Product("Product nr" + j,(j+i)*1.57f, (float) Math.sqrt((i-j)*(i-j)),category);
                         bill.addProduct(product);
                     }
                     bills.add(bill);
@@ -120,7 +119,7 @@ public class History extends AppCompatActivity {
         linearLayout.addView(constraintLayout);
         Button button = new Button(this);
         button.setId(View.generateViewId());
-        button.setBackgroundColor(Color.valueOf(1,0,0,0.25f).toArgb());
+        button.setBackgroundColor(Color.TRANSPARENT);
         button.setLayoutParams(constraintLayout.getLayoutParams());
         // Hegiht of extended history item is 72dp + 16dp for margin
         button.setHeight(dptoPx(72+16));

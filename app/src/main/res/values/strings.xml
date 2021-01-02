@@ -24,4 +24,8 @@
     <string name="month_to_month_comparison">Porównanie miesięcy</string>
     <string name="trends">Trendy</string>
     <string name="savings">Oszczędzanie</string>
+    <string name="product_name">Nazwa</string>
+    <string name="pirce_title">Cena</string>
+    <string name="quantity">Ilość</string>
+    <string name="category">Kategoria</string>
 </resources>
