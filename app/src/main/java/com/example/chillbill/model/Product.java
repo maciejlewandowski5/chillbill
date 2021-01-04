@@ -47,5 +47,21 @@ public class Product implements Serializable {
     public float getQuantity() {
         return quantity;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setQuantity(float quantity) {
+        this.quantity = quantity;
+    }
 }
 

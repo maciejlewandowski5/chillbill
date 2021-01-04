@@ -28,4 +28,5 @@
     <string name="pirce_title">Cena</string>
     <string name="quantity">Ilość</string>
     <string name="category">Kategoria</string>
+    <string name="confirm">Potwierdź</string>
 </resources>

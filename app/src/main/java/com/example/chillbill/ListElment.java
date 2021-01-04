@@ -61,7 +61,7 @@ public class ListElment extends Fragment {
         TextView priceTextView = root.findViewById(R.id.table_element_price);
         ImageView categoryImageView = root.findViewById(R.id.table_elment_category_color);
         ConstraintLayout constraintLayout = root.findViewById(R.id.table_elment_container);
-        TextView quantityTextView = root.findViewById(R.id.textView2);
+       // TextView quantityTextView = root.findViewById(R.id.textView2);
 
         if (isEven) {
             constraintLayout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
@@ -70,7 +70,7 @@ public class ListElment extends Fragment {
         }
         titleTextView.setText(title);
         priceTextView.setText(String.format("%.2f", price));
-        quantityTextView.setText(String.format("%.2f", price));
+       // quantityTextView.setText(String.format("%.2f", quantity));
         if(category=="purple"){
             categoryImageView.setImageResource(R.drawable.purple_small_circle);
         }else if(category == "yellow"){

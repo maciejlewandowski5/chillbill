@@ -6,7 +6,6 @@
         <item>@string/green_category</item>
         <item>@string/yellow_category</item>
         <item>@string/orange_category</item>
-
     </string-array>
 
 </resources>

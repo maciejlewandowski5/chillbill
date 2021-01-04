@@ -96,5 +96,9 @@
         </item>
 
     </style>
-
+    <style name="spinnerTheme">
+        <item name="android:textColor">@color/orange</item>
+        <item name="android:textColorHint">@color/orange</item>
+        <item name="android:backgroundTint">@color/purple</item>
+    </style>
 </resources>

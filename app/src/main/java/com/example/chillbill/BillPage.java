@@ -1,10 +1,12 @@
 package com.example.chillbill;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,8 +18,11 @@ import com.example.chillbill.model.Product;
 
 import java.util.ArrayList;
 
+import static com.example.chillbill.StartScreen.dpToPx;
+
 public class BillPage extends AppCompatActivity {
 
+    private final String ARG_PROD_PARAM_OUT = "PRODINFO";
     private final String ARG_HIST_PARAM_OUT = "HISTINFO";
     private LinearLayout linearLayout;
     Bill bill;
@@ -65,8 +70,27 @@ public class BillPage extends AppCompatActivity {
         int i = 0;
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         for (Product product : products) {
-            Fragment fragment = new ListElment().newInstance(product.getName(), product.getPrice(),product.getQuantity(), i % 2 != 0, product.getCategoryString());
-            transaction.add(linearLayout.getId(), fragment);
+            ConstraintLayout constraintLayout = new ConstraintLayout(this);
+            Fragment fragment = ListElment.newInstance(product.getName(), product.getPrice(), product.getQuantity(), i % 2 != 0, product.getCategoryString());
+            constraintLayout.setId(View.generateViewId());
+            linearLayout.addView(constraintLayout);
+            Button button = new Button(this);
+            button.setId(View.generateViewId());
+            button.setBackgroundColor(Color.TRANSPARENT);
+            button.setLayoutParams(constraintLayout.getLayoutParams());
+            button.setHeight(dpToPx(24 + 8 + 24, this));
+
+            BillPage that = this;
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(that, ProductPropertiesEditor.class);
+                    intent.putExtra(ARG_PROD_PARAM_OUT, product);
+                    that.startActivity(intent);
+                }
+            });
+            constraintLayout.addView(button);
+            transaction.add(constraintLayout.getId(), fragment, product.getName() + product.getPrice() + product.getQuantity());
             i++;
         }
         transaction.commit();
@@ -77,8 +101,30 @@ public class BillPage extends AppCompatActivity {
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         for (Product product : products) {
             if (product.getCategory() == category) {
-                Fragment fragment = new ListElment().newInstance(product.getName(), product.getPrice(),product.getQuantity(), i % 2 != 0, product.getCategoryString());
-                transaction.add(linearLayout.getId(), fragment);
+                ConstraintLayout constraintLayout = new ConstraintLayout(this);
+                Fragment fragment = ListElment.newInstance(product.getName(), product.getPrice(), product.getQuantity(), i % 2 != 0, product.getCategoryString());
+                constraintLayout.setId(View.generateViewId());
+
+                linearLayout.addView(constraintLayout);
+                Button button = new Button(this);
+                button.setId(View.generateViewId());
+                button.setBackgroundColor(Color.TRANSPARENT);
+                button.setLayoutParams(constraintLayout.getLayoutParams());
+                button.setHeight(dpToPx(24 + 8 + 24, this));
+
+                BillPage that = this;
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(that, ProductPropertiesEditor.class);
+                        intent.putExtra(ARG_PROD_PARAM_OUT, product);
+                        that.startActivity(intent);
+                    }
+                });
+                constraintLayout.addView(button);
+
+                transaction.add(constraintLayout.getId(), fragment, product.getName() + product.getPrice() + product.getQuantity());
+
                 i++;
             }
         }
@@ -127,12 +173,12 @@ public class BillPage extends AppCompatActivity {
 
     public void sortYellow(View view) {
         if (activeFilters[2] == false) {
-        linearLayout.removeAllViews();
-        displayProducts(bill.getProductList(), Category.YELLOW);
-        Button button = (Button) view;
-        button.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.yellow, null));
-        button.setTextColor(ResourcesCompat.getColor(getResources(), R.color.white, null));
-        setColorsToWhite(2);
+            linearLayout.removeAllViews();
+            displayProducts(bill.getProductList(), Category.YELLOW);
+            Button button = (Button) view;
+            button.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.yellow, null));
+            button.setTextColor(ResourcesCompat.getColor(getResources(), R.color.white, null));
+            setColorsToWhite(2);
             activeFilters[2] = true;
         } else {
             linearLayout.removeAllViews();
@@ -147,14 +193,14 @@ public class BillPage extends AppCompatActivity {
 
     public void sortGreen(View view) {
         if (activeFilters[3] == false) {
-        linearLayout.removeAllViews();
-        displayProducts(bill.getProductList(), Category.GREEN);
-        Button button = (Button) view;
-        button.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.green, null));
-        button.setTextColor(ResourcesCompat.getColor(getResources(), R.color.white, null));
-        setColorsToWhite(3);
+            linearLayout.removeAllViews();
+            displayProducts(bill.getProductList(), Category.GREEN);
+            Button button = (Button) view;
+            button.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.green, null));
+            button.setTextColor(ResourcesCompat.getColor(getResources(), R.color.white, null));
+            setColorsToWhite(3);
             activeFilters[3] = true;
-                } else {
+        } else {
             linearLayout.removeAllViews();
             displayProducts(bill.getProductList());
             Button button = (Button) view;
@@ -167,14 +213,14 @@ public class BillPage extends AppCompatActivity {
 
     public void sortBlue(View view) {
         if (activeFilters[4] == false) {
-        linearLayout.removeAllViews();
-        displayProducts(bill.getProductList(), Category.BLUE);
-        Button button = (Button) view;
-        button.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.blue, null));
-        button.setTextColor(ResourcesCompat.getColor(getResources(), R.color.white, null));
-        setColorsToWhite(4);
+            linearLayout.removeAllViews();
+            displayProducts(bill.getProductList(), Category.BLUE);
+            Button button = (Button) view;
+            button.setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.blue, null));
+            button.setTextColor(ResourcesCompat.getColor(getResources(), R.color.white, null));
+            setColorsToWhite(4);
             activeFilters[4] = true;
-         } else {
+        } else {
             linearLayout.removeAllViews();
             displayProducts(bill.getProductList());
             Button button = (Button) view;
