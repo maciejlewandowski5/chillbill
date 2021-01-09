@@ -16,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
@@ -25,11 +26,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.chillbill.model.Bill;
 import com.example.chillbill.model.Category;
@@ -42,6 +49,8 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -265,36 +274,46 @@ public class StartScreen extends AppCompatActivity {
     }
 
     private void sendPostRequest(byte[] postData) {
-        //TODO: this request
+
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="https://chillbill-bv4675ezoa-ey.a.run.app//parseBill";
+        //TODO:: Fix this link, when new work commited on server
+        String url ="https://chillbill-bv4675ezoa-ey.a.run.app/api/vision/parseBill";
 
         RequestQueue ExampleRequestQueue = Volley.newRequestQueue(this);
-        JsonArrayRequest ExampleRequest = new JsonArrayRequest(Request.Method.POST, url,null, new Response.Listener<JSONArray>() {
+        JsonObjectRequest ExampleRequest = new JsonObjectRequest(Request.Method.POST, url, null,new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray response) {
-                org.json.JSONArray jsonArray = response;
-                for(int i=0;i<jsonArray.length();i++){
-                    try {
-                        RecipeInformation recipeInformation = RecipeInformation.instantiate(new JSONObject(jsonArray.getString(i)));
-                        recipeInformations.add(recipeInformation);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                displayFoodItems(recipeInformations);
+            public void onResponse(JSONObject response) {
+                System.out.println("Response");
+                System.out.println(response);
+                System.out.println();
             }
-
-        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //This code is executed if there is an error.
+                System.out.println("Error");
+                System.out.println(error);
+            }
+        }){
+            @Override
+            public byte[] getBody() {
+                return postData;
             }
 
-        });
+            @Override
+            protected Response parseNetworkResponse(NetworkResponse response) {
+                try {
+                    String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    System.out.println(response.data);
+                    System.out.println(HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONObject(jsonString),HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException je) {
+                    return Response.error(new ParseError(je));
+                }
+            }};
 
         ExampleRequestQueue.add(ExampleRequest);
-
     }
 
     @Override

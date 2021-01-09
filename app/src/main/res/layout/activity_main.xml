@@ -75,7 +75,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-            app:rippleColor="#FFFFFF" />
+            app:rippleColor="#FFFFFF"
+            android:onClick="logIn"
+            android:visibility="invisible"/>
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/add_bill"
+            app:layout_constraintEnd_toEndOf="@+id/add_bill"
+            app:layout_constraintStart_toStartOf="@+id/add_bill"
+            app:layout_constraintTop_toTopOf="@+id/add_bill"
+            android:onClick="logIn"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
