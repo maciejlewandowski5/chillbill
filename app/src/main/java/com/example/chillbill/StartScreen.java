@@ -16,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,6 +36,13 @@ import com.example.chillbill.model.Bill;
 import com.example.chillbill.model.Category;
 import com.example.chillbill.model.Product;
 import com.example.chillbill.model.RecipeInformation;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +56,8 @@ import java.util.Date;
 
 public class StartScreen extends AppCompatActivity {
 
+    private static final String TAG = "StartScreen";
+
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_REQUEST_CODE = 100;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
@@ -57,6 +67,9 @@ public class StartScreen extends AppCompatActivity {
 
     private final String ARG_RECEP_PARAM_OUT = "RECEPINFO";
     private final String ARG_HIST_PARAM_OUT = "HISTINFO";
+
+    private FirebaseAuth firebaseAuth;
+    private GoogleSignInClient googleSignInClient;
 
     int[] sampleImages = {R.drawable.image_1, R.drawable.image_2, R.drawable.image_3};
 
@@ -137,9 +150,25 @@ public class StartScreen extends AppCompatActivity {
         displayHistoryItems(billInfos)
         ;
 
+        googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
+        firebaseAuth = FirebaseAuth.getInstance();
 
-
-
+        Button signOutButton = findViewById(R.id.sign_out_button);
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseAuth.signOut();
+                googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.w(TAG, "Signed out of google");
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        Toast.makeText(getApplicationContext(), "You Signed out", Toast.LENGTH_LONG).show();
+                        startActivity(intent);
+                    }
+                });
+            }
+        });
     }
 
     public void getRecipeInfos(String title){
