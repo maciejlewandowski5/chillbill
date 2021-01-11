@@ -57,8 +57,8 @@ public class BillPage extends AppCompatActivity {
         linlay.removeAllViews();
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Fragment billfrag = new HistoryItemExtended().newInstance(bill.getShopName(), bill.getTotalAmount(),
-                bill.getCategoryPercentage()[0], bill.getCategoryPercentage()[1],
-                bill.getCategoryPercentage()[2], bill.getCategoryPercentage()[3], bill.getCategoryPercentage()[4]
+                bill.getCategoryPercentage().get(0).floatValue(), bill.getCategoryPercentage().get(1).floatValue(),
+                bill.getCategoryPercentage().get(2).floatValue(), bill.getCategoryPercentage().get(3).floatValue(), bill.getCategoryPercentage().get(4).floatValue()
                 , bill.getDate(), bill.getSavingsJar());
         transaction.add(linlay.getId(), billfrag);
         transaction.commit();

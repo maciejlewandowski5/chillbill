@@ -5,14 +5,39 @@ import java.io.Serializable;
 public class Product implements Serializable {
     private String name;
     private float price;
+    private float pricePerName;
     private Category category;
     private float quantity;
+    private float discount;
 
-    public Product(String name, float price,float quantity, Category category) {
+    public Product() {
+    }
+
+    public void setPricePerName(float pricePerName) {
+        this.pricePerName = pricePerName;
+    }
+
+    public void setDiscount(float discount) {
+        this.discount = discount;
+    }
+
+    // for firestor object conversions only
+    public Product(String name, float price, float pricePerName, Category category, float quantity, float discount) {
         this.name = name;
         this.price = price;
+        this.pricePerName = pricePerName;
+        this.category = category;
+        this.quantity = quantity;
+        this.discount = discount;
+    }
+
+    public Product(String name, float pricePerName, float quantity, Category category) {
+        this.name = name;
+        this.price = pricePerName * quantity;
         this.quantity = quantity;
         this.category = category;
+        this.discount=0;
+        this.pricePerName = pricePerName;
     }
 
     public String getName() {

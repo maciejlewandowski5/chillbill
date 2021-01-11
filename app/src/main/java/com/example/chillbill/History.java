@@ -1,11 +1,13 @@
 package com.example.chillbill;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -16,6 +18,17 @@ import android.widget.ScrollView;
 import com.example.chillbill.model.Bill;
 import com.example.chillbill.model.Category;
 import com.example.chillbill.model.Product;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +41,11 @@ public class History extends AppCompatActivity {
     int prevScrollPositon;
     int loadedElements;
     private final String ARG_HIST_PARAM_OUT = "HISTINFO";
+    private FirebaseAuth firebaseAuth;
+    private GoogleSignInClient googleSignInClient;
+    FirebaseFirestore db;
+    final int[] historyItemsLoaded = {0};
+    private DocumentSnapshot lastVisible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,108 +58,143 @@ public class History extends AppCompatActivity {
         prevScrollPositon = 0;
         loadedElements = 0;
 
-        final int[] historyItemsLoaded = {0};
-
-        //Load starting last ten bills
-        ArrayList<Bill> bills = loadHistoryItemExtended(historyItemsLoaded[0]);
-        displayHistoryItemsExtended(bills);
-        historyItemsLoaded[0] +=5;
-        displayHistoryItemsExtended(bills);
-        historyItemsLoaded[0] +=5;
-
+        googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
+        firebaseAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         History that = this;
-        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            @Override
-            public void onScrollChanged() {
-                int scrollY = scrollView.getScrollY();
-                int fragmentScrolled = (int) Math.ceil((float) scrollY / (linearLayout.getChildAt(0).getHeight() + dptoPx(16)));
-                float percentScrolled = (float) scrollY / (linearLayout.getHeight());
+
+        loadAllHistoryItemExtended();
+      /*  db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.ASCENDING).limit(1)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                lastVisible = document;
+                            }
+
+                            //Load starting last ten bills
+                            loadHistoryItemExtended(historyItemsLoaded[0]);
+                            scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+                                @Override
+                                public void onScrollChanged() {
+                                    int scrollY = scrollView.getScrollY();
+                                    //int fragmentScrolled = (int) Math.ceil((float) scrollY / (linearLayout.getChildAt(0).getHeight() + dptoPx(16)));
+                                    int fragmentScrolled = (int) Math.ceil((float) scrollY / (dptoPx(72) + dptoPx(16)));
+                                    float percentScrolled = (float) scrollY / (linearLayout.getHeight());
 
 
-                if (prevScrollPositon < scrollY) {
+                                    if (prevScrollPositon < scrollY) {
 
-                    if ((float) fragmentScrolled / loadedElements >= 0.5) {
-                        ArrayList<Bill> bills = loadHistoryItemExtended(historyItemsLoaded[0]);
-                        displayHistoryItemsExtended(bills);
-                        //loaded was 5 elments, if more should be changed for diffretn number;
-                        historyItemsLoaded[0] += 5;
-                        prevScrollPositon = scrollY;
+                                        if ((float) fragmentScrolled / loadedElements >= 0.5) {
+                                            loadHistoryItemExtended(historyItemsLoaded[0]);
+                                            prevScrollPositon = scrollY;
+                                        }
+                                    }
+
+                                }
+                            });
+
+                        } else {
+                            Log.w("History", "Error getting documents.", task.getException());
+                        }
                     }
-                }
+                });
 
-            }
-        });
-
+*/
     }
 
-    public ArrayList<Bill> loadHistoryItemExtended(int alreadyLoadedElementsNumber){
+    public ArrayList<Bill> loadAllHistoryItemExtended() {
         //TODO:: Add get request
-                ArrayList<Bill> bills = new ArrayList<>();
-                for (int i=alreadyLoadedElementsNumber; i<alreadyLoadedElementsNumber+5;i++){
+        ArrayList<Bill> bills = new ArrayList<>();
 
 
-                    Bill bill = new Bill("Lidl", (float) (98.51*i/10f),new Date());
-                    for(int j=0;j<12;j++){
-                        Category category;
-                        if(j%5==0){
-                            category = Category.BLUE;
+        db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.ASCENDING)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Bill bill = document.toObject(Bill.class);
+                                bills.add(bill);
+                            }
+                            displayHistoryItemsExtended(bills);
+
+                        } else {
+                            Log.w("History", "Error getting documents.", task.getException());
                         }
-                        else if(j%5==1){
-                            category = Category.PURPLE;
-                        }
-                        else if(j%5==2){
-                            category = Category.ORANGE;
-                        }
-                        else if(j%5==3){
-                            category = Category.GREEN;
-                        }
-                        else{
-                            category = Category.YELLOW;
-                        }
-                        Product product = new Product("Product nr" + j,(j+i)*1.57f, (float) Math.sqrt((i-j)*(i-j)),category);
-                        bill.addProduct(product);
                     }
-                    bills.add(bill);
-                }
-                return bills;
+                });
+
+        return bills;
+    }
+    public ArrayList<Bill> loadHistoryItemExtended(int alreadyLoadedElementsNumber) {
+        //TODO:: Add get request
+        ArrayList<Bill> bills = new ArrayList<>();
+
+
+            db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.ASCENDING).startAt(lastVisible).limit(5)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Bill bill = document.toObject(Bill.class);
+                                    bills.add(bill);
+                                    System.out.println("ITEM WAS LOADED");
+                                    lastVisible = document;
+                                }
+                                displayHistoryItemsExtended(bills);
+                                historyItemsLoaded[0] += 5;
+
+                            } else {
+                                Log.w("History", "Error getting documents.", task.getException());
+                            }
+                        }
+                    });
+
+        return bills;
     }
 
-    public void displayHistoryItemsExtended(ArrayList<Bill> bills){
+    public void displayHistoryItemsExtended(ArrayList<Bill> bills) {
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                for(Bill bill : bills){
-        ConstraintLayout constraintLayout = new ConstraintLayout(this);
-        HistoryItemExtended fragment = HistoryItemExtended.newInstance(bill.getShopName(),
-                bill.getTotalAmount(), bill.getCategoryPercentage()[0], bill.getCategoryPercentage()[1],bill.getCategoryPercentage()[2],
-                bill.getCategoryPercentage()[3],bill.getCategoryPercentage()[4], bill.getDate(), bill.getSavingsJar());
+        for (Bill bill : bills) {
+            ConstraintLayout constraintLayout = new ConstraintLayout(this);
+            HistoryItemExtended fragment = HistoryItemExtended.newInstance(bill.getShopName(),
+                    bill.getTotalAmount(), bill.getCategoryPercentage().get(0).floatValue(), bill.getCategoryPercentage().get(1).floatValue(), bill.getCategoryPercentage().get(2).floatValue(),
+                    bill.getCategoryPercentage().get(3).floatValue(), bill.getCategoryPercentage().get(4).floatValue(), bill.getDate(), bill.getSavingsJar());
 
-        constraintLayout.setId(View.generateViewId());
-        linearLayout.addView(constraintLayout);
-        Button button = new Button(this);
-        button.setId(View.generateViewId());
-        button.setBackgroundColor(Color.TRANSPARENT);
-        button.setLayoutParams(constraintLayout.getLayoutParams());
-        // Hegiht of extended history item is 72dp + 16dp for margin
-        button.setHeight(dptoPx(72+16));
+            constraintLayout.setId(View.generateViewId());
+            linearLayout.addView(constraintLayout);
+            Button button = new Button(this);
+            button.setId(View.generateViewId());
+            button.setBackgroundColor(Color.TRANSPARENT);
+            button.setLayoutParams(constraintLayout.getLayoutParams());
+            // Hegiht of extended history item is 72dp + 16dp for margin
+            button.setHeight(dptoPx(72 + 16));
 
-        History that =this;
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(that, BillPage.class);
-                intent.putExtra(ARG_HIST_PARAM_OUT, bill);
-                that.startActivity(intent);
-            }
+            History that = this;
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(that, BillPage.class);
+                    intent.putExtra(ARG_HIST_PARAM_OUT, bill);
+                    that.startActivity(intent);
+                }
 
-        });
+            });
 
-        constraintLayout.addView(button);
-        transaction.add(constraintLayout.getId(), fragment);
-        loadedElements++;
+            constraintLayout.addView(button);
+            transaction.add(constraintLayout.getId(), fragment);
+            loadedElements++;
 
-    }
+        }
 
-                transaction.commit();
+        transaction.commit();
     }
 
 

@@ -60,6 +60,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -80,6 +84,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Blob;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -102,6 +107,7 @@ public class StartScreen extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
     private GoogleSignInClient googleSignInClient;
+    private FirebaseFirestore db;
 
     int[] sampleImages = {R.drawable.image_1, R.drawable.image_2, R.drawable.image_3};
 
@@ -118,6 +124,7 @@ public class StartScreen extends AppCompatActivity {
         FitItem fitItem3 = FitItem.newInstance("Aktywnosc fizyczna", "Lorem impsum dolores . . .", R.drawable.image_2);
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
+        db = FirebaseFirestore.getInstance();
 
 
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -241,8 +248,8 @@ public class StartScreen extends AppCompatActivity {
         for (Bill bill : bills) {
             i++;
             ConstraintLayout constraintLayout = new ConstraintLayout(this);
-            Fragment fragment = HistoryItem.newInstance(bill.getShopName(), bill.getTotalAmount(), bill.getCategoryPercentage()[0]
-                    , bill.getCategoryPercentage()[1], bill.getCategoryPercentage()[2], bill.getCategoryPercentage()[3], bill.getCategoryPercentage()[4]);
+            Fragment fragment = HistoryItem.newInstance(bill.getShopName(), bill.getTotalAmount(), bill.getCategoryPercentage().get(0).floatValue()
+                    , bill.getCategoryPercentage().get(1).floatValue(), bill.getCategoryPercentage().get(2).floatValue(), bill.getCategoryPercentage().get(3).floatValue(), bill.getCategoryPercentage().get(4).floatValue());
 
             constraintLayout.setId(View.generateViewId());
             historyContainer.addView(constraintLayout);
@@ -373,12 +380,13 @@ public class StartScreen extends AppCompatActivity {
         }
 
     }
-    private String requestBillParsing(String postData) {
+    private String requestBillParsing(String billId) {
 
 
+        StartScreen that = this;
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://chillbill-bv4675ezoa-ey.a.run.app/api/vision/parseBill/get?keyword=" + postData;
-
+        String url = "https://chillbill-bv4675ezoa-ey.a.run.app/api/vision/parseBill?userImage="+ firebaseAuth.getCurrentUser().getUid()+ "/" + billId;
+        System.out.println(url);
         final String[] result = {""};
         RequestQueue ExampleRequestQueue = Volley.newRequestQueue(this);
         StringRequest ExampleRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -387,6 +395,26 @@ public class StartScreen extends AppCompatActivity {
                 System.out.println("Response");
                 System.out.println(response);
                 System.out.println();
+
+
+                db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").document(response)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    Bill bill = task.getResult().toObject(Bill.class);
+
+                                    Intent intent = new Intent(that, BillPage.class);
+                                    intent.putExtra(ARG_HIST_PARAM_OUT, bill);
+                                    that.startActivity(intent);
+
+                                } else {
+                                    Log.w(TAG, "Error getting documents.", task.getException());
+                                }
+                            }
+                        });
+
                 result[0] = response;
             }
         }, new Response.ErrorListener() {
@@ -395,16 +423,24 @@ public class StartScreen extends AppCompatActivity {
                 System.out.println("Error");
                 System.out.println(error);
             }
-        }) {
+        });
+
+        ExampleRequest.setRetryPolicy(new RetryPolicy() {
             @Override
-            public byte[] getBody() {
-                //  for(Byte byte1: postData){
-                //    System.out.println(byte1);
-                //}
-                return postData.getBytes();
+            public int getCurrentTimeout() {
+                return 50000;
             }
 
-        };
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
         ExampleRequestQueue.add(ExampleRequest);
     return result[0];
 
@@ -439,6 +475,7 @@ public class StartScreen extends AppCompatActivity {
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             // Get a URL to the uploaded content
                             System.out.println("HO+RRAY");
+                            requestBillParsing(String.valueOf(file.hashCode()));
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -461,6 +498,7 @@ public class StartScreen extends AppCompatActivity {
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                     // Get a URL to the uploaded content
                                     System.out.println("HO+RRAY");
+                                    requestBillParsing(String.valueOf(file.hashCode()));
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
