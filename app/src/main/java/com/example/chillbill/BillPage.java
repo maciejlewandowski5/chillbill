@@ -23,7 +23,6 @@ import static com.example.chillbill.StartScreen.dpToPx;
 public class BillPage extends AppCompatActivity {
 
     private final String ARG_PROD_PARAM_OUT = "PRODINFO";
-    private final String ARG_HIST_PARAM_OUT = "HISTINFO";
     private LinearLayout linearLayout;
     Bill bill;
     Button[] filterButtons;
@@ -49,6 +48,7 @@ public class BillPage extends AppCompatActivity {
                 ResourcesCompat.getColor(getResources(), R.color.green, null),
                 ResourcesCompat.getColor(getResources(), R.color.blue, null)};
 
+        String ARG_HIST_PARAM_OUT = "HISTINFO";
         bill = (Bill) intent.getSerializableExtra(ARG_HIST_PARAM_OUT);
 
         linearLayout = findViewById(R.id.container_for_table_item_bill_list);
@@ -56,7 +56,7 @@ public class BillPage extends AppCompatActivity {
 
         linlay.removeAllViews();
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment billfrag = new HistoryItemExtended().newInstance(bill.getShopName(), bill.getTotalAmount(),
+        Fragment billfrag = HistoryItemExtended.newInstance(bill.getShopName(), bill.getTotalAmount(),
                 bill.getCategoryPercentage().get(0).floatValue(), bill.getCategoryPercentage().get(1).floatValue(),
                 bill.getCategoryPercentage().get(2).floatValue(), bill.getCategoryPercentage().get(3).floatValue(), bill.getCategoryPercentage().get(4).floatValue()
                 , bill.getDate(), bill.getSavingsJar());
@@ -81,13 +81,10 @@ public class BillPage extends AppCompatActivity {
             button.setHeight(dpToPx(24 + 8 + 24, this));
 
             BillPage that = this;
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(that, ProductPropertiesEditor.class);
-                    intent.putExtra(ARG_PROD_PARAM_OUT, product);
-                    that.startActivity(intent);
-                }
+            button.setOnClickListener(v -> {
+                Intent intent = new Intent(that, ProductPropertiesEditor.class);
+                intent.putExtra(ARG_PROD_PARAM_OUT, product);
+                that.startActivity(intent);
             });
             constraintLayout.addView(button);
             transaction.add(constraintLayout.getId(), fragment, product.getName() + product.getPrice() + product.getQuantity());
@@ -113,13 +110,10 @@ public class BillPage extends AppCompatActivity {
                 button.setHeight(dpToPx(24 + 8 + 24, this));
 
                 BillPage that = this;
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(that, ProductPropertiesEditor.class);
-                        intent.putExtra(ARG_PROD_PARAM_OUT, product);
-                        that.startActivity(intent);
-                    }
+                button.setOnClickListener(v -> {
+                    Intent intent = new Intent(that, ProductPropertiesEditor.class);
+                    intent.putExtra(ARG_PROD_PARAM_OUT, product);
+                    that.startActivity(intent);
                 });
                 constraintLayout.addView(button);
 
@@ -132,7 +126,7 @@ public class BillPage extends AppCompatActivity {
     }
 
     public void sortOrange(View view) {
-        if (activeFilters[0] == false) {
+        if (!activeFilters[0]) {
             linearLayout.removeAllViews();
             displayProducts(bill.getProductList(), Category.ORANGE);
             Button button = (Button) view;
@@ -152,7 +146,7 @@ public class BillPage extends AppCompatActivity {
     }
 
     public void sortPurple(View view) {
-        if (activeFilters[1] == false) {
+        if (!activeFilters[1]) {
             linearLayout.removeAllViews();
             displayProducts(bill.getProductList(), Category.PURPLE);
             Button button = (Button) view;
@@ -172,7 +166,7 @@ public class BillPage extends AppCompatActivity {
     }
 
     public void sortYellow(View view) {
-        if (activeFilters[2] == false) {
+        if (!activeFilters[2]) {
             linearLayout.removeAllViews();
             displayProducts(bill.getProductList(), Category.YELLOW);
             Button button = (Button) view;
@@ -192,7 +186,7 @@ public class BillPage extends AppCompatActivity {
     }
 
     public void sortGreen(View view) {
-        if (activeFilters[3] == false) {
+        if (!activeFilters[3]) {
             linearLayout.removeAllViews();
             displayProducts(bill.getProductList(), Category.GREEN);
             Button button = (Button) view;
@@ -212,7 +206,7 @@ public class BillPage extends AppCompatActivity {
     }
 
     public void sortBlue(View view) {
-        if (activeFilters[4] == false) {
+        if (!activeFilters[4]) {
             linearLayout.removeAllViews();
             displayProducts(bill.getProductList(), Category.BLUE);
             Button button = (Button) view;

@@ -29,4 +29,11 @@
     <string name="quantity">Ilość</string>
     <string name="category">Kategoria</string>
     <string name="confirm">Potwierdź</string>
+    <string name="todo">TODO</string>
+    <string name="textview">TextView</string>
+    <string name="take_picture">Zrób zdjęcie</string>
+    <string name="take_from_galery">Wybierz z galerii</string>
+    <string name="add_manually">Wprowadź dane ręcznie</string>
+    <string name="log_out">Wyloguj</string>
+
 </resources>

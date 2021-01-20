@@ -1,4 +1,4 @@
-package com.example.chillbill.model;
+package com.example.chillbill.factory;
 import androidx.annotation.Nullable;
 
 import com.android.volley.AuthFailureError;

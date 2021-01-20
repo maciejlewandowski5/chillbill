@@ -69,7 +69,8 @@
                 android:textAllCaps="false"
                 android:textColor="@color/design_default_color_on_primary"
                 android:textSize="11sp"
-                app:cornerRadius="50dp" />
+                app:cornerRadius="50dp"
+                tools:ignore="SmallSp" />
 
             <Button
                 android:onClick="sortPurple"
@@ -85,7 +86,8 @@
                 android:textAllCaps="false"
                 android:textColor="@color/design_default_color_on_primary"
                 android:textSize="11sp"
-                app:cornerRadius="50dp" />
+                app:cornerRadius="50dp"
+                tools:ignore="SmallSp" />
 
             <Button
                 android:onClick="sortYellow"
@@ -101,7 +103,8 @@
                 android:textAllCaps="false"
                 android:textColor="@color/design_default_color_on_primary"
                 android:textSize="11sp"
-                app:cornerRadius="50dp" />
+                app:cornerRadius="50dp"
+                tools:ignore="SmallSp" />
 
             <Button
                 android:onClick="sortGreen"
@@ -117,7 +120,8 @@
                 android:textAllCaps="false"
                 android:textColor="@color/design_default_color_on_primary"
                 android:textSize="11sp"
-                app:cornerRadius="50dp" />
+                app:cornerRadius="50dp"
+                tools:ignore="SmallSp" />
 
             <Button
                 android:onClick="sortBlue"
@@ -133,7 +137,8 @@
                 android:textAllCaps="false"
                 android:textColor="@color/design_default_color_on_primary"
                 android:textSize="11sp"
-                app:cornerRadius="50dp" />
+                app:cornerRadius="50dp"
+                tools:ignore="SmallSp" />
 
 
         </LinearLayout>
@@ -151,7 +156,7 @@
         android:id="@+id/bill_name"
         android:layout_width="140dp"
         android:layout_height="35dp"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginVertical="5dp"
         android:layout_marginStart="16dp"
@@ -172,7 +177,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/space7"
-        app:srcCompat="@drawable/grey_line_divder" />
+        app:srcCompat="@drawable/grey_line_divder"
+        android:contentDescription="@string/todo" />
 
     <Space
         android:id="@+id/space9"

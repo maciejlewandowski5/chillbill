@@ -10,14 +10,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.example.chillbill.model.Bill;
-import com.example.chillbill.model.Category;
-import com.example.chillbill.model.Product;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -31,7 +29,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Date;
+
 
 //TODO: Implemet sorting by biggest usage of bill in category and by date and by
 //      jar type. Should be done by get requests to cloud.
@@ -42,7 +40,6 @@ public class History extends AppCompatActivity {
     int loadedElements;
     private final String ARG_HIST_PARAM_OUT = "HISTINFO";
     private FirebaseAuth firebaseAuth;
-    private GoogleSignInClient googleSignInClient;
     FirebaseFirestore db;
     final int[] historyItemsLoaded = {0};
     private DocumentSnapshot lastVisible;
@@ -58,12 +55,12 @@ public class History extends AppCompatActivity {
         prevScrollPositon = 0;
         loadedElements = 0;
 
-        googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         History that = this;
 
+        //TODO: Fix inifinty scroller
         loadAllHistoryItemExtended();
       /*  db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.ASCENDING).limit(1)
                 .get()

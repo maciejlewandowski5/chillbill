@@ -51,7 +51,7 @@ public class RecipeInformation implements Serializable {
             }
         } catch (MalformedURLException e) {
             try {
-                recipeInformation = new RecipeInformation(title, description, new URL("https://google.com"), new URL("https://www.mojegotowanie.pl/search?q=" + title));
+                recipeInformation = new RecipeInformation(title, description, new URL("https:" + imageURL), new URL("https://www.mojegotowanie.pl/search?q=" + title));
                 for (int j = 0; j < jsonArray.length(); j++) {
                     try {
                         recipeInformation.addProduct(jsonArray.getString(j));

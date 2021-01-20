@@ -17,6 +17,7 @@ import java.util.ArrayList;
 public class Recepe extends AppCompatActivity {
     private final String ARG_RECEP_PARAM_OUT = "RECEPINFO";
     RecipeInformation recipeInformation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,31 +29,32 @@ public class Recepe extends AppCompatActivity {
 
         recipeInformation = (RecipeInformation) intent.getSerializableExtra(ARG_RECEP_PARAM_OUT);
 
-        // TODO: Implement photos from link
-        Fragment foodItem = new FoodItem().newInstance(recipeInformation.getTitle(),R.drawable.food_item_background_image);
+        if (recipeInformation != null) {
+            Fragment foodItem =  FoodItem.newInstance(recipeInformation.getTitle(), recipeInformation.getImageURL());
 
-        androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment5,foodItem);
-        transaction.commit();
-
-
-        transaction = getSupportFragmentManager().beginTransaction();
+            androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment5, foodItem);
+            transaction.commit();
 
 
-        ArrayList<String> products = new ArrayList<>();
-        products = recipeInformation.getProducts();
+            transaction = getSupportFragmentManager().beginTransaction();
 
-        int i=0;
-        for(String product : products) {
-            Fragment ingredient = new ShopItemList().newInstance(product,i%2==0);
-            transaction.add(linearLayout.getId(),ingredient);
-            i++;
+
+            ArrayList<String> products = new ArrayList<>();
+            products = recipeInformation.getProducts();
+
+            int i = 0;
+            for (String product : products) {
+                Fragment ingredient = ShopItemList.newInstance(product, i % 2 == 0);
+                transaction.add(linearLayout.getId(), ingredient);
+                i++;
+            }
+            transaction.commit();
+
+            TextView recepeText = findViewById(R.id.recepeText);
+
+            recepeText.setText(recipeInformation.getShortDesc());
         }
-        transaction.commit();
-
-        TextView recepeText = findViewById(R.id.recepeText);
-
-        recepeText.setText(recipeInformation.getShortDesc());
     }
 
     public void openURL(View view) {

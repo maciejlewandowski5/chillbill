@@ -43,6 +43,7 @@
 
                 <ImageView
                     android:id="@+id/imageView5"
+                    android:onClick="logOut"
                     android:layout_width="56dp"
                     android:layout_height="56dp"
                     android:layout_marginVertical="10dp"
@@ -52,15 +53,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:srcCompat="@drawable/logo" />
 
-                <Button
-                    android:id="@+id/sign_out_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Sign Out"
-                    app:layout_constraintStart_toEndOf="@+id/chillbill"
-                    app:layout_constraintTop_toTopOf="parent" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -301,31 +294,14 @@
                     android:insetBottom="0dp"
                     android:paddingStart="40dp"
                     android:paddingEnd="40dp"
-                    android:text="Zrob zdjecie"
+                    android:text="@string/add_recept"
                     app:cornerRadius="50dp"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
                     app:rippleColor="#FFFFFF" />
-                <Button
-                    android:onClick="dispatchChoosePictureIntent"
-                    android:id="@+id/add_bill_choose"
-                    style="@style/Widget.MaterialComponents.Button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/grey"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:paddingStart="40dp"
-                    android:paddingEnd="40dp"
-                    android:text="Wybierz z galaerii"
-                    app:cornerRadius="50dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/add_bill"
-                    app:rippleColor="#FFFFFF" />
+
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -397,6 +373,8 @@
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="22dp" />
+
+            <!--
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -474,6 +452,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            -->
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="22dp" />

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -27,10 +28,13 @@ import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +51,8 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.chillbill.factory.NotifyingThread;
+import com.example.chillbill.factory.ThreadCompleteListener;
 import com.example.chillbill.model.Bill;
 import com.example.chillbill.model.Category;
 import com.example.chillbill.model.Product;
@@ -62,6 +68,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -109,6 +116,7 @@ public class StartScreen extends AppCompatActivity {
     private GoogleSignInClient googleSignInClient;
     private FirebaseFirestore db;
 
+
     int[] sampleImages = {R.drawable.image_1, R.drawable.image_2, R.drawable.image_3};
 
     String currentPhotoPath;
@@ -119,21 +127,8 @@ public class StartScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
-        FitItem fitItem = FitItem.newInstance("Aktywnosc fizyczna", "Lorem impsum dolores . . .", R.drawable.image_2);
-        FitItem fitItem2 = FitItem.newInstance("Aktywnosc fizyczna", "Lorem impsum dolores . . .", R.drawable.image_2);
-        FitItem fitItem3 = FitItem.newInstance("Aktywnosc fizyczna", "Lorem impsum dolores . . .", R.drawable.image_2);
-
         mStorageRef = FirebaseStorage.getInstance().getReference();
         db = FirebaseFirestore.getInstance();
-
-
-        androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        transaction.replace(R.id.fragment, fitItem);
-        transaction.replace(R.id.fragment1, fitItem2);
-        transaction.replace(R.id.fragment12, fitItem3);
-
-        transaction.commit();
 
 
         //Camera permissons
@@ -171,45 +166,29 @@ public class StartScreen extends AppCompatActivity {
         });
         ArrayList<Bill> billInfos = new ArrayList<>();
 
-        // here server should return only last three;
-        Bill bill = new Bill("Biedronka", 326.12f, new Date());
-        Bill bill2 = new Bill("Empik", 326.12f, new Date());
-        Bill bill3 = new Bill("Lidl", 326.12f, new Date());
-
-        Product product = new Product("Mąka", 5.50f, 5.5f, Category.BLUE);
-
-        for (int i = 0; i < 20; i++) {
-            bill.addProduct(product);
-            bill2.addProduct(product);
-            bill3.addProduct(product);
-        }
-
-        billInfos.add(bill);
-        billInfos.add(bill2);
-        billInfos.add(bill3);
-
-        displayHistoryItems(billInfos)
-        ;
-
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
 
-        Button signOutButton = findViewById(R.id.sign_out_button);
-        signOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                firebaseAuth.signOut();
-                googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+
+        db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.ASCENDING).limit(3)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.w(TAG, "Signed out of google");
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        Toast.makeText(getApplicationContext(), "You Signed out", Toast.LENGTH_LONG).show();
-                        startActivity(intent);
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Bill bill = document.toObject(Bill.class);
+                                billInfos.add(bill);
+                            }
+                            displayHistoryItems(billInfos);
+
+                        } else {
+                            Log.w("History", "Error getting documents.", task.getException());
+                        }
                     }
                 });
-            }
-        });
+
+
     }
 
     public void getRecipeInfos(String title) {
@@ -280,12 +259,14 @@ public class StartScreen extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         int i = 0;
         int previousId = recipesContainer.getId();
+        StartScreen that = this;
         for (RecipeInformation info : recipeInformations) {
             i++;
             ConstraintLayout constraintLayout = new ConstraintLayout(this);
 
             // TODO: Change to image from info url
-            Fragment fragment = FoodItem.newInstance(info.getTitle(), R.drawable.food_item_background_image);
+            FoodItem fragment = FoodItem.newInstance(info.getTitle(), info.getImageURL());
+
 
             constraintLayout.setId(View.generateViewId());
 
@@ -298,7 +279,7 @@ public class StartScreen extends AppCompatActivity {
             //88 is height of food item with margins
             button.setHeight(dpToPx(88, this));
 
-            StartScreen that = this;
+            //StartScreen that = this;
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -315,6 +296,8 @@ public class StartScreen extends AppCompatActivity {
         transaction.commit();
 
     }
+
+
     //TODO: change initial photo to photo downloaded from web for food items
 
     public static int dpToPx(float dp, Context context) {
@@ -325,12 +308,6 @@ public class StartScreen extends AppCompatActivity {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
     }
 
-    public void dispatchChoosePictureIntent(View view) {
-
-        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(pickPhoto, 1);//one can be replaced with any action code
-    }
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -345,47 +322,82 @@ public class StartScreen extends AppCompatActivity {
 
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
-        currentPhoto=image;
+        currentPhoto = image;
         return image;
     }
 
     public void dispatchTakePictureIntent(View view) {
 
-      /*  if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+        StartScreen that = this;
+        PopupMenu menu = new PopupMenu(this, view);
+
+        menu.getMenu().add(R.string.add_manually);
+        menu.getMenu().add(R.string.take_from_galery);
+        menu.getMenu().add(R.string.take_picture);
+
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getTitle().toString().equals(getResources().getString(R.string.add_manually))) {
+
+                } else if (item.getTitle().toString().equals(getResources().getString(R.string.take_from_galery))) {
+                    Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(pickPhoto, 1);//one can be replaced with any action code
+                } else {
+                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    // Ensure that there's a camera activity to handle the intent
+                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                        // Create the File where the photo should go
+                        File photoFile = null;
+                        try {
+                            photoFile = createImageFile();
+                        } catch (IOException ex) {
+                            // Error occurred while creating the File
+
+                        }
+                        // Continue only if the File was successfully created
+                        if (photoFile != null) {
+                            Uri photoURI = FileProvider.getUriForFile(that,
+                                    "com.example.android.fileprovider",
+                                    photoFile);
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                            startActivityForResult(takePictureIntent, 0);
+                        }
+                    }
+
+                }
+
+                return false;
+            }
+        });
+
+        menu.show();
+
+
+
+
+
+        /*
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
         } else {
             Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(cameraIntent, 0);
-        }*/
-
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.android.fileprovider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, 0);
-            }
         }
 
+         */
+
+
     }
+
     private String requestBillParsing(String billId) {
 
 
         StartScreen that = this;
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://chillbill-bv4675ezoa-ey.a.run.app/api/vision/parseBill?userImage="+ firebaseAuth.getCurrentUser().getUid()+ "/" + billId;
+        String url = "https://chillbill-bv4675ezoa-ey.a.run.app/api/vision/parseBill?userImage=" + firebaseAuth.getCurrentUser().getUid() + "/" + billId;
         System.out.println(url);
         final String[] result = {""};
         RequestQueue ExampleRequestQueue = Volley.newRequestQueue(this);
@@ -442,7 +454,7 @@ public class StartScreen extends AppCompatActivity {
             }
         });
         ExampleRequestQueue.add(ExampleRequest);
-    return result[0];
+        return result[0];
 
     }
 
@@ -468,7 +480,7 @@ public class StartScreen extends AppCompatActivity {
         switch (requestCode) {
             case 0: // taking picture with camera
                 if (resultCode == RESULT_OK) {
-                   Uri file = Uri.fromFile(currentPhoto);
+                    Uri file = Uri.fromFile(currentPhoto);
                     StorageReference riversRef = mStorageRef.child("/" + firebaseAuth.getCurrentUser().getUid() + "/" + file.hashCode());
                     riversRef.putFile(file).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -522,5 +534,33 @@ public class StartScreen extends AppCompatActivity {
     public void startCharts(View view) {
         Intent intent = new Intent(this, StatisticsActivity.class);
         startActivity(intent);
+    }
+
+    public void logOut(View view) {
+        StartScreen that = this;
+        PopupMenu menu = new PopupMenu(this, view);
+
+        menu.getMenu().add(R.string.log_out);
+
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getTitle().toString().equals(getResources().getString(R.string.log_out))) {
+                    firebaseAuth.signOut();
+                    googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Log.w(TAG, "Signed out of google");
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            Toast.makeText(getApplicationContext(), "You Signed out", Toast.LENGTH_LONG).show();
+                            startActivity(intent);
+                        }
+                    });
+                }
+                return false;
+            }
+        });
+        menu.show();
+
     }
 }
