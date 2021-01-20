@@ -86,6 +86,9 @@ public class BillPage extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent intent = new Intent(that, ProductPropertiesEditor.class);
                     intent.putExtra(ARG_PROD_PARAM_OUT, product);
+                    intent.putExtra("ARG_DATE_OUT", bill.getDate());
+                    intent.putExtra("ARG_SHOPNAME_OUT", bill.getShopName());
+                    intent.putExtra("ARG_PRODUCT_INDEX_OUT", finalI);
                     that.startActivity(intent);
                 }
             });
