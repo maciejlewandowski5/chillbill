@@ -51,6 +51,7 @@ public class BillPage extends AppCompatActivity {
         String ARG_HIST_PARAM_OUT = "HISTINFO";
         bill = (Bill) intent.getSerializableExtra(ARG_HIST_PARAM_OUT);
 
+
         linearLayout = findViewById(R.id.container_for_table_item_bill_list);
         LinearLayout linlay = findViewById(R.id.linearLayout7);
 
@@ -71,7 +72,7 @@ public class BillPage extends AppCompatActivity {
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         for (Product product : products) {
             ConstraintLayout constraintLayout = new ConstraintLayout(this);
-            Fragment fragment = ListElment.newInstance(product.getName(), product.getPrice(), product.getQuantity(), i % 2 != 0, product.getCategoryString());
+            Fragment fragment = ListElment.newInstance(product.getName(), product.getPrice(), product.getQuantity(), i % 2 != 0, product.getCategoryString(product));
             constraintLayout.setId(View.generateViewId());
             linearLayout.addView(constraintLayout);
             Button button = new Button(this);
@@ -81,10 +82,20 @@ public class BillPage extends AppCompatActivity {
             button.setHeight(dpToPx(24 + 8 + 24, this));
 
             BillPage that = this;
-            button.setOnClickListener(v -> {
-                Intent intent = new Intent(that, ProductPropertiesEditor.class);
-                intent.putExtra(ARG_PROD_PARAM_OUT, product);
-                that.startActivity(intent);
+
+            int finalI = i;
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(that, ProductPropertiesEditor.class);
+                    intent.putExtra(ARG_PROD_PARAM_OUT, product);
+                    intent.putExtra("ARG_DATE_OUT", bill.getDate());
+                    intent.putExtra("ARG_SHOPNAME_OUT", bill.getShopName());
+                    intent.putExtra("ARG_PRODUCT_INDEX_OUT", finalI);
+                    intent.putExtra("BILL_FOR_PROD",bill);
+                    that.startActivity(intent);
+                }
+
             });
             constraintLayout.addView(button);
             transaction.add(constraintLayout.getId(), fragment, product.getName() + product.getPrice() + product.getQuantity());
@@ -99,7 +110,7 @@ public class BillPage extends AppCompatActivity {
         for (Product product : products) {
             if (product.getCategory() == category) {
                 ConstraintLayout constraintLayout = new ConstraintLayout(this);
-                Fragment fragment = ListElment.newInstance(product.getName(), product.getPrice(), product.getQuantity(), i % 2 != 0, product.getCategoryString());
+                Fragment fragment = ListElment.newInstance(product.getName(), product.getPrice(), product.getQuantity(), i % 2 != 0, product.getCategoryString(product));
                 constraintLayout.setId(View.generateViewId());
 
                 linearLayout.addView(constraintLayout);
@@ -109,10 +120,15 @@ public class BillPage extends AppCompatActivity {
                 button.setLayoutParams(constraintLayout.getLayoutParams());
                 button.setHeight(dpToPx(24 + 8 + 24, this));
 
+                int finalI = i;
                 BillPage that = this;
                 button.setOnClickListener(v -> {
                     Intent intent = new Intent(that, ProductPropertiesEditor.class);
                     intent.putExtra(ARG_PROD_PARAM_OUT, product);
+                    intent.putExtra("ARG_DATE_OUT", bill.getDate());
+                    intent.putExtra("ARG_SHOPNAME_OUT", bill.getShopName());
+                    intent.putExtra("ARG_PRODUCT_INDEX_OUT", finalI);
+                    intent.putExtra("BILL_FOR_PROD",bill);
                     that.startActivity(intent);
                 });
                 constraintLayout.addView(button);

@@ -13,13 +13,6 @@ public class Product implements Serializable {
     public Product() {
     }
 
-    public void setPricePerName(float pricePerName) {
-        this.pricePerName = pricePerName;
-    }
-
-    public void setDiscount(float discount) {
-        this.discount = discount;
-    }
 
     // for firestor object conversions only
     public Product(String name, float price, float pricePerName, Category category, float quantity, float discount) {
@@ -40,6 +33,8 @@ public class Product implements Serializable {
         this.pricePerName = pricePerName;
     }
 
+
+
     public String getName() {
         return name;
     }
@@ -52,16 +47,16 @@ public class Product implements Serializable {
         return category;
     }
 
-    public String getCategoryString(){
+    public static String getCategoryString(Product product){
         String results="";
 
-        if(category==Category.BLUE){
+        if(product.category==Category.BLUE){
             results = "blue";
-        }else if(category==Category.GREEN){
+        }else if(product.category==Category.GREEN){
             results = "green";
-        }else if(category==Category.ORANGE){
+        }else if(product.category==Category.ORANGE){
             results = "orange";
-        }else if(category==Category.PURPLE){
+        }else if(product.category==Category.PURPLE){
             results = "purple";
         }else{
             results = "yellow";
@@ -87,6 +82,22 @@ public class Product implements Serializable {
 
     public void setQuantity(float quantity) {
         this.quantity = quantity;
+    }
+
+    public void setPricePerName(float pricePerName) {
+        this.pricePerName = pricePerName;
+    }
+
+    public void setDiscount(float discount) {
+        this.discount = discount;
+    }
+
+    public float getPricePerName() {
+        return pricePerName;
+    }
+
+    public float getDiscount() {
+        return discount;
     }
 }
 
