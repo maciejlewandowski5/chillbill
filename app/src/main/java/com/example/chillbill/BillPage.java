@@ -20,8 +20,10 @@ import com.example.chillbill.model.Product;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -268,27 +270,25 @@ public class BillPage extends AppCompatActivity {
     }
 
     public void refreshBill(){
-        db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                bill = document.toObject(Bill.class);
-                            }
-                            displayProducts(bill.getProductList());
+        db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").document(bill.getId())
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                bill = documentSnapshot.toObject(Bill.class);
+                displayProducts(bill.getProductList());
+            }
+        });
 
-                        } else {
-                            Log.w("History", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
+
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        String ARG_HIST_PARAM_OUT = "HISTINFO";
+        Intent intent  = getIntent();
+        bill = (Bill) intent.getSerializableExtra(ARG_HIST_PARAM_OUT);
         refreshBill();
     }
 }

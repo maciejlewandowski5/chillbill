@@ -78,11 +78,28 @@ public class HistoryItemExtended extends Fragment {
         if (getArguments() != null) {
             name = getArguments().getString("name");
             price = getArguments().getFloat("price");
-            purpleFloat = barWidthInDp*getArguments().getFloat("purpleFloat")/100.0f;
+            purpleFloat =barWidthInDp*getArguments().getFloat("purpleFloat")/100.0f;
             yellowFloat = barWidthInDp*getArguments().getFloat("yellowFloat")/100.0f;
             greenFloat = barWidthInDp*getArguments().getFloat("greenFloat")/100.0f;
             orangeFloat = barWidthInDp*getArguments().getFloat("orangeFloat")/100.0f;
             blueFloat = barWidthInDp*getArguments().getFloat("blueFloat")/100.0f;
+
+            if (purpleFloat == 0) {
+                purpleFloat = 1;
+            }
+            if (yellowFloat == 0) {
+                yellowFloat = 1;
+            }
+            if (orangeFloat == 0) {
+                orangeFloat = 1;
+            }
+            if (greenFloat == 0) {
+                greenFloat = 1;
+            }
+            if (blueFloat == 0) {
+                blueFloat = 1;
+            }
+
             try {
                 date = new SimpleDateFormat().parse(getArguments().getString("date"));
             } catch (ParseException e) {

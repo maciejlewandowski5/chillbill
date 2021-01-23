@@ -148,4 +148,43 @@ public class Bill implements Serializable {
         }
         return  result.toString();
     }
+
+    public void updateCategories() {
+        ArrayList<Double> categoriesPercentage = new ArrayList<Double>() {
+            {
+                add(0.0); //purple
+                add(0.0); //yellow
+                add(0.0); //green
+                add(0.0); //orange
+                add(0.0); //blue
+            }
+        };
+        double total = 0.0;
+
+        for (int i = 0; i < productList.size(); i++) {
+            Category category = productList.get(i).getCategory();
+            float currentPrice = productList.get(i).getPrice();
+            total += currentPrice;
+
+            if (category== Category.PURPLE) {
+                categoriesPercentage.set(0, currentPrice + categoriesPercentage.get(0));
+            } else if (category== Category.YELLOW) {
+                categoriesPercentage.set(1, currentPrice + categoriesPercentage.get(1));
+            } else if (category== Category.GREEN) {
+                categoriesPercentage.set(2, currentPrice + categoriesPercentage.get(2));
+            } else if (category== Category.ORANGE) {
+                categoriesPercentage.set(3, currentPrice + categoriesPercentage.get(3));
+            } else if (category== Category.BLUE) {
+                categoriesPercentage.set(4, currentPrice + categoriesPercentage.get(4));
+            }
+        }
+
+        for (int i = 0; i < 5; i++) {
+            categoriesPercentage.set(i, categoriesPercentage.get(i) * 100 / total);
+            System.out.println("QWERTYUIOP");
+            System.out.println(categoriesPercentage.get(i));
+        }
+
+        this.categoryPercentage = categoriesPercentage;
+    }
 }

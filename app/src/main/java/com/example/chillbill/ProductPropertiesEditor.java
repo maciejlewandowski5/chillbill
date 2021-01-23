@@ -140,8 +140,8 @@ public class ProductPropertiesEditor extends AppCompatActivity {
             bill.getProductList().get(index).setCategory(selectedCategory);
             addReq = sendChangeVoteRequest(bill.getShopName(), new String(Product.getCategoryString(bill.getProductList().get(index)).toLowerCase()), name1, "addVote");
 
-            StringRequest finalRemoveReq = removeReq;
-            StringRequest finalAddReq = addReq;
+
+            bill.updateCategories();
             StringRequest finalRemoveReq1 = removeReq;
             StringRequest finalAddReq1 = addReq;
             db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").document(bill.getId()).update("productList", bill.getProductList()).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -149,6 +149,12 @@ public class ProductPropertiesEditor extends AppCompatActivity {
                 public void onSuccess(Void aVoid) {
                     ExampleRequestQueue.add(finalRemoveReq1);
                     ExampleRequestQueue.add(finalAddReq1);
+                }
+            });
+            db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").document(bill.getId()).update("categoryPercentage",bill.getCategoryPercentage()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    System.out.println("Fixxed");
                 }
             });
             onBackPressed();
