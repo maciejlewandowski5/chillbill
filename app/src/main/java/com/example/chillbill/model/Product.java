@@ -58,8 +58,10 @@ public class Product implements Serializable {
             results = "orange";
         }else if(product.category==Category.PURPLE){
             results = "purple";
-        }else{
+        }else if(product.category==Category.YELLOW){
             results = "yellow";
+        }else{
+            results = "null";
         };
         return results;
     }

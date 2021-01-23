@@ -171,4 +171,10 @@ public class HistoryItem extends Fragment {
     int DptoPx(float dp){
         return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
 }

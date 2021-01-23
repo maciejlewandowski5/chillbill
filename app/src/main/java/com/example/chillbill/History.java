@@ -9,10 +9,14 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.example.chillbill.model.Bill;
 
@@ -43,6 +47,8 @@ public class History extends AppCompatActivity {
     FirebaseFirestore db;
     final int[] historyItemsLoaded = {0};
     private DocumentSnapshot lastVisible;
+    ArrayList<Bill> bills;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +64,16 @@ public class History extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        bills = new ArrayList<>();
         History that = this;
 
+
+
+        //Search recepes listner
+        textView = findViewById(R.id.textInputEditText);
+
         //TODO: Fix inifinty scroller
-        loadAllHistoryItemExtended();
+       // loadAllHistoryItemExtended();
       /*  db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.ASCENDING).limit(1)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -105,7 +117,7 @@ public class History extends AppCompatActivity {
 
     public ArrayList<Bill> loadAllHistoryItemExtended() {
         //TODO:: Add get request
-        ArrayList<Bill> bills = new ArrayList<>();
+        bills = new ArrayList<>();
 
 
         db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.ASCENDING)
@@ -115,6 +127,7 @@ public class History extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
+
                                 Bill bill = document.toObject(Bill.class);
                                 bills.add(bill);
                             }
@@ -130,7 +143,7 @@ public class History extends AppCompatActivity {
     }
     public ArrayList<Bill> loadHistoryItemExtended(int alreadyLoadedElementsNumber) {
         //TODO:: Add get request
-        ArrayList<Bill> bills = new ArrayList<>();
+        bills = new ArrayList<>();
 
 
             db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.ASCENDING).startAt(lastVisible).limit(5)
@@ -199,4 +212,21 @@ public class History extends AppCompatActivity {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        linearLayout.removeAllViews();
+        loadAllHistoryItemExtended();
+    }
+
+    public void search(View view) {
+        ArrayList<Bill> sorted = new ArrayList<>();
+        for(Bill bill: bills){
+            if(bill.getShopName().contains(textView.getText())){
+                sorted.add(bill);
+            }
+        }
+        linearLayout.removeAllViews();
+        displayHistoryItemsExtended(sorted);
+    }
 }

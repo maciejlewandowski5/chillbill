@@ -1,6 +1,7 @@
 package com.example.chillbill.model;
 
 
+import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.io.Serializable;
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Bill implements Serializable {
+    @DocumentId
+    private String id;
     @ServerTimestamp
     private Date timeStamp;
     private String shopName;
@@ -30,6 +33,13 @@ public class Bill implements Serializable {
     public Bill() {
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public void setShopName(String shopName) {
         this.shopName = shopName;

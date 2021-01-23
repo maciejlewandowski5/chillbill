@@ -81,6 +81,8 @@ public class ListElment extends Fragment {
             categoryImageView.setImageResource(R.drawable.orange_small_circle);
         }else if(category == "blue"){
             categoryImageView.setImageResource(R.drawable.blue_small_circle);
+        }else if(category == "null"){
+            categoryImageView.setImageResource(R.drawable.gray_small_circle);
         }
 
         return root;

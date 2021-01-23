@@ -1,5 +1,6 @@
 package com.example.chillbill;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -15,6 +17,16 @@ import android.widget.LinearLayout;
 import com.example.chillbill.model.Bill;
 import com.example.chillbill.model.Category;
 import com.example.chillbill.model.Product;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 
@@ -28,6 +40,8 @@ public class BillPage extends AppCompatActivity {
     Button[] filterButtons;
     int[] colors;
     boolean[] activeFilters; //TODO: smarter filter, create way to show few categories at the same time
+    FirebaseFirestore db;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +66,11 @@ public class BillPage extends AppCompatActivity {
         bill = (Bill) intent.getSerializableExtra(ARG_HIST_PARAM_OUT);
 
 
+        db = FirebaseFirestore.getInstance();
+       // googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
+        firebaseAuth = FirebaseAuth.getInstance();
+
+
         linearLayout = findViewById(R.id.container_for_table_item_bill_list);
         LinearLayout linlay = findViewById(R.id.linearLayout7);
 
@@ -69,6 +88,7 @@ public class BillPage extends AppCompatActivity {
 
     public void displayProducts(ArrayList<Product> products) {
         int i = 0;
+        linearLayout.removeAllViews();
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         for (Product product : products) {
             ConstraintLayout constraintLayout = new ConstraintLayout(this);
@@ -124,9 +144,6 @@ public class BillPage extends AppCompatActivity {
                 BillPage that = this;
                 button.setOnClickListener(v -> {
                     Intent intent = new Intent(that, ProductPropertiesEditor.class);
-                    intent.putExtra(ARG_PROD_PARAM_OUT, product);
-                    intent.putExtra("ARG_DATE_OUT", bill.getDate());
-                    intent.putExtra("ARG_SHOPNAME_OUT", bill.getShopName());
                     intent.putExtra("ARG_PRODUCT_INDEX_OUT", finalI);
                     intent.putExtra("BILL_FOR_PROD",bill);
                     that.startActivity(intent);
@@ -248,5 +265,30 @@ public class BillPage extends AppCompatActivity {
                 filterButtons[i].setTextColor(colors[i]);
             }
         }
+    }
+
+    public void refreshBill(){
+        db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                bill = document.toObject(Bill.class);
+                            }
+                            displayProducts(bill.getProductList());
+
+                        } else {
+                            Log.w("History", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshBill();
     }
 }

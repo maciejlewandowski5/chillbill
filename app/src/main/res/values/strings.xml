@@ -35,5 +35,6 @@
     <string name="take_from_galery">Wybierz z galerii</string>
     <string name="add_manually">Wprowadź dane ręcznie</string>
     <string name="log_out">Wyloguj</string>
+    <string name="product_edit">Edycja produktu</string>
 
 </resources>

@@ -71,6 +71,7 @@
             app:cornerRadius="50dp"
             app:icon="@drawable/google_logo"
             app:iconTint="#FFFFFF"
+
             app:iconTintMode="multiply"
             app:layout_constraintBottom_toBottomOf="@+id/imageView"
             app:layout_constraintEnd_toEndOf="parent"

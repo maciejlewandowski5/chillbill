@@ -35,6 +35,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,6 +73,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -116,6 +118,9 @@ public class StartScreen extends AppCompatActivity {
     private GoogleSignInClient googleSignInClient;
     private FirebaseFirestore db;
 
+    private ProgressBar progressBar;
+    private Button addBill;
+
 
     int[] sampleImages = {R.drawable.image_1, R.drawable.image_2, R.drawable.image_3};
 
@@ -130,6 +135,11 @@ public class StartScreen extends AppCompatActivity {
         mStorageRef = FirebaseStorage.getInstance().getReference();
         db = FirebaseFirestore.getInstance();
 
+        progressBar = findViewById(R.id.progress_bar);
+        addBill = findViewById(R.id.add_bill);
+
+        progressBar.setVisibility(View.INVISIBLE);
+        addBill.setVisibility(View.VISIBLE);
 
         //Camera permissons
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -142,6 +152,7 @@ public class StartScreen extends AppCompatActivity {
 
         recipeInformations = new ArrayList<>();
         getRecipeInfos("naleśniki");
+        StartScreen that= this;
 
         //Search recepes listner
         TextView textView = findViewById(R.id.textInputEditText);
@@ -155,6 +166,8 @@ public class StartScreen extends AppCompatActivity {
                                 event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                     if (event == null || !event.isShiftPressed()) {
                         recipesContainer.removeAllViews();
+                        progressBar = new ProgressBar(that, null, android.R.attr.progressBarStyleLarge);
+                        recipesContainer.addView(progressBar);
                         recipeInformations = new ArrayList<>();
                         getRecipeInfos(v.getText().toString());
                         return true; // consume.
@@ -164,12 +177,15 @@ public class StartScreen extends AppCompatActivity {
                 return false;
             }
         });
-        ArrayList<Bill> billInfos = new ArrayList<>();
 
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
 
+       // loadLastestHistoryItems();
+    }
 
+    public void loadLastestHistoryItems(){
+        ArrayList<Bill> billInfos = new ArrayList<>();
         db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.ASCENDING).limit(3)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -188,14 +204,13 @@ public class StartScreen extends AppCompatActivity {
                     }
                 });
 
-
     }
 
     public void getRecipeInfos(String title) {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://chillbill-bv4675ezoa-ey.a.run.app/api/recipes/get?keyword=" + title;
-
+        StartScreen that = this;
         RequestQueue ExampleRequestQueue = Volley.newRequestQueue(this);
         JsonArrayRequest ExampleRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
@@ -209,16 +224,25 @@ public class StartScreen extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+                recipesContainer.removeAllViews();
                 displayFoodItems(recipeInformations);
             }
 
         }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
             @Override
             public void onErrorResponse(VolleyError error) {
-                //This code is executed if there is an error.
+                recipesContainer.removeAllViews();
+                Toast.makeText(that, "Something went wrong, try again later.", Toast.LENGTH_LONG).show();
             }
         });
         ExampleRequestQueue.add(ExampleRequest);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        historyContainer.removeAllViews();
+        loadLastestHistoryItems();
     }
 
     public void displayHistoryItems(ArrayList<Bill> bills) {
@@ -264,7 +288,6 @@ public class StartScreen extends AppCompatActivity {
             i++;
             ConstraintLayout constraintLayout = new ConstraintLayout(this);
 
-            // TODO: Change to image from info url
             FoodItem fragment = FoodItem.newInstance(info.getTitle(), info.getImageURL());
 
 
@@ -335,6 +358,7 @@ public class StartScreen extends AppCompatActivity {
         menu.getMenu().add(R.string.take_from_galery);
         menu.getMenu().add(R.string.take_picture);
 
+
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
             @Override
@@ -345,6 +369,10 @@ public class StartScreen extends AppCompatActivity {
                     Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     startActivityForResult(pickPhoto, 1);//one can be replaced with any action code
+                  view.setClickable(false);
+                  view.setVisibility(View.INVISIBLE);
+                  progressBar.setVisibility(View.VISIBLE);
+
                 } else {
                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     // Ensure that there's a camera activity to handle the intent
@@ -364,6 +392,9 @@ public class StartScreen extends AppCompatActivity {
                                     photoFile);
                             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                             startActivityForResult(takePictureIntent, 0);
+                            view.setClickable(false);
+                            view.setVisibility(View.INVISIBLE);
+                            progressBar.setVisibility(View.VISIBLE);
                         }
                     }
 
@@ -375,26 +406,9 @@ public class StartScreen extends AppCompatActivity {
 
         menu.show();
 
-
-
-
-
-        /*
-        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-        } else {
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, 0);
-        }
-
-         */
-
-
     }
 
     private String requestBillParsing(String billId) {
-
-
         StartScreen that = this;
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://chillbill-bv4675ezoa-ey.a.run.app/api/vision/parseBill?userImage=" + firebaseAuth.getCurrentUser().getUid() + "/" + billId;
@@ -420,9 +434,16 @@ public class StartScreen extends AppCompatActivity {
                                     Intent intent = new Intent(that, BillPage.class);
                                     intent.putExtra(ARG_HIST_PARAM_OUT, bill);
                                     that.startActivity(intent);
+                                    addBill.setClickable(true);
+                                    addBill.setVisibility(View.VISIBLE);
+                                    progressBar.setVisibility(View.INVISIBLE);
 
                                 } else {
                                     Log.w(TAG, "Error getting documents.", task.getException());
+                                    Toast.makeText(that, "Something went wrong, try again later.", Toast.LENGTH_LONG).show();
+                                    addBill.setClickable(true);
+                                    addBill.setVisibility(View.VISIBLE);
+                                    progressBar.setVisibility(View.INVISIBLE);
                                 }
                             }
                         });
@@ -492,8 +513,9 @@ public class StartScreen extends AppCompatActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            // Handle unsuccessful uploads
-                            // ...
+                            addBill.setClickable(true);
+                            addBill.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.INVISIBLE);
                         }
                     });
 
@@ -516,8 +538,9 @@ public class StartScreen extends AppCompatActivity {
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
-                                    // Handle unsuccessful uploads
-                                    // ...
+                                    addBill.setClickable(true);
+                                    addBill.setVisibility(View.VISIBLE);
+                                    progressBar.setVisibility(View.INVISIBLE);
                                 }
                             });
                 }
@@ -563,4 +586,5 @@ public class StartScreen extends AppCompatActivity {
         menu.show();
 
     }
+
 }
