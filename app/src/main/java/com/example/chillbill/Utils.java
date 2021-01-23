@@ -1,14 +1,17 @@
 package com.example.chillbill;
 
-import android.util.Log;
-
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Utils {
     /**
@@ -36,5 +39,30 @@ public class Utils {
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         }
+    }
+
+    public static Task<QuerySnapshot> getBillsInRange(Date from, Date to) {
+        FirebaseAuth fa = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        return db.collection("Users").document(fa.getCurrentUser().getUid()).collection("Bills")
+                .whereGreaterThanOrEqualTo("date", from)
+                .whereLessThanOrEqualTo("date", to)
+                .get();
+    }
+
+    public static Task<QuerySnapshot> getBills() {
+        FirebaseAuth fa = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference reference = db.collection("Users").document(fa.getCurrentUser().getUid()).collection("Bills");
+        return reference.get();
+    }
+
+    public static Date getFirstDayOfTheMonth(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+        cal.set(Calendar.HOUR_OF_DAY, cal.getActualMinimum(Calendar.HOUR_OF_DAY));
+        return cal.getTime();
     }
 }

@@ -16,7 +16,9 @@
             android:id="@+id/linearLayout8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <Space
                 android:layout_width="match_parent"
@@ -30,12 +32,15 @@
                 android:text="@string/expenses"
                 android:textAppearance="@style/header" />
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pie_chart"
+            <Space
                 android:layout_width="match_parent"
-                android:layout_height="300dp">
+                android:layout_height="20dp" />
 
-            </com.github.mikephil.charting.charts.PieChart>
+            <androidx.fragment.app.FragmentContainerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/pieChartFragment"
+                android:name="com.example.chillbill.PieChartFragment" />
 
             <Space
                 android:layout_width="match_parent"
@@ -53,118 +58,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="20dp" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.fragment.app.FragmentContainerView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp">
-
-                        <Button
-                            android:id="@+id/orange_category_button"
-                            style="@style/Widget.MaterialComponents.Button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="28sp"
-                            android:layout_marginStart="16dp"
-                            android:backgroundTint="@color/orange"
-                            android:paddingTop="0dp"
-                            android:paddingBottom="0dp"
-                            android:text="@string/orange_category"
-                            android:textAllCaps="false"
-                            android:textColor="@color/design_default_color_on_primary"
-                            android:textSize="11sp"
-                            app:cornerRadius="50dp" />
-
-                        <Button
-                            android:id="@+id/purple_category_button"
-                            style="@style/Widget.MaterialComponents.Button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="28sp"
-                            android:layout_marginStart="16dp"
-                            android:backgroundTint="@color/purple"
-                            android:paddingTop="0dp"
-                            android:paddingBottom="0dp"
-                            android:text="@string/purple_category"
-                            android:textAllCaps="false"
-                            android:textColor="@color/design_default_color_on_primary"
-                            android:textSize="11sp"
-                            app:cornerRadius="50dp" />
-
-                        <Button
-                            android:id="@+id/yellow_category_button"
-                            style="@style/Widget.MaterialComponents.Button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="28sp"
-                            android:layout_marginStart="16dp"
-                            android:backgroundTint="@color/yellow"
-                            android:paddingTop="0dp"
-                            android:paddingBottom="0dp"
-                            android:text="@string/yellow_category"
-                            android:textAllCaps="false"
-                            android:textColor="@color/design_default_color_on_primary"
-                            android:textSize="11sp"
-                            app:cornerRadius="50dp" />
-
-                        <Button
-                            android:id="@+id/green_categoty_button"
-                            style="@style/Widget.MaterialComponents.Button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="28sp"
-                            android:layout_marginStart="16dp"
-                            android:backgroundTint="@color/green"
-                            android:paddingTop="0dp"
-                            android:paddingBottom="0dp"
-                            android:text="@string/green_category"
-                            android:textAllCaps="false"
-                            android:textColor="@color/design_default_color_on_primary"
-                            android:textSize="11sp"
-                            app:cornerRadius="50dp" />
-
-                        <Button
-                            android:id="@+id/blue_category_button"
-                            style="@style/Widget.MaterialComponents.Button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="28sp"
-                            android:layout_marginStart="16dp"
-                            android:backgroundTint="@color/blue"
-                            android:paddingTop="0dp"
-                            android:paddingBottom="0dp"
-                            android:text="@string/blue_category"
-                            android:textAllCaps="false"
-                            android:textColor="@color/design_default_color_on_primary"
-                            android:textSize="11sp"
-                            app:cornerRadius="50dp" />
-
-
-                    </LinearLayout>
-                </HorizontalScrollView>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_height="wrap_content"
+                android:id="@+id/barChartFragment"
+                android:name="com.example.chillbill.BarChartFragment" />
 
             <Space
-                android:layout_width="match_parent"
-                android:layout_height="20dp" />
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
 
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/month_by_month_bar_chart"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/background_chart"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
 
-            </com.github.mikephil.charting.charts.BarChart>
 
             <Space
                 android:layout_width="match_parent"

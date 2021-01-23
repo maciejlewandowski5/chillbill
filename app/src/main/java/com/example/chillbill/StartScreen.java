@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
@@ -180,7 +181,10 @@ public class StartScreen extends AppCompatActivity {
 
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
-
+        FragmentContainerView pieChart = findViewById(R.id.pieChartFragmentStart);
+        pieChart.setOnClickListener(v -> {
+            startCharts();
+        });
        // loadLastestHistoryItems();
     }
 
@@ -554,7 +558,7 @@ public class StartScreen extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void startCharts(View view) {
+    public void startCharts() {
         Intent intent = new Intent(this, StatisticsActivity.class);
         startActivity(intent);
     }
