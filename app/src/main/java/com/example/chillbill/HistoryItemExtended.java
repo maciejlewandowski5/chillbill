@@ -51,20 +51,21 @@ public class HistoryItemExtended extends Fragment {
 
 
         // Shoud be in percentage where 100% is purpleFloat + ... + blueFloat
-        args.putString("name",name);
-        args.putFloat("price",price);
+        args.putString("name", name);
+        args.putFloat("price", price);
         args.putFloat("purpleFloat", purpleCategory);
         args.putFloat("yellowFloat", yellowCategory);
         args.putFloat("greenFloat", greenCategory);
         args.putFloat("orangeFloat", orangeCategory);
         args.putFloat("blueFloat", blueCategory);
-        args.putString("date", formatter.format(date));
-        args.putString("category",category);
+        args.putSerializable("date", date);
+        args.putString("category", category);
 
 
         fragment.setArguments(args);
         return fragment;
     }
+
     public HistoryItemExtended() {
         // Required empty public constructor
     }
@@ -78,11 +79,11 @@ public class HistoryItemExtended extends Fragment {
         if (getArguments() != null) {
             name = getArguments().getString("name");
             price = getArguments().getFloat("price");
-            purpleFloat =barWidthInDp*getArguments().getFloat("purpleFloat")/100.0f;
-            yellowFloat = barWidthInDp*getArguments().getFloat("yellowFloat")/100.0f;
-            greenFloat = barWidthInDp*getArguments().getFloat("greenFloat")/100.0f;
-            orangeFloat = barWidthInDp*getArguments().getFloat("orangeFloat")/100.0f;
-            blueFloat = barWidthInDp*getArguments().getFloat("blueFloat")/100.0f;
+            purpleFloat = barWidthInDp * getArguments().getFloat("purpleFloat") / 100.0f;
+            yellowFloat = barWidthInDp * getArguments().getFloat("yellowFloat") / 100.0f;
+            greenFloat = barWidthInDp * getArguments().getFloat("greenFloat") / 100.0f;
+            orangeFloat = barWidthInDp * getArguments().getFloat("orangeFloat") / 100.0f;
+            blueFloat = barWidthInDp * getArguments().getFloat("blueFloat") / 100.0f;
 
             if (purpleFloat == 0) {
                 purpleFloat = 1;
@@ -100,11 +101,12 @@ public class HistoryItemExtended extends Fragment {
                 blueFloat = 1;
             }
 
-            try {
-                date = new SimpleDateFormat().parse(getArguments().getString("date"));
-            } catch (ParseException e) {
-                e.printStackTrace();
-                date = new Date();
+
+            date = (Date) getArguments().getSerializable("date");
+
+            if(date == null){
+                date= new Date();
+
             }
             category = getArguments().getString("category");
             sum = purpleFloat + yellowFloat + greenFloat + orangeFloat + blueFloat;
@@ -133,43 +135,43 @@ public class HistoryItemExtended extends Fragment {
         ConstraintLayout constraintLayout = RootView.findViewById(R.id.history_item_extended_container);
 
         /// Purple
-        purple.setLayoutParams(new ConstraintLayout.LayoutParams((int) DptoPx(purpleFloat),(int)heightPx));
+        purple.setLayoutParams(new ConstraintLayout.LayoutParams((int) DptoPx(purpleFloat), (int) heightPx));
         ConstraintSet purpleConstrainSet = new ConstraintSet();
         purpleConstrainSet.clone(constraintLayout);
-        purpleConstrainSet.connect(purple.getId(),ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM);
-        purpleConstrainSet.connect(purple.getId(),ConstraintSet.START,ConstraintSet.PARENT_ID,ConstraintSet.START);
+        purpleConstrainSet.connect(purple.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+        purpleConstrainSet.connect(purple.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START);
         purpleConstrainSet.applyTo(constraintLayout);
 
         /// Yellow
         yellow.setLayoutParams(new ConstraintLayout.LayoutParams((int) DptoPx(yellowFloat), (int) heightPx));
         ConstraintSet yellowConstraintSet = new ConstraintSet();
         yellowConstraintSet.clone(constraintLayout);
-        yellowConstraintSet.connect(yellow.getId(),ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM);
-        yellowConstraintSet.connect(yellow.getId(),ConstraintSet.START,purple.getId(),ConstraintSet.END);
+        yellowConstraintSet.connect(yellow.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+        yellowConstraintSet.connect(yellow.getId(), ConstraintSet.START, purple.getId(), ConstraintSet.END);
         yellowConstraintSet.applyTo(constraintLayout);
 
         /// Green
         green.setLayoutParams(new ConstraintLayout.LayoutParams((int) DptoPx(greenFloat), (int) heightPx));
         ConstraintSet greenConstraintSet = new ConstraintSet();
         greenConstraintSet.clone(constraintLayout);
-        greenConstraintSet.connect(green.getId(),ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM);
-        greenConstraintSet.connect(green.getId(),ConstraintSet.START,yellow.getId(),ConstraintSet.END);
+        greenConstraintSet.connect(green.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+        greenConstraintSet.connect(green.getId(), ConstraintSet.START, yellow.getId(), ConstraintSet.END);
         greenConstraintSet.applyTo(constraintLayout);
 
         /// Orange
         orange.setLayoutParams(new ConstraintLayout.LayoutParams((int) DptoPx(orangeFloat), (int) heightPx));
         ConstraintSet orangeConstraintSet = new ConstraintSet();
         orangeConstraintSet.clone(constraintLayout);
-        orangeConstraintSet.connect(orange.getId(),ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM);
-        orangeConstraintSet.connect(orange.getId(),ConstraintSet.START,green.getId(),ConstraintSet.END);
+        orangeConstraintSet.connect(orange.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+        orangeConstraintSet.connect(orange.getId(), ConstraintSet.START, green.getId(), ConstraintSet.END);
         orangeConstraintSet.applyTo(constraintLayout);
 
         /// Blue
         blue.setLayoutParams(new ConstraintLayout.LayoutParams((int) DptoPx(blueFloat), (int) heightPx));
         ConstraintSet blueConstraintSet = new ConstraintSet();
         blueConstraintSet.clone(constraintLayout);
-        blueConstraintSet.connect(blue.getId(),ConstraintSet.BOTTOM,ConstraintSet.PARENT_ID,ConstraintSet.BOTTOM);
-        blueConstraintSet.connect(blue.getId(),ConstraintSet.START,orange.getId(),ConstraintSet.END);
+        blueConstraintSet.connect(blue.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+        blueConstraintSet.connect(blue.getId(), ConstraintSet.START, orange.getId(), ConstraintSet.END);
         blueConstraintSet.applyTo(constraintLayout);
 
         TextView priceTextView = RootView.findViewById(R.id.price);
@@ -184,8 +186,10 @@ public class HistoryItemExtended extends Fragment {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
         categoryTextView.setText(category);
-        dateTextView.setText(formatter.format(new Date()));
-
+        if(date==null){
+            date = new Date();
+        }
+        dateTextView.setText(formatter.format(date));
 
 
         return RootView;
@@ -194,7 +198,7 @@ public class HistoryItemExtended extends Fragment {
     }
 
 
-    int DptoPx(float dp){
+    int DptoPx(float dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
     }
 }

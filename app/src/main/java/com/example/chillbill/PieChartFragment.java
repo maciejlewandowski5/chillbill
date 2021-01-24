@@ -1,11 +1,13 @@
 package com.example.chillbill;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +23,12 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -91,9 +97,9 @@ public class PieChartFragment extends Fragment {
                 ContextCompat.getColor(getActivity(), R.color.blue)
         };
 
-        Date end = new Date();
-        Date start = Utils.getFirstDayOfTheMonth(end);
-        Utils.getBillsInRange(start, end).addOnCompleteListener(task -> {
+        LocalDate endloc = LocalDate.now();
+        Date start = Utils.getFirstDayOfTheMonth(convertToDateViaInstant(endloc.minusMonths(1)));
+        Utils.getBillsInRange(start, convertToDateViaInstant(endloc)).addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
                 dataset = new float[5];
                 QuerySnapshot qs = task.getResult();
@@ -110,7 +116,11 @@ public class PieChartFragment extends Fragment {
         return view;
     }
 
-
+    public Date convertToDateViaInstant(LocalDate dateToConvert) {
+        return java.util.Date.from(dateToConvert.atStartOfDay()
+                .atZone(ZoneId.systemDefault())
+                .toInstant());
+    }
     private void setupPieChart() {
         //Sample data
         //populate list of entries
@@ -122,16 +132,19 @@ public class PieChartFragment extends Fragment {
         PieDataSet dataSet = new PieDataSet(pieEntries, "");
         dataSet.setColors(colors);
         PieData pieData = new PieData(dataSet);
-        pieData.setDrawValues(true);
+        pieData.setDrawValues(false);
         pieChart.setData(pieData);
         pieChart.setDrawEntryLabels(false);
         pieChart.setContentDescription("");
-        pieChart.setHoleRadius(75);
+        pieChart.setHoleRadius(dpToPx(39, requireActivity().getApplicationContext()));
         pieChart.getDescription().setEnabled(false);
         pieChart.setTouchEnabled(false);
         pieChart.getLegend().setEnabled(false);
         pieChart.refreshDrawableState();
         pieChart.invalidate();
 
+    }
+    public static int dpToPx(float dp, Context context) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 }

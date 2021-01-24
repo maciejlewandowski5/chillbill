@@ -190,7 +190,7 @@ public class StartScreen extends AppCompatActivity {
 
     public void loadLastestHistoryItems(){
         ArrayList<Bill> billInfos = new ArrayList<>();
-        db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.ASCENDING).limit(3)
+        db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.DESCENDING).limit(3)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -457,8 +457,10 @@ public class StartScreen extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("Error");
-                System.out.println(error);
+                Toast.makeText(that, "Something went wrong, try again later.", Toast.LENGTH_LONG).show();
+                addBill.setClickable(true);
+                addBill.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -493,6 +495,9 @@ public class StartScreen extends AppCompatActivity {
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
             } else {
                 Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+                addBill.setClickable(true);
+                addBill.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.INVISIBLE);
             }
         }
     }

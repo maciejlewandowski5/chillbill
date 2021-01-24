@@ -110,6 +110,21 @@ public class HistoryItem extends Fragment {
         orange = (ProgressBar) RootView.findViewById(R.id.progressBar3);
         blue = (ProgressBar) RootView.findViewById(R.id.progressBar7);
 
+        if (purpleFloat == 0) {
+            purpleFloat = 1;
+        }
+        if (yellowFloat == 0) {
+            yellowFloat = 1;
+        }
+        if (orangeFloat == 0) {
+            orangeFloat = 1;
+        }
+        if (greenFloat == 0) {
+            greenFloat = 1;
+        }
+        if (blueFloat == 0) {
+            blueFloat = 1;
+        }
 
         float heightDp = 5f;
         float heightPx = DptoPx(heightDp);

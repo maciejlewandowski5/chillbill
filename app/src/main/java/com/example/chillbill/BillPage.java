@@ -31,6 +31,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import static com.example.chillbill.StartScreen.dpToPx;
 
@@ -81,7 +82,7 @@ public class BillPage extends AppCompatActivity {
         Fragment billfrag = HistoryItemExtended.newInstance(bill.getShopName(), bill.getTotalAmount(),
                 bill.getCategoryPercentage().get(0).floatValue(), bill.getCategoryPercentage().get(1).floatValue(),
                 bill.getCategoryPercentage().get(2).floatValue(), bill.getCategoryPercentage().get(3).floatValue(), bill.getCategoryPercentage().get(4).floatValue()
-                , bill.getDate(), bill.getSavingsJar());
+                ,new Date(), bill.getSavingsJar());
         transaction.add(linlay.getId(), billfrag);
         transaction.commit();
 
@@ -154,8 +155,9 @@ public class BillPage extends AppCompatActivity {
 
                 transaction.add(constraintLayout.getId(), fragment, product.getName() + product.getPrice() + product.getQuantity());
 
-                i++;
+
             }
+            i++;
         }
         transaction.commit();
     }

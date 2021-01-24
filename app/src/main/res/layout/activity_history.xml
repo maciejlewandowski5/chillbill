@@ -149,7 +149,8 @@
                         android:textAllCaps="false"
                         android:textColor="@color/design_default_color_on_primary"
                         android:textSize="11sp"
-                        app:cornerRadius="50dp" />
+                        app:cornerRadius="50dp"
+                        android:onClick="sortOrangeHistory"/>
 
                     <Button
                         android:id="@+id/purple_category_button"
@@ -164,7 +165,8 @@
                         android:textAllCaps="false"
                         android:textColor="@color/design_default_color_on_primary"
                         android:textSize="11sp"
-                        app:cornerRadius="50dp" />
+                        app:cornerRadius="50dp"
+                        android:onClick="sortPurpleHistory"/>
 
                     <Button
                         android:id="@+id/yellow_category_button"
@@ -179,7 +181,8 @@
                         android:textAllCaps="false"
                         android:textColor="@color/design_default_color_on_primary"
                         android:textSize="11sp"
-                        app:cornerRadius="50dp" />
+                        app:cornerRadius="50dp"
+                        android:onClick="sortYellowHistory"/>
 
                     <Button
                         android:id="@+id/green_categoty_button"
@@ -194,7 +197,8 @@
                         android:textAllCaps="false"
                         android:textColor="@color/design_default_color_on_primary"
                         android:textSize="11sp"
-                        app:cornerRadius="50dp" />
+                        app:cornerRadius="50dp"
+                        android:onClick="sortGreenHistory"/>
 
                     <Button
                         android:id="@+id/blue_category_button"
@@ -209,7 +213,8 @@
                         android:textAllCaps="false"
                         android:textColor="@color/design_default_color_on_primary"
                         android:textSize="11sp"
-                        app:cornerRadius="50dp" />
+                        app:cornerRadius="50dp"
+                        android:onClick="sortBlueHistory"/>
 
 
                 </LinearLayout>
