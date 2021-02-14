@@ -4,19 +4,17 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
+import com.example.chillbill.helpers.FirestoreHelper;
+import com.example.chillbill.helpers.Utils;
 import com.example.chillbill.model.Bill;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -26,9 +24,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -99,7 +95,7 @@ public class PieChartFragment extends Fragment {
 
         LocalDate endloc = LocalDate.now();
         Date start = Utils.getFirstDayOfTheMonth(convertToDateViaInstant(endloc.minusMonths(1)));
-        Utils.getBillsInRange(start, convertToDateViaInstant(endloc)).addOnCompleteListener(task -> {
+        FirestoreHelper.getBillsInRange(start, convertToDateViaInstant(endloc)).addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
                 dataset = new float[5];
                 QuerySnapshot qs = task.getResult();

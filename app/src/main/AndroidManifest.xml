@@ -15,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Chillbill">
-        <activity android:name=".SplashScreen"></activity>
         <activity
             android:name=".ProductPropertiesEditor"
             android:exported="true" />

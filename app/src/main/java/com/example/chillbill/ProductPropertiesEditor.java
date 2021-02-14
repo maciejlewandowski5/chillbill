@@ -62,11 +62,11 @@ public class ProductPropertiesEditor extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         Intent intent = getIntent();
-        int index = (int) intent.getSerializableExtra("ARG_PRODUCT_INDEX_OUT");
         bill = (Bill) intent.getSerializableExtra("BILL_FOR_PROD");
         name = findViewById(R.id.name_to_change);
         quantity = findViewById(R.id.editTextNumberDecimal2);
         price = findViewById(R.id.editTextNumberDecimal);
+        int index = (Integer) intent.getSerializableExtra(ARG_PROD_PARAM_OUT);
 
         radioButtons = new RadioButton[]{findViewById(R.id.radioButton5),
                 findViewById(R.id.radioButton4),

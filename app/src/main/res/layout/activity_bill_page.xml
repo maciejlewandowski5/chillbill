@@ -40,109 +40,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
 
-    <HorizontalScrollView
-        android:id="@+id/horizontalScrollView"
+    <fragment
+        android:id="@+id/fragment2"
+        android:name="com.example.chillbill.FilterButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space8">
-
-        <LinearLayout
-            android:id="@+id/linearLayout6"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <Button
-                android:onClick="sortOrange"
-                android:id="@+id/orange_category_button"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="28sp"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/orange"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:text="@string/orange_category"
-                android:textAllCaps="false"
-                android:textColor="@color/design_default_color_on_primary"
-                android:textSize="11sp"
-                app:cornerRadius="50dp"
-                tools:ignore="SmallSp" />
-
-            <Button
-                android:onClick="sortPurple"
-                android:id="@+id/purple_category_button"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="28sp"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/purple"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:text="@string/purple_category"
-                android:textAllCaps="false"
-                android:textColor="@color/design_default_color_on_primary"
-                android:textSize="11sp"
-                app:cornerRadius="50dp"
-                tools:ignore="SmallSp" />
-
-            <Button
-                android:onClick="sortYellow"
-                android:id="@+id/yellow_category_button"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="28sp"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/yellow"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:text="@string/yellow_category"
-                android:textAllCaps="false"
-                android:textColor="@color/design_default_color_on_primary"
-                android:textSize="11sp"
-                app:cornerRadius="50dp"
-                tools:ignore="SmallSp" />
-
-            <Button
-                android:onClick="sortGreen"
-                android:id="@+id/green_categoty_button"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="28sp"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/green"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:text="@string/green_category"
-                android:textAllCaps="false"
-                android:textColor="@color/design_default_color_on_primary"
-                android:textSize="11sp"
-                app:cornerRadius="50dp"
-                tools:ignore="SmallSp" />
-
-            <Button
-                android:onClick="sortBlue"
-                android:id="@+id/blue_category_button"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="28sp"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/blue"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:text="@string/blue_category"
-                android:textAllCaps="false"
-                android:textColor="@color/design_default_color_on_primary"
-                android:textSize="11sp"
-                app:cornerRadius="50dp"
-                tools:ignore="SmallSp" />
-
-
-        </LinearLayout>
-    </HorizontalScrollView>
+        app:layout_constraintTop_toBottomOf="@+id/space8" />
 
     <Space
         android:id="@+id/space7"
@@ -150,7 +55,7 @@
         android:layout_height="22dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment2" />
 
     <TextView
         android:id="@+id/bill_name"
@@ -190,11 +95,12 @@
 
     <ScrollView
         android:id="@+id/scrollView2"
-        android:layout_width="wrap_content"
-        android:layout_height="390dp"
+        android:layout_width="0dp"
+        android:layout_height="453dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space9">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout7">
 
         <LinearLayout
             android:id="@+id/container_for_table_item_bill_list"

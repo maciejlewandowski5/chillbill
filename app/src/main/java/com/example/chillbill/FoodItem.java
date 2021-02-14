@@ -12,9 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.example.chillbill.model.RecipeInformation;
 import com.squareup.picasso.Picasso;
 
 
+import java.io.Serializable;
 import java.net.URL;
 
 /**
@@ -42,12 +44,21 @@ public class FoodItem extends Fragment {
         return fragment;
     }
 
+    public static FoodItem newInstance(Serializable ...serializable) {
+        FoodItem fragment = new FoodItem();
+        Bundle args = new Bundle();
+        args.putSerializable("serializable",serializable[0]);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            title = getArguments().getString("titleFood");
-            imageId = (URL)getArguments().getSerializable("imageIdFood");
+            RecipeInformation recipeInformation = (RecipeInformation) getArguments().getSerializable("serializable");
+            title = recipeInformation.getTitle();
+            imageId = recipeInformation.getImageURL();
         }
     }
 
@@ -71,4 +82,6 @@ public class FoodItem extends Fragment {
     public ImageView getBackground(){
         return background;
     }
+
+
 }

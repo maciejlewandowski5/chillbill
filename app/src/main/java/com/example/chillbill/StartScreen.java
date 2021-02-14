@@ -2,34 +2,21 @@ package com.example.chillbill;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
-import android.app.ActionBar;
-import android.app.Activity;
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
-import android.util.Size;
-import android.util.TypedValue;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -40,24 +27,23 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.chillbill.factory.NotifyingThread;
-import com.example.chillbill.factory.ThreadCompleteListener;
+import com.example.chillbill.helpers.FirestoreHelper;
+import com.example.chillbill.helpers.InfiniteScroller;
+
+
+import com.example.chillbill.helpers.ListenableInput;
+import com.example.chillbill.helpers.VolleyHelper;
+import com.example.chillbill.helpers.VolleyJsonHelper;
+import com.example.chillbill.helpers.VolleyStringHelper;
 import com.example.chillbill.model.Bill;
-import com.example.chillbill.model.Category;
-import com.example.chillbill.model.Product;
 import com.example.chillbill.model.RecipeInformation;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -67,43 +53,34 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.JsonArray;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.Blob;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 
 public class StartScreen extends AppCompatActivity {
 
-    private static final String TAG = "StartScreen";
 
+
+    private static final int NAM_OF_LATEST_HIST_ITEMS = 3;
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_REQUEST_CODE = 100;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
@@ -121,312 +98,85 @@ public class StartScreen extends AppCompatActivity {
 
     private ProgressBar progressBar;
     private Button addBill;
+    PopupMenu menu;
 
 
     int[] sampleImages = {R.drawable.image_1, R.drawable.image_2, R.drawable.image_3};
 
     String currentPhotoPath;
     File currentPhoto;
+    InfiniteScroller<Bill> billScroller;
+    InfiniteScroller<RecipeInformation> recipeInformationInfiniteScroller;
+    VolleyJsonHelper jasonReq;
+    VolleyStringHelper stringReq;
+    FirestoreHelper firestoreHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
+        // Firebase
         mStorageRef = FirebaseStorage.getInstance().getReference();
         db = FirebaseFirestore.getInstance();
-
-        progressBar = findViewById(R.id.progress_bar);
-        addBill = findViewById(R.id.add_bill);
-
-        progressBar.setVisibility(View.INVISIBLE);
-        addBill.setVisibility(View.VISIBLE);
-
-        //Camera permissons
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
-        }
-
-        recipesContainer = findViewById(R.id.recipes_container);
-        historyContainer = findViewById(R.id.linearLayout10);
-
-        recipeInformations = new ArrayList<>();
-        getRecipeInfos("naleśniki");
-        StartScreen that= this;
-
-        //Search recepes listner
-        TextView textView = findViewById(R.id.textInputEditText);
-        textView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                        actionId == EditorInfo.IME_ACTION_DONE ||
-                        event != null &&
-                                event.getAction() == KeyEvent.ACTION_DOWN &&
-                                event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    if (event == null || !event.isShiftPressed()) {
-                        recipesContainer.removeAllViews();
-                        progressBar = new ProgressBar(that, null, android.R.attr.progressBarStyleLarge);
-                        recipesContainer.addView(progressBar);
-                        recipeInformations = new ArrayList<>();
-                        getRecipeInfos(v.getText().toString());
-                        return true; // consume.
-                    }
-                }
-
-                return false;
-            }
-        });
-
         googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         firebaseAuth = FirebaseAuth.getInstance();
+
+        // Initialize views
+        recipesContainer = findViewById(R.id.recipes_container);
+        historyContainer = findViewById(R.id.linearLayout10);
+        progressBar = findViewById(R.id.progress_bar);
+        addBill = findViewById(R.id.add_bill);
+        ListenableInput textView = new ListenableInput(findViewById(R.id.textInputEditText));
         FragmentContainerView pieChart = findViewById(R.id.pieChartFragmentStart);
-        pieChart.setOnClickListener(v -> {
-            startCharts();
-        });
-       // loadLastestHistoryItems();
-    }
+        PopupMenu menu = new PopupMenu(this, addBill);
 
-    public void loadLastestHistoryItems(){
-        ArrayList<Bill> billInfos = new ArrayList<>();
-        db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.DESCENDING).limit(3)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Bill bill = document.toObject(Bill.class);
-                                billInfos.add(bill);
-                            }
-                            displayHistoryItems(billInfos);
-
-                        } else {
-                            Log.w("History", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-
-    }
-
-    public void getRecipeInfos(String title) {
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://chillbill-bv4675ezoa-ey.a.run.app/api/recipes/get?keyword=" + title;
         StartScreen that = this;
-        RequestQueue ExampleRequestQueue = Volley.newRequestQueue(this);
-        JsonArrayRequest ExampleRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+        billScroller = new InfiniteScroller<>(historyContainer, 12 + 51, new InfiniteScroller.SpecificOnClickListener() {
+            @Override
+            public void onClick(View v, Serializable s, int i) {
+                Intent intent = new Intent(that, BillPage.class);
+                intent.putExtra(ARG_HIST_PARAM_OUT,s);
+                that.startActivity(intent);
+            }
+        }, HistoryItem::newInstance, this);
+
+        recipeInformationInfiniteScroller = new InfiniteScroller<>(recipesContainer, 88, new InfiniteScroller.SpecificOnClickListener() {
+            @Override
+            public void onClick(View v, Serializable s, int i) {
+                Intent intent = new Intent(that, Recepe.class);
+                intent.putExtra(ARG_HIST_PARAM_OUT,s);
+                that.startActivity(intent);
+            }
+        }, FoodItem::newInstance, this);
+
+        jasonReq = new VolleyJsonHelper(new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                org.json.JSONArray jsonArray = response;
-                for (int i = 0; i < jsonArray.length(); i++) {
+                for (int i = 0; i < response.length(); i++) {
                     try {
-                        RecipeInformation recipeInformation = RecipeInformation.instantiate(new JSONObject(jsonArray.getString(i)));
+                        RecipeInformation recipeInformation = RecipeInformation.instantiate(new JSONObject(response.getString(i)));
                         recipeInformations.add(recipeInformation);
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.w("History", "Error getting documents.", e.getCause());
                     }
                 }
                 recipesContainer.removeAllViews();
-                displayFoodItems(recipeInformations);
+                recipeInformationInfiniteScroller.populate(recipeInformations);
             }
 
-        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 recipesContainer.removeAllViews();
+                Log.w("History", "Error getting documents.", error.getCause());
                 Toast.makeText(that, "Something went wrong, try again later.", Toast.LENGTH_LONG).show();
             }
         });
-        ExampleRequestQueue.add(ExampleRequest);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        historyContainer.removeAllViews();
-        loadLastestHistoryItems();
-    }
-
-    public void displayHistoryItems(ArrayList<Bill> bills) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        int i = 0;
-        for (Bill bill : bills) {
-            i++;
-            ConstraintLayout constraintLayout = new ConstraintLayout(this);
-            Fragment fragment = HistoryItem.newInstance(bill.getShopName(), bill.getTotalAmount(), bill.getCategoryPercentage().get(0).floatValue()
-                    , bill.getCategoryPercentage().get(1).floatValue(), bill.getCategoryPercentage().get(2).floatValue(), bill.getCategoryPercentage().get(3).floatValue(), bill.getCategoryPercentage().get(4).floatValue());
-
-            constraintLayout.setId(View.generateViewId());
-            historyContainer.addView(constraintLayout);
-            Button button = new Button(this);
-            button.setId(View.generateViewId());
-            button.setBackgroundColor(Color.TRANSPARENT);
-            button.setLayoutParams(constraintLayout.getLayoutParams());
-            // Height of historyItem. 12 is height of a margin
-            button.setHeight(dpToPx(51 + 12, this));
-
-            StartScreen that = this;
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(that, BillPage.class);
-                    intent.putExtra(ARG_HIST_PARAM_OUT, bill);
-                    that.startActivity(intent);
-                }
-            });
-
-            constraintLayout.addView(button);
-            transaction.add(constraintLayout.getId(), fragment, bill.getShopName() + bill.getDate() + bill.getTotalAmount());
-        }
-        transaction.commit();
-    }
-
-    public void displayFoodItems(ArrayList<RecipeInformation> recipes) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        int i = 0;
-        int previousId = recipesContainer.getId();
-        StartScreen that = this;
-        for (RecipeInformation info : recipeInformations) {
-            i++;
-            ConstraintLayout constraintLayout = new ConstraintLayout(this);
-
-            FoodItem fragment = FoodItem.newInstance(info.getTitle(), info.getImageURL());
-
-
-            constraintLayout.setId(View.generateViewId());
-
-            recipesContainer.addView(constraintLayout);
-
-            Button button = new Button(this);
-            button.setId(View.generateViewId());
-            button.setBackgroundColor(Color.TRANSPARENT);
-            button.setLayoutParams(constraintLayout.getLayoutParams());
-            //88 is height of food item with margins
-            button.setHeight(dpToPx(88, this));
-
-            //StartScreen that = this;
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(that, Recepe.class);
-                    intent.putExtra(ARG_RECEP_PARAM_OUT, info);
-                    that.startActivity(intent);
-                }
-            });
-
-            constraintLayout.addView(button);
-            transaction.add(constraintLayout.getId(), fragment, info.getTitle());
-            previousId = constraintLayout.getId();
-        }
-        transaction.commit();
-
-    }
-
-
-    //TODO: change initial photo to photo downloaded from web for food items
-
-    public static int dpToPx(float dp, Context context) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
-    }
-
-    public static int spToPx(float sp, Context context) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
-    }
-
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        currentPhotoPath = image.getAbsolutePath();
-        currentPhoto = image;
-        return image;
-    }
-
-    public void dispatchTakePictureIntent(View view) {
-
-        StartScreen that = this;
-        PopupMenu menu = new PopupMenu(this, view);
-
-        menu.getMenu().add(R.string.add_manually);
-        menu.getMenu().add(R.string.take_from_galery);
-        menu.getMenu().add(R.string.take_picture);
-
-
-        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getTitle().toString().equals(getResources().getString(R.string.add_manually))) {
-
-                } else if (item.getTitle().toString().equals(getResources().getString(R.string.take_from_galery))) {
-                    Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pickPhoto, 1);//one can be replaced with any action code
-                  view.setClickable(false);
-                  view.setVisibility(View.INVISIBLE);
-                  progressBar.setVisibility(View.VISIBLE);
-
-                } else {
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    // Ensure that there's a camera activity to handle the intent
-                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                        // Create the File where the photo should go
-                        File photoFile = null;
-                        try {
-                            photoFile = createImageFile();
-                        } catch (IOException ex) {
-                            // Error occurred while creating the File
-
-                        }
-                        // Continue only if the File was successfully created
-                        if (photoFile != null) {
-                            Uri photoURI = FileProvider.getUriForFile(that,
-                                    "com.example.android.fileprovider",
-                                    photoFile);
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                            startActivityForResult(takePictureIntent, 0);
-                            view.setClickable(false);
-                            view.setVisibility(View.INVISIBLE);
-                            progressBar.setVisibility(View.VISIBLE);
-                        }
-                    }
-
-                }
-
-                return false;
-            }
-        });
-
-        menu.show();
-
-    }
-
-    private String requestBillParsing(String billId) {
-        StartScreen that = this;
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://chillbill-bv4675ezoa-ey.a.run.app/api/vision/parseBill?userImage=" + firebaseAuth.getCurrentUser().getUid() + "/" + billId;
-        System.out.println(url);
-        final String[] result = {""};
-        RequestQueue ExampleRequestQueue = Volley.newRequestQueue(this);
-        StringRequest ExampleRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        stringReq = new VolleyStringHelper(new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                System.out.println("Response");
-                System.out.println(response);
-                System.out.println();
-
-
                 db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").document(response)
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -452,7 +202,6 @@ public class StartScreen extends AppCompatActivity {
                             }
                         });
 
-                result[0] = response;
             }
         }, new Response.ErrorListener() {
             @Override
@@ -462,28 +211,156 @@ public class StartScreen extends AppCompatActivity {
                 addBill.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.INVISIBLE);
             }
+        },firebaseAuth,this);
+
+        final ArrayList<Bill>[] billsInfo = new ArrayList[]{new ArrayList<>()};
+
+        firestoreHelper = new FirestoreHelper(firebaseAuth, db, new FirestoreHelper.OnGetDocument() {
+            @Override
+            public void onGetDocument(QueryDocumentSnapshot document) {
+                Bill bill = document.toObject(Bill.class);
+                billsInfo[0].add(bill);
+            }
+        }, new FirestoreHelper.OnDocumentsProcessingFinished() {
+            @Override
+            public void onDocumentsProcessingFinished() {
+                billScroller.populate(billsInfo[0]);
+            }
+        }, new FirestoreHelper.OnError() {
+            @Override
+            public void onError(Exception e) {
+                Log.w("History", "Error getting documents.", e);
+            }
+        }, new FirestoreHelper.OnTaskSuccessful() {
+            @Override
+            public void OnTaskSuccessful() {
+                billsInfo[0] = new ArrayList<>();
+            }
         });
 
-        ExampleRequest.setRetryPolicy(new RetryPolicy() {
-            @Override
-            public int getCurrentTimeout() {
-                return 50000;
-            }
+        // Populate menu
+        menu.getMenu().add(R.string.add_manually);
+        menu.getMenu().add(R.string.take_from_galery);
+        menu.getMenu().add(R.string.take_picture);
 
-            @Override
-            public int getCurrentRetryCount() {
-                return 50000;
-            }
+        setProgressBarInvisible();
 
-            @Override
-            public void retry(VolleyError error) throws VolleyError {
+        checkCameraPersmission();
 
+        recipeInformations = new ArrayList<>();
+        jasonReq.getRecipesInfo("naleśniki",this);
+
+        // Set listeners
+        textView.setOnTypingEndsListener(new ListenableInput.OnTypingEndsListener() {
+            @Override
+            public boolean onTypingEnds(TextView v, int actionId, KeyEvent event) {
+                recipesContainer.removeAllViews();
+                progressBar = new ProgressBar(that, null, android.R.attr.progressBarStyleLarge);
+                recipesContainer.addView(progressBar);
+                recipeInformations = new ArrayList<>();
+
+                jasonReq.getRecipesInfo(v.getText().toString(),that);
+                return false;
             }
         });
-        ExampleRequestQueue.add(ExampleRequest);
-        return result[0];
+
 
     }
+
+    public void setProgressBarInvisible() {
+        progressBar.setVisibility(View.INVISIBLE);
+        addBill.setVisibility(View.VISIBLE);
+    }
+
+    public void setProgressBarVisible() {
+        progressBar.setVisibility(View.VISIBLE);
+        addBill.setVisibility(View.INVISIBLE);
+    }
+
+    public void checkCameraPersmission(){
+        //Camera permissons
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
+        }
+    }
+
+
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        historyContainer.removeAllViews();
+        firestoreHelper.loadLatestHistoryItems(NAM_OF_LATEST_HIST_ITEMS);
+    }
+
+
+    private File createImageFile() throws IOException {
+        // Date format used for storage, no need to localize it.
+        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        currentPhotoPath = image.getAbsolutePath();
+        currentPhoto = image;
+        return image;
+    }
+
+    public void dispatchTakePictureIntent(View view) {
+
+        StartScreen that = this;
+
+
+        menu.setOnMenuItemClickListener(item -> {
+            if (item.getTitle().toString().equals(getResources().getString(R.string.add_manually))) {
+
+                // TODO: Create module for manual bill adding;
+
+            } else if (item.getTitle().toString().equals(getResources().getString(R.string.take_from_galery))) {
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto, 1);
+                setProgressBarVisible();
+
+            } else {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                // Ensure that there's a camera activity to handle the intent
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    // Create the File where the photo should go
+                    File photoFile = null;
+                    try {
+                        photoFile = createImageFile();
+                    } catch (IOException ex) {
+                        Toast.makeText(that, "Something went wrong, try again later.", Toast.LENGTH_LONG).show();
+                    }
+                    // Continue only if the File was successfully created
+                    if (photoFile != null) {
+                        Uri photoURI = FileProvider.getUriForFile(that,
+                                "com.example.android.fileprovider",
+                                photoFile);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                        startActivityForResult(takePictureIntent, 0);
+                        setProgressBarVisible();
+                    }
+                }
+
+            }
+
+            return false;
+        });
+
+        menu.show();
+
+    }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -516,8 +393,7 @@ public class StartScreen extends AppCompatActivity {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             // Get a URL to the uploaded content
-                            System.out.println("HO+RRAY");
-                            requestBillParsing(String.valueOf(file.hashCode()));
+                            stringReq.requestBillParsing(String.valueOf(file.hashCode()));
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -539,9 +415,7 @@ public class StartScreen extends AppCompatActivity {
                             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    // Get a URL to the uploaded content
-                                    System.out.println("HO+RRAY");
-                                    requestBillParsing(String.valueOf(file.hashCode()));
+                                    stringReq.requestBillParsing(String.valueOf(file.hashCode()));
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
@@ -562,11 +436,11 @@ public class StartScreen extends AppCompatActivity {
         Intent intent = new Intent(this, History.class);
         startActivity(intent);
     }
-
-    public void startCharts() {
+    public void startChartsPage(View view) {
         Intent intent = new Intent(this, StatisticsActivity.class);
         startActivity(intent);
     }
+
 
     public void logOut(View view) {
         StartScreen that = this;
@@ -595,5 +469,6 @@ public class StartScreen extends AppCompatActivity {
         menu.show();
 
     }
+
 
 }

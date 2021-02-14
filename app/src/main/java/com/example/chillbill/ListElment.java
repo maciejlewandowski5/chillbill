@@ -1,6 +1,5 @@
 package com.example.chillbill;
 
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -12,6 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.chillbill.model.Product;
+import com.example.chillbill.model.RecipeInformation;
+
+import java.io.Serializable;
 
 
 public class ListElment extends Fragment {
@@ -28,14 +32,13 @@ public class ListElment extends Fragment {
     }
 
 
-    public static ListElment newInstance(String title, float pricePerUnit,float quantity, boolean even, String category) {
+
+
+    public static ListElment newInstance(Serializable ...serializable) {
         ListElment fragment = new ListElment();
         Bundle args = new Bundle();
-        args.putString("elementListTitle", title);
-        args.putFloat("elementListPrice", pricePerUnit);
-        args.putFloat("elementListQuantity", quantity);
-        args.putBoolean("isEven", even);
-        args.putString("elementListCategory", category);
+        args.putSerializable("serializable",serializable[0]);
+        args.putSerializable("i",serializable[1]);
         fragment.setArguments(args);
         return fragment;
     }
@@ -44,11 +47,13 @@ public class ListElment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            title = getArguments().getString("elementListTitle");
-            price = getArguments().getFloat("elementListPrice");
-            quantity = getArguments().getFloat("elementListQuantity");
-            isEven = getArguments().getBoolean("isEven");
-            category = getArguments().getString("elementListCategory");
+            Product product = (Product) getArguments().getSerializable("serializable");
+
+            title = product.getName();
+            price = product.getPrice();
+            quantity = product.getQuantity();
+            isEven =  (int)getArguments().getSerializable("i")%2==0;
+            category = Product.getCategoryString(product);
         }
     }
 

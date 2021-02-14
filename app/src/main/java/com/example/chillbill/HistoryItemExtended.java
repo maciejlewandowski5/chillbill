@@ -13,8 +13,10 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.chillbill.model.Bill;
+
+import java.io.Serializable;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -43,25 +45,11 @@ public class HistoryItemExtended extends Fragment {
     Date date;
     String category;
 
-    public static HistoryItemExtended newInstance(String name, float price, float purpleCategory, float yellowCategory, float greenCategory, float orangeCategory, float blueCategory, Date date, String category) {
+    public static Fragment newInstance(Serializable ...serializable) {
         HistoryItemExtended fragment = new HistoryItemExtended();
         Bundle args = new Bundle();
 
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
-
-        // Shoud be in percentage where 100% is purpleFloat + ... + blueFloat
-        args.putString("name", name);
-        args.putFloat("price", price);
-        args.putFloat("purpleFloat", purpleCategory);
-        args.putFloat("yellowFloat", yellowCategory);
-        args.putFloat("greenFloat", greenCategory);
-        args.putFloat("orangeFloat", orangeCategory);
-        args.putFloat("blueFloat", blueCategory);
-        args.putSerializable("date", date);
-        args.putString("category", category);
-
-
+        args.putSerializable("bill",serializable[0]);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,13 +65,25 @@ public class HistoryItemExtended extends Fragment {
 
         float barWidthInDp = 338.f;
         if (getArguments() != null) {
-            name = getArguments().getString("name");
-            price = getArguments().getFloat("price");
-            purpleFloat = barWidthInDp * getArguments().getFloat("purpleFloat") / 100.0f;
-            yellowFloat = barWidthInDp * getArguments().getFloat("yellowFloat") / 100.0f;
-            greenFloat = barWidthInDp * getArguments().getFloat("greenFloat") / 100.0f;
-            orangeFloat = barWidthInDp * getArguments().getFloat("orangeFloat") / 100.0f;
-            blueFloat = barWidthInDp * getArguments().getFloat("blueFloat") / 100.0f;
+            Bill bill = (Bill)getArguments().getSerializable("bill");
+            name = bill.getShopName();
+            price = bill.getTotalAmount();
+            purpleFloat = (float) barWidthInDp*(bill.getCategoryPercentage().get(0).floatValue())/100.0f;
+            yellowFloat = (float) barWidthInDp*(bill.getCategoryPercentage().get(1).floatValue())/100.0f;
+            greenFloat = (float) barWidthInDp*(bill.getCategoryPercentage().get(2).floatValue())/100.0f;
+            orangeFloat = (float) barWidthInDp*(bill.getCategoryPercentage().get(3).floatValue())/100.0f;
+            blueFloat = (float) barWidthInDp*(bill.getCategoryPercentage().get(4).floatValue())/100.0f;
+            sum = purpleFloat + yellowFloat + greenFloat + orangeFloat + blueFloat;
+
+
+            date = bill.getDate();
+
+            if(date == null){
+                date= new Date();
+
+            }
+            category = bill.getSavingsJar();
+            sum = purpleFloat + yellowFloat + greenFloat + orangeFloat + blueFloat;
 
             if (purpleFloat == 0) {
                 purpleFloat = 1;
@@ -102,14 +102,7 @@ public class HistoryItemExtended extends Fragment {
             }
 
 
-            date = (Date) getArguments().getSerializable("date");
 
-            if(date == null){
-                date= new Date();
-
-            }
-            category = getArguments().getString("category");
-            sum = purpleFloat + yellowFloat + greenFloat + orangeFloat + blueFloat;
         }
 
 
@@ -201,4 +194,6 @@ public class HistoryItemExtended extends Fragment {
     int DptoPx(float dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
     }
+
+
 }

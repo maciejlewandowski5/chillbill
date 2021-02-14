@@ -16,9 +16,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import com.example.chillbill.model.Bill;
+
+import java.io.Serializable;
 import java.util.Date;
 
 
@@ -55,6 +55,22 @@ public class HistoryItem extends Fragment {
         // Required empty public constructor
     }
 
+
+    public static HistoryItem newInstance(Serializable ...bill) {
+        HistoryItem fragment = new HistoryItem();
+        Bundle args = new Bundle();
+
+
+
+        // Shoud be in percentage where 100% is purpleFloat + ... + blueFloat
+        args.putSerializable("billHistItem",bill[0]);
+
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
     public static HistoryItem newInstance(String name,float price,float purpleCategory, float yellowCategory, float greenCategory, float orangeCategory, float blueCategory) {
         HistoryItem fragment = new HistoryItem();
         Bundle args = new Bundle();
@@ -71,6 +87,7 @@ public class HistoryItem extends Fragment {
         args.putFloat("blueFloat", blueCategory);
 
 
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,15 +100,33 @@ public class HistoryItem extends Fragment {
 
         float barWidthInDp = 338.f;
         if (getArguments() != null) {
-            name = getArguments().getString("name");
-            price = getArguments().getFloat("price");
-            purpleFloat = barWidthInDp*getArguments().getFloat("purpleFloat")/100.0f;
-            yellowFloat = barWidthInDp*getArguments().getFloat("yellowFloat")/100.0f;
-            greenFloat = barWidthInDp*getArguments().getFloat("greenFloat")/100.0f;
-            orangeFloat = barWidthInDp*getArguments().getFloat("orangeFloat")/100.0f;
-            blueFloat = barWidthInDp*getArguments().getFloat("blueFloat")/100.0f;
+            Bill bill = (Bill) getArguments().getSerializable("billHistItem");
+            name = bill.getShopName();
+            price = bill.getTotalAmount();
+            purpleFloat = (float) barWidthInDp*(bill.getCategoryPercentage().get(0).floatValue())/100.0f;
+            yellowFloat = (float) barWidthInDp*(bill.getCategoryPercentage().get(1).floatValue())/100.0f;
+            greenFloat = (float) barWidthInDp*(bill.getCategoryPercentage().get(2).floatValue())/100.0f;
+            orangeFloat = (float) barWidthInDp*(bill.getCategoryPercentage().get(3).floatValue())/100.0f;
+            blueFloat = (float) barWidthInDp*(bill.getCategoryPercentage().get(4).floatValue())/100.0f;
             sum = purpleFloat + yellowFloat + greenFloat + orangeFloat + blueFloat;
         }
+
+        if (purpleFloat == 0) {
+            purpleFloat = 1;
+        }
+        if (yellowFloat == 0) {
+            yellowFloat = 1;
+        }
+        if (orangeFloat == 0) {
+            orangeFloat = 1;
+        }
+        if (greenFloat == 0) {
+            greenFloat = 1;
+        }
+        if (blueFloat == 0) {
+            blueFloat = 1;
+        }
+
 
 
     }
