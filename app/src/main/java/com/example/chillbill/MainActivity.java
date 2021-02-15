@@ -11,8 +11,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import android.transition.Explode;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -29,6 +31,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import static android.app.ActivityOptions.makeSceneTransitionAnimation;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         configureGoogleClient();
+
     }
 
     private void configureGoogleClient() {
@@ -112,7 +117,8 @@ public class MainActivity extends AppCompatActivity {
     private void launchStartActivity(FirebaseUser user) {
         if(user != null) {
             Intent intent = new Intent(getApplicationContext(), StartScreen.class);
-            startActivity(intent);
+            //startActivity(intent);
+            startActivity(intent,makeSceneTransitionAnimation(this).toBundle());
         }
     }
 

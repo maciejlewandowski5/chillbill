@@ -15,7 +15,6 @@ import com.example.chillbill.model.RecipeInformation;
 import java.util.ArrayList;
 
 public class Recepe extends AppCompatActivity {
-    private final String ARG_RECEP_PARAM_OUT = "RECEPINFO";
     RecipeInformation recipeInformation;
 
     @Override
@@ -23,10 +22,13 @@ public class Recepe extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recepe);
 
+
+        //
         LinearLayout linearLayout = findViewById(R.id.list_contaner);
 
         Intent intent = getIntent();
 
+        String ARG_RECEP_PARAM_OUT = "RECEPINFO";
         recipeInformation = (RecipeInformation) intent.getSerializableExtra(ARG_RECEP_PARAM_OUT);
 
         if (recipeInformation != null) {

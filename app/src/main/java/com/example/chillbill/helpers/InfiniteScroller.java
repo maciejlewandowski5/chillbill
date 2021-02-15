@@ -10,6 +10,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.chillbill.R;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -35,11 +37,12 @@ public class InfiniteScroller<T extends Serializable> {
     }
 
     public  <T extends Serializable> void populate(ArrayList<T> items){
-        FragmentTransaction transaction = app.getSupportFragmentManager().beginTransaction();
+
+
         int i = 0;
         for (T item : items) {
-
-
+            FragmentTransaction transaction = app.getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right,android.R.anim.fade_in,android.R.anim.fade_out);
             ConstraintLayout constraintLayout = new ConstraintLayout(app);
             Fragment fragment = factory.newInstance(item,i);
 
@@ -65,8 +68,9 @@ public class InfiniteScroller<T extends Serializable> {
 
             transaction.add(constraintLayout.getId(), fragment, String.valueOf(item.hashCode()));
             i++;
+            transaction.commit();
         }
-        transaction.commit();
+
     }
 
 

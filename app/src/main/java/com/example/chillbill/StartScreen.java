@@ -5,10 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -20,6 +24,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -79,6 +84,7 @@ import java.util.Objects;
 public class StartScreen extends AppCompatActivity {
 
 
+    private static final String TAG = "s";
 
     private static final int NAM_OF_LATEST_HIST_ITEMS = 3;
     private static final int CAMERA_REQUEST = 1888;
@@ -130,6 +136,7 @@ public class StartScreen extends AppCompatActivity {
         ListenableInput textView = new ListenableInput(findViewById(R.id.textInputEditText));
         FragmentContainerView pieChart = findViewById(R.id.pieChartFragmentStart);
         PopupMenu menu = new PopupMenu(this, addBill);
+        pieChart.removeAllViews();
 
         StartScreen that = this;
         billScroller = new InfiniteScroller<>(historyContainer, 12 + 51, new InfiniteScroller.SpecificOnClickListener() {
@@ -137,7 +144,8 @@ public class StartScreen extends AppCompatActivity {
             public void onClick(View v, Serializable s, int i) {
                 Intent intent = new Intent(that, BillPage.class);
                 intent.putExtra(ARG_HIST_PARAM_OUT,s);
-                that.startActivity(intent);
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(that).toBundle());
+
             }
         }, HistoryItem::newInstance, this);
 
@@ -254,6 +262,8 @@ public class StartScreen extends AppCompatActivity {
         textView.setOnTypingEndsListener(new ListenableInput.OnTypingEndsListener() {
             @Override
             public boolean onTypingEnds(TextView v, int actionId, KeyEvent event) {
+                InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
                 recipesContainer.removeAllViews();
                 progressBar = new ProgressBar(that, null, android.R.attr.progressBarStyleLarge);
                 recipesContainer.addView(progressBar);
@@ -263,6 +273,13 @@ public class StartScreen extends AppCompatActivity {
                 return false;
             }
         });
+
+        PieChartFragment pieChartFragment = PieChartFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,android.R.anim.bounce_interpolator,android.R.anim.bounce_interpolator);
+        transaction.add(R.id.pieChartFragmentStart, pieChartFragment);
+        transaction.commit();
+
 
 
     }
@@ -293,7 +310,7 @@ public class StartScreen extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         historyContainer.removeAllViews();
-        firestoreHelper.loadLatestHistoryItems(NAM_OF_LATEST_HIST_ITEMS);
+        firestoreHelper.loadHistoryItems(NAM_OF_LATEST_HIST_ITEMS);
     }
 
 

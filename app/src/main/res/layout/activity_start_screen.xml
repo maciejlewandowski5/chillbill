@@ -82,7 +82,6 @@
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/pieChartFragmentStart"
-                    android:name="com.example.chillbill.PieChartFragment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -194,6 +193,7 @@
                     android:id="@+id/linearLayout10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minHeight="189dp"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

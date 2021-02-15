@@ -4,105 +4,108 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FilterButtons">
+    tools:context=".FilterButtons"
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
+            tools:layout_editor_absoluteX="45dp"
+            tools:layout_editor_absoluteY="247dp">
 
-            <Button
-                android:id="@+id/orange_category_button"
-                style="@style/Widget.MaterialComponents.Button"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="28sp"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/orange"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:text="@string/orange_category"
-                android:textAllCaps="false"
-                android:textColor="@color/design_default_color_on_primary"
-                android:textSize="11sp"
-                app:cornerRadius="50dp"
-                android:onClick="sortOrangeHistory"/>
+                android:layout_height="match_parent"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
 
-            <Button
-                android:id="@+id/purple_category_button"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="28sp"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/purple"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:text="@string/purple_category"
-                android:textAllCaps="false"
-                android:textColor="@color/design_default_color_on_primary"
-                android:textSize="11sp"
-                app:cornerRadius="50dp"
-                android:onClick="sortPurpleHistory"/>
+                <Button
+                    android:id="@+id/orange_category_button"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="28sp"
+                    android:layout_marginStart="16dp"
+                    android:backgroundTint="@color/orange"
+                    android:onClick="sortOrange"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:text="@string/orange_category"
+                    android:textAllCaps="false"
+                    android:textColor="@color/design_default_color_on_primary"
+                    android:textSize="11sp"
+                    app:cornerRadius="50dp" />
 
-            <Button
-                android:id="@+id/yellow_category_button"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="28sp"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/yellow"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:text="@string/yellow_category"
-                android:textAllCaps="false"
-                android:textColor="@color/design_default_color_on_primary"
-                android:textSize="11sp"
-                app:cornerRadius="50dp"
-                android:onClick="sortYellowHistory"/>
+                <Button
+                    android:id="@+id/purple_category_button"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="28sp"
+                    android:layout_marginStart="16dp"
+                    android:backgroundTint="@color/purple"
+                    android:onClick="sortPurple"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:text="@string/purple_category"
+                    android:textAllCaps="false"
+                    android:textColor="@color/design_default_color_on_primary"
+                    android:textSize="11sp"
+                    app:cornerRadius="50dp" />
 
-            <Button
-                android:id="@+id/green_categoty_button"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="28sp"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/green"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:text="@string/green_category"
-                android:textAllCaps="false"
-                android:textColor="@color/design_default_color_on_primary"
-                android:textSize="11sp"
-                app:cornerRadius="50dp"
-                android:onClick="sortGreenHistory"/>
+                <Button
+                    android:id="@+id/yellow_category_button"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="28sp"
+                    android:layout_marginStart="16dp"
+                    android:backgroundTint="@color/yellow"
+                    android:onClick="sortYellow"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:text="@string/yellow_category"
+                    android:textAllCaps="false"
+                    android:textColor="@color/design_default_color_on_primary"
+                    android:textSize="11sp"
+                    app:cornerRadius="50dp" />
 
-            <Button
-                android:id="@+id/blue_category_button"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="28sp"
-                android:layout_marginStart="16dp"
-                android:backgroundTint="@color/blue"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:text="@string/blue_category"
-                android:textAllCaps="false"
-                android:textColor="@color/design_default_color_on_primary"
-                android:textSize="11sp"
-                app:cornerRadius="50dp"
-                android:onClick="sortBlueHistory"/>
+                <Button
+                    android:id="@+id/green_categoty_button"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="28sp"
+                    android:layout_marginStart="16dp"
+                    android:backgroundTint="@color/green"
+                    android:onClick="sortGreen"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:text="@string/green_category"
+                    android:textAllCaps="false"
+                    android:textColor="@color/design_default_color_on_primary"
+                    android:textSize="11sp"
+                    app:cornerRadius="50dp" />
+
+                <Button
+                    android:id="@+id/blue_category_button"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="28sp"
+                    android:layout_marginStart="16dp"
+                    android:backgroundTint="@color/blue"
+                    android:onClick="sortBlue"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:text="@string/blue_category"
+                    android:textAllCaps="false"
+                    android:textColor="@color/design_default_color_on_primary"
+                    android:textSize="11sp"
+                    app:cornerRadius="50dp" />
 
 
-        </LinearLayout>
-    </HorizontalScrollView>
+            </LinearLayout>
+        </HorizontalScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

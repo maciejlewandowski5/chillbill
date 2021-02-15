@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.example.chillbill.helpers.FirestoreHelper;
 import com.example.chillbill.helpers.Utils;
 import com.example.chillbill.model.Bill;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -26,21 +27,10 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PieChartFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class PieChartFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private PieChart pieChart;
 
@@ -52,20 +42,11 @@ public class PieChartFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PieChartFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PieChartFragment newInstance(String param1, String param2) {
+
+    public static PieChartFragment newInstance() {
         PieChartFragment fragment = new PieChartFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,8 +55,7 @@ public class PieChartFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
     }
 
@@ -138,6 +118,8 @@ public class PieChartFragment extends Fragment {
         pieChart.getLegend().setEnabled(false);
         pieChart.refreshDrawableState();
         pieChart.invalidate();
+        pieChart.spin(1400,0,90,Easing.EaseInOutQuad);
+        pieChart.animateY(700, Easing.EaseInOutQuad);
 
     }
     public static int dpToPx(float dp, Context context) {

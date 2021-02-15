@@ -96,16 +96,17 @@
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="0dp"
-        android:layout_height="453dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/space10"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout7">
+        app:layout_constraintTop_toBottomOf="@+id/space9">
 
         <LinearLayout
             android:id="@+id/container_for_table_item_bill_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:orientation="vertical"
 
             />
@@ -115,8 +116,8 @@
         android:id="@+id/space10"
         android:layout_width="match_parent"
         android:layout_height="22dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

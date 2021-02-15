@@ -29,7 +29,7 @@ import java.util.Comparator;
 import java.util.Date;
 
 
-public class BillPage extends AppCompatActivity {
+public class BillPage extends AppCompatActivity implements  FilterButtons.OnClickListener {
 
     private final String ARG_PROD_PARAM_OUT = "PRODINFO";
     private final String BILL_FOR_PROD = "BILL_FOR_PROD";
@@ -87,21 +87,22 @@ public class BillPage extends AppCompatActivity {
             @Override
             public void sortAndDisplay(Category category) {
                 linearLayout.removeAllViews();
-                populateContainer(Category.ORANGE);
+                populateContainer(category);
             }
         });
+        filterButtons.setOnClickListener(this);
 
         linlay.removeAllViews();
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Fragment billfrag = HistoryItemExtended.newInstance(bill);
+
         transaction.add(linlay.getId(), billfrag);
         transaction.commit();
 
-        infiniteScroller.populate(bill.getProductList());
 
         FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
 
-        transaction2.replace(R.id.fragment,filterButtons);
+        transaction2.replace(R.id.fragment2,filterButtons);
         transaction2.commit();
 
     }
@@ -114,7 +115,7 @@ public class BillPage extends AppCompatActivity {
                 tmp.add(product);
             }
         });
-        infiniteScroller.populate(bill.getProductList());
+        infiniteScroller.populate(tmp);
     }
 
 
@@ -141,5 +142,33 @@ public class BillPage extends AppCompatActivity {
         Intent intent = getIntent();
         bill = (Bill) intent.getSerializableExtra(ARG_HIST_PARAM_OUT);
         refreshBill();
+        filterButtons.refreshFilters();
+        filterButtons.setAllToWhite();
+    }
+
+
+    @Override
+    public void sortYellow(View view) {
+        filterButtons.sortColorHistory(view, R.color.yellow, Category.YELLOW, 2);
+    }
+
+    @Override
+    public void sortPurple(View view) {
+        filterButtons.sortColorHistory(view, R.color.purple, Category.PURPLE, 1);
+    }
+
+    @Override
+    public void sortGreen(View view) {
+        filterButtons.sortColorHistory(view, R.color.green, Category.GREEN, 3);
+    }
+
+    @Override
+    public void sortOrange(View view) {
+        filterButtons.sortColorHistory(view, R.color.orange, Category.ORANGE, 0);
+    }
+
+    @Override
+    public void sortBlue(View view) {
+        filterButtons.sortColorHistory(view, R.color.blue, Category.BLUE, 4);
     }
 }

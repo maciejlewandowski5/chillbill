@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,23 +28,25 @@ public class FilterButtons extends Fragment {
     boolean[] activeFilters; //TODO: smarter filter, create way to show few categories at the same time
 
 
-
     private Sorter sorter;
+    private OnClickListener onClickListener;
 
     public FilterButtons() {
         // Required empty public constructor
     }
 
     public void setSorter(Sorter sorter) {
+
         this.sorter = sorter;
     }
 
-
+    public void setOnClickListener(OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
 
     public static FilterButtons newInstance() {
         FilterButtons fragment = new FilterButtons();
         Bundle args = new Bundle();
-
         fragment.setArguments(args);
         return fragment;
     }
@@ -53,7 +56,6 @@ public class FilterButtons extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
 
-            sorter = null;
         }
     }
 
@@ -74,33 +76,8 @@ public class FilterButtons extends Fragment {
                 ResourcesCompat.getColor(getResources(), R.color.yellow, null),
                 ResourcesCompat.getColor(getResources(), R.color.green, null),
                 ResourcesCompat.getColor(getResources(), R.color.blue, null)};
-
-
-
-
-
         return root;
     }
-    public void sortYellowHistory(View view) {
-        sortColorHistory(view, R.color.yellow, Category.YELLOW, 2);
-    }
-
-    public void sortPurpleHistory(View view) {
-        sortColorHistory(view, R.color.purple, Category.PURPLE, 1);
-    }
-
-    public void sortGreenHistory(View view) {
-        sortColorHistory(view, R.color.green, Category.GREEN, 3);
-    }
-
-    public void sortOrangeHistory(View view) {
-        sortColorHistory(view, R.color.orange, Category.ORANGE, 0);
-    }
-
-    public void sortBlueHistory(View view) {
-        sortColorHistory(view, R.color.blue, Category.BLUE, 4);
-    }
-
 
     public void setColorsToWhite(int buttonNumber) {
         for (int i = 0; i < filterButtons.length; i++) {
@@ -120,6 +97,7 @@ public class FilterButtons extends Fragment {
             button.setTextColor(ResourcesCompat.getColor(getResources(), R.color.white, null));
             setColorsToWhite(activeFilterId);
             activeFilters[activeFilterId] = true;
+
         } else {
             sorter.sortByDate();
             Button button = (Button) view;
@@ -127,25 +105,40 @@ public class FilterButtons extends Fragment {
             button.setTextColor(ResourcesCompat.getColor(getResources(), colorId, null));
             setColorsToWhite(activeFilterId);
             activeFilters[activeFilterId] = false;
+
         }
+        System.out.println("sorting ended");
     }
-    public void setAllToWhite(){
+
+    public void setAllToWhite() {
         setColorsToWhite(0);
         filterButtons[0].setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.white, null));
         filterButtons[0].setTextColor(colors[0]);
     }
 
-    public void refreshFilters(){
+    public void refreshFilters() {
         activeFilters = new boolean[]{false, false, false, false, false};
     }
-    public interface Sorter{
-        public void sortByDate();
-        public void sortAndDisplay(Category category);
+
+    public interface Sorter {
+        void sortByDate();
+
+        void sortAndDisplay(Category category);
 
     }
 
+    public interface OnClickListener {
+        void sortYellow(View view);
 
+        void sortPurple(View view);
 
+        void sortGreen(View view);
+
+        void sortOrange(View view);
+
+        void sortBlue(View view);
+
+    }
 
 
 }

@@ -9,7 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.chillbill.helpers.FirestoreHelper;
+import com.example.chillbill.helpers.Utils;
 import com.example.chillbill.model.Bill;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -47,20 +50,9 @@ public class BarChartFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BarChartFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static BarChartFragment newInstance(String param1, String param2) {
+    public static BarChartFragment newInstance() {
         BarChartFragment fragment = new BarChartFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,8 +61,7 @@ public class BarChartFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
     }
 
@@ -98,7 +89,7 @@ public class BarChartFragment extends Fragment {
 
         Date end = new Date();
         Date start = Utils.getFirstDayOfTheMonth(end);
-        Utils.getBillsInRange(start, end).addOnCompleteListener(task -> {
+        FirestoreHelper.getBillsInRange(start, end).addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
                 datasetMain = new float[5];
                 QuerySnapshot qs = task.getResult();
@@ -118,7 +109,7 @@ public class BarChartFragment extends Fragment {
         cal.setTime(start);
         cal.add(Calendar.DATE, -1);
         Date startSecondary = Utils.getFirstDayOfTheMonth(cal.getTime());
-        Utils.getBillsInRange(startSecondary, start).addOnCompleteListener(task -> {
+        FirestoreHelper.getBillsInRange(startSecondary, start).addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
                 datasetSecondary = new float[5];
                 QuerySnapshot qs = task.getResult();
@@ -164,5 +155,8 @@ public class BarChartFragment extends Fragment {
         barChart.setTouchEnabled(false);
         barChart.refreshDrawableState();
         barChart.invalidate();
+        barChart.animateY(700, Easing.EaseInOutQuad);
+        barChart.animateX(700, Easing.EaseInOutQuad);
+
     }
 }
