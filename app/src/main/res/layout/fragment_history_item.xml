@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:background="#00FFFFFF"
     android:backgroundTint="#00000000"
-    tools:context=".HistoryItem">
+    tools:context=".HistoryItem"
+>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

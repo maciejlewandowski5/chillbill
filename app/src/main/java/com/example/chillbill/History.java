@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -129,9 +130,10 @@ public class History extends AppCompatActivity implements FilterButtons.OnClickL
         infiniteScroller = new InfiniteScroller<>(linearLayout, 72 + 16, new InfiniteScroller.SpecificOnClickListener() {
             @Override
             public void onClick(View view, Serializable object, int index) {
+                view.setTransitionName("he");
                 Intent intent = new Intent(that, BillPage.class);
                 intent.putExtra(ARG_HIST_PARAM_OUT, object);
-                that.startActivity(intent);
+                startActivity(intent);
             }
         }, HistoryItemExtended::newInstance, this);
 

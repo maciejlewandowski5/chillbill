@@ -2,6 +2,9 @@ package com.example.chillbill.helpers;
 
 import android.graphics.Color;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Interpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -32,19 +35,33 @@ public class InfiniteScroller<T extends Serializable> {
         this.app = app;
     }
 
-    public void clear(){
+    public void clear() {
         container.removeAllViews();
     }
 
-    public  <T extends Serializable> void populate(ArrayList<T> items){
+    public <T extends Serializable> void populate(ArrayList<T> items) {
 
 
         int i = 0;
         for (T item : items) {
+
             FragmentTransaction transaction = app.getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right,android.R.anim.fade_in,android.R.anim.fade_out);
+
+
+            if (i % 3 == 0) {
+                transaction.setCustomAnimations(R.anim.pop_enter_1,
+                        android.R.anim.slide_out_right);
+            } else if (i%3==1) {
+                transaction.setCustomAnimations(R.anim.pop_enter,
+                        android.R.anim.slide_out_right);
+            } else{
+                transaction.setCustomAnimations(R.anim.pop_enter_2,
+                        android.R.anim.slide_out_right);
+            }
+
+
             ConstraintLayout constraintLayout = new ConstraintLayout(app);
-            Fragment fragment = factory.newInstance(item,i);
+            Fragment fragment = factory.newInstance(item, i);
 
             constraintLayout.setId(View.generateViewId());
             container.addView(constraintLayout);
@@ -60,7 +77,7 @@ public class InfiniteScroller<T extends Serializable> {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onClickListener.onClick(v,item, finalI);
+                    onClickListener.onClick(v, item, finalI);
                 }
             });
 
@@ -74,10 +91,9 @@ public class InfiniteScroller<T extends Serializable> {
     }
 
 
-
     public interface SpecificOnClickListener {
 
-        void onClick(View view, Serializable object,int index);
+        void onClick(View view, Serializable object, int index);
 
     }
 

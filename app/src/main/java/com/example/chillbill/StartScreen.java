@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -144,8 +145,7 @@ public class StartScreen extends AppCompatActivity {
             public void onClick(View v, Serializable s, int i) {
                 Intent intent = new Intent(that, BillPage.class);
                 intent.putExtra(ARG_HIST_PARAM_OUT,s);
-                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(that).toBundle());
-
+                startActivity(intent);
             }
         }, HistoryItem::newInstance, this);
 

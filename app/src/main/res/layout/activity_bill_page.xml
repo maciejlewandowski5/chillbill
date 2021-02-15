@@ -23,13 +23,16 @@
         android:gravity="center_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/space6">
+        app:layout_constraintTop_toBottomOf="@+id/space6"
+        >
 
         <fragment
             android:id="@+id/bill_header"
             android:name="com.example.chillbill.HistoryItemExtended"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+
+            />
     </LinearLayout>
 
     <Space
@@ -38,7 +41,8 @@
         android:layout_height="22dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout7"
+        />
 
     <fragment
         android:id="@+id/fragment2"
@@ -70,7 +74,8 @@
         android:textAlignment="textStart"
         android:textAppearance="@style/header"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView20" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView20"
+        />
 
     <ImageView
         android:id="@+id/imageView20"

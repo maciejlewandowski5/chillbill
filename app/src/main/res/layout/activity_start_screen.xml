@@ -5,19 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".StartScreen">
+    tools:context=".StartScreen"
+>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <Space
                 android:layout_width="match_parent"
@@ -51,7 +54,8 @@
                     android:layout_marginBottom="4dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@drawable/logo" />
+                    app:srcCompat="@drawable/logo"
+                    android:transitionName="cart"/>
 
 
 
@@ -63,7 +67,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                app:srcCompat="@drawable/grey_line_divder" />
+                app:srcCompat="@drawable/grey_line_divder"
+                />
 
             <TextView
                 android:id="@+id/expenses"
@@ -84,11 +89,14 @@
                     android:id="@+id/pieChartFragmentStart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minHeight="278dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:onClick="startChartsPage"/>
+                    android:onClick="startChartsPage"
+
+                    />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <Space
@@ -116,7 +124,9 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-                    app:rippleColor="#FFFFFF" />
+                    app:rippleColor="#FFFFFF"
+                    android:transitionName="button"
+/>
 
 
 
@@ -142,7 +152,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <Button
                     android:id="@+id/see_more"
@@ -180,7 +191,8 @@
                     android:textAlignment="textStart"
                     android:textAppearance="@style/header"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView15" />
+                    app:layout_constraintTop_toBottomOf="@+id/imageView15"
+                   />
 
                 <Space
                     android:id="@+id/space2"

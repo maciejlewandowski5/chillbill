@@ -7,12 +7,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import android.transition.Explode;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
@@ -42,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
     GoogleSignInClient googleSignInClient;
 
     private FirebaseAuth firebaseAuth;
+    View sharedTransition;
+    View rectangle;
+    View circle;
+    SignInButton signInButton;
 
 
     @Override
@@ -49,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SignInButton signInButton = findViewById(R.id.google_signin);
+        signInButton = findViewById(R.id.google_signin);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         configureGoogleClient();
+
+        sharedTransition = findViewById(R.id.imageView5);
+        rectangle = findViewById(R.id.imageView);
+        circle = findViewById(R.id.imageView2);
 
     }
 
@@ -73,14 +83,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void signInUsingGoogle() {
         Intent signInIntent = googleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent,RC_SIGN_IN);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == RC_SIGN_IN) {
+        if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
@@ -100,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()) {
+                if (task.isSuccessful()) {
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     Log.d(TAG, "signInWithCredential:success: currentUser: " + user.getEmail());
                     showToastMessage("Firebase Authentication Succeeded ");
@@ -115,10 +125,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void launchStartActivity(FirebaseUser user) {
-        if(user != null) {
+        if (user != null) {
             Intent intent = new Intent(getApplicationContext(), StartScreen.class);
-            //startActivity(intent);
-            startActivity(intent,makeSceneTransitionAnimation(this).toBundle());
+            // create the transition animation - the images in the layouts
+            // of both activities are defined with android:transitionName="robot"
+            ActivityOptions options = ActivityOptions
+                    .makeSceneTransitionAnimation(this, Pair.create(sharedTransition, "cart"),
+                            Pair.create(signInButton,"button"));
+            startActivity(intent, options.toBundle());
+
         }
     }
 
