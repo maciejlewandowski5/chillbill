@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context=".ListElment">
+    tools:context=".ListElement">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/table_elment_container"

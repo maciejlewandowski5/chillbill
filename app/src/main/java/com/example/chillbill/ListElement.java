@@ -1,5 +1,6 @@
 package com.example.chillbill;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -13,29 +14,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.chillbill.model.Product;
-import com.example.chillbill.model.RecipeInformation;
 
 import java.io.Serializable;
 
 
-public class ListElment extends Fragment {
+public class ListElement extends Fragment {
 
 
     private String title;
-    private float price;
-    private float quantity;
-    private boolean isEven;
     private String category;
+    private float price;
+    private boolean isEven;
 
-    public ListElment() {
+
+    public ListElement() {
         // Required empty public constructor
     }
 
 
-
-
-    public static ListElment newInstance(Serializable ...serializable) {
-        ListElment fragment = new ListElment();
+    public static ListElement newInstance(Serializable ...serializable) {
+        ListElement fragment = new ListElement();
         Bundle args = new Bundle();
         args.putSerializable("serializable",serializable[0]);
         args.putSerializable("i",serializable[1]);
@@ -48,15 +46,14 @@ public class ListElment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Product product = (Product) getArguments().getSerializable("serializable");
-
             title = product.getName();
             price = product.getPrice();
-            quantity = product.getQuantity();
             isEven =  (int)getArguments().getSerializable("i")%2==0;
             category = Product.getCategoryString(product);
         }
     }
 
+    @SuppressLint("DefaultLocale") // For price formatting
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -66,7 +63,6 @@ public class ListElment extends Fragment {
         TextView priceTextView = root.findViewById(R.id.table_element_price);
         ImageView categoryImageView = root.findViewById(R.id.table_elment_category_color);
         ConstraintLayout constraintLayout = root.findViewById(R.id.table_elment_container);
-       // TextView quantityTextView = root.findViewById(R.id.textView2);
 
         if (isEven) {
             constraintLayout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
@@ -75,21 +71,24 @@ public class ListElment extends Fragment {
         }
         titleTextView.setText(title);
         priceTextView.setText(String.format("%.2f", price));
-       // quantityTextView.setText(String.format("%.2f", quantity));
-        if(category=="purple"){
-            categoryImageView.setImageResource(R.drawable.purple_small_circle);
-        }else if(category == "yellow"){
-            categoryImageView.setImageResource(R.drawable.yellow_small_circle);
-        }else if(category == "green"){
-            categoryImageView.setImageResource(R.drawable.green_small_circle);
-        }else if(category == "orange"){
-            categoryImageView.setImageResource(R.drawable.orange_small_circle);
-        }else if(category == "blue"){
-            categoryImageView.setImageResource(R.drawable.blue_small_circle);
-        }else if(category == "null"){
-            categoryImageView.setImageResource(R.drawable.gray_small_circle);
-        }
+        setCategoryCircle(categoryImageView);
 
         return root;
+    }
+
+    private void setCategoryCircle(ImageView categoryImageView){
+        if(category.equals("purple")){
+            categoryImageView.setImageResource(R.drawable.purple_small_circle);
+        }else if(category.equals("yellow")){
+            categoryImageView.setImageResource(R.drawable.yellow_small_circle);
+        }else if(category.equals("green")){
+            categoryImageView.setImageResource(R.drawable.green_small_circle);
+        }else if(category.equals("orange")){
+            categoryImageView.setImageResource(R.drawable.orange_small_circle);
+        }else if(category.equals("blue")){
+            categoryImageView.setImageResource(R.drawable.blue_small_circle);
+        }else if(category.equals("null")){
+            categoryImageView.setImageResource(R.drawable.gray_small_circle);
+        }
     }
 }

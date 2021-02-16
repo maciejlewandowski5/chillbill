@@ -19,12 +19,11 @@ import com.squareup.picasso.Picasso;
 import java.io.Serializable;
 import java.net.URL;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FoodItem#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class FoodItem extends Fragment {
+
+    private static final String SERIALIZABLE = "serializable";
+
     private String title;
     private URL imageId;
     ImageView background;
@@ -34,20 +33,10 @@ public class FoodItem extends Fragment {
     }
 
 
-    // TODO: Rename and change types and number of parameters
-    public static FoodItem newInstance(String titleFood, URL imageIdFood) {
-        FoodItem fragment = new FoodItem();
-        Bundle args = new Bundle();
-        args.putString("titleFood", titleFood);
-        args.putSerializable("imageIdFood", imageIdFood);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     public static FoodItem newInstance(Serializable ...serializable) {
         FoodItem fragment = new FoodItem();
         Bundle args = new Bundle();
-        args.putSerializable("serializable",serializable[0]);
+        args.putSerializable(SERIALIZABLE,serializable[0]);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,7 +45,7 @@ public class FoodItem extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            RecipeInformation recipeInformation = (RecipeInformation) getArguments().getSerializable("serializable");
+            RecipeInformation recipeInformation = (RecipeInformation) getArguments().getSerializable(SERIALIZABLE);
             title = recipeInformation.getTitle();
             imageId = recipeInformation.getImageURL();
         }
@@ -73,7 +62,6 @@ public class FoodItem extends Fragment {
             Picasso.get().load(imageId.toString()).into(background);
         }
         TextView titleView = rootView.findViewById(R.id.title_food);
-
         titleView.setText(title);
 
         return rootView;

@@ -36,5 +36,7 @@
     <string name="add_manually">Wprowadź dane ręcznie</string>
     <string name="log_out">Wyloguj</string>
     <string name="product_edit">Edycja produktu</string>
+    <string name="SmgWrg">Something went wrong, try again later.</string>
+    <string name="Expenses">Wydatki</string>
 
 </resources>

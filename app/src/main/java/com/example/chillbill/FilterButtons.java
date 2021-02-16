@@ -1,25 +1,17 @@
 package com.example.chillbill;
 
 import android.os.Bundle;
-
-import androidx.core.content.res.ResourcesCompat;
-import androidx.fragment.app.Fragment;
-
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
+
 import com.example.chillbill.model.Category;
 
-import java.util.Comparator;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FilterButtons#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FilterButtons extends Fragment {
 
 
@@ -27,9 +19,8 @@ public class FilterButtons extends Fragment {
     Button[] filterButtons;
     boolean[] activeFilters; //TODO: smarter filter, create way to show few categories at the same time
 
-
     private Sorter sorter;
-    private OnClickListener onClickListener;
+
 
     public FilterButtons() {
         // Required empty public constructor
@@ -40,23 +31,14 @@ public class FilterButtons extends Fragment {
         this.sorter = sorter;
     }
 
-    public void setOnClickListener(OnClickListener onClickListener) {
-        this.onClickListener = onClickListener;
-    }
 
     public static FilterButtons newInstance() {
-        FilterButtons fragment = new FilterButtons();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+        return new FilterButtons();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
     @Override
@@ -79,7 +61,7 @@ public class FilterButtons extends Fragment {
         return root;
     }
 
-    public void setColorsToWhite(int buttonNumber) {
+    private void setColorsToWhite(int buttonNumber) {
         for (int i = 0; i < filterButtons.length; i++) {
             if (i != buttonNumber) {
                 filterButtons[i].setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.white, null));
@@ -107,35 +89,36 @@ public class FilterButtons extends Fragment {
             activeFilters[activeFilterId] = false;
 
         }
-        System.out.println("sorting ended");
     }
 
-    public void setAllToWhite() {
+    private void setAllToWhite() {
         setColorsToWhite(0);
         filterButtons[0].setBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.white, null));
         filterButtons[0].setTextColor(colors[0]);
     }
 
-    public void refreshFilters() {
+    private void refreshFilters() {
         activeFilters = new boolean[]{false, false, false, false, false};
+    }
+
+
+
+    public void callOnResume(){
+        refreshFilters();
+        setAllToWhite();
     }
 
     public interface Sorter {
         void sortByDate();
-
         void sortAndDisplay(Category category);
 
     }
 
     public interface OnClickListener {
         void sortYellow(View view);
-
         void sortPurple(View view);
-
         void sortGreen(View view);
-
         void sortOrange(View view);
-
         void sortBlue(View view);
 
     }

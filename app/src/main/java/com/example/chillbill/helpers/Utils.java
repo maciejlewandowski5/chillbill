@@ -9,6 +9,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -16,6 +17,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.chillbill.HistoryItem;
 import com.example.chillbill.R;
 import com.example.chillbill.StartScreen;
 import com.example.chillbill.model.Category;
@@ -79,4 +81,11 @@ public class Utils {
             throw new IOException(e.getMessage());
         }
     }
+
+    public static void toastError(Context context){
+        Toast.makeText(context, context.getResources().getString(R.string.SmgWrg), Toast.LENGTH_LONG).show();
+    }
+
+
+
 }

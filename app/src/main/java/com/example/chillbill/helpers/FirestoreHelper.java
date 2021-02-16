@@ -6,9 +6,12 @@ import androidx.annotation.NonNull;
 
 import com.example.chillbill.model.Bill;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -36,8 +39,24 @@ public class FirestoreHelper {
         this.onTaskSuccessful = onTaskSuccessful;
     }
 
+    private void get(DocumentReference documentReference) {
+        documentReference.get()
+                .addOnSuccessListener((DocumentSnapshot documentSnapshot) -> {
+                    onTaskSuccessful.OnTaskSuccessful();
+                    onGetDocument.onGetDocument(documentSnapshot);
+                    onDocumentsProcessingFinished.onDocumentsProcessingFinished();
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        onError.onError(e);
+                    }
+                });
 
-    private void getFromQuery(Query query){
+
+    }
+
+    private void get(Query query) {
         query.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -55,30 +74,39 @@ public class FirestoreHelper {
                     }
                 });
     }
+
     public void loadHistoryItems(int limit) {
         Query query = db.collection("Users").document(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid()).collection("Bills").orderBy("date", Query.Direction.DESCENDING).limit(limit);
-        getFromQuery(query);
+        get(query);
     }
+
     public void loadHistoryItems() {
         Query query = db.collection("Users").document(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid()).collection("Bills").orderBy("date", Query.Direction.DESCENDING);
-        getFromQuery(query);
+        get(query);
     }
 
+    public void loadBill(String billId) {
+        DocumentReference documentReference = db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").document(billId);
+        get(documentReference);
 
 
+    }
 
 
     public interface OnTaskSuccessful {
         void OnTaskSuccessful();
     }
 
-    public interface OnGetDocument{
-        void onGetDocument(QueryDocumentSnapshot document);
+    public interface OnGetDocument {
+        void onGetDocument(DocumentSnapshot document);
+
     }
-    public interface OnDocumentsProcessingFinished{
+
+    public interface OnDocumentsProcessingFinished {
         void onDocumentsProcessingFinished();
     }
-    public interface  OnError{
+
+    public interface OnError {
         void onError(Exception e);
     }
 
@@ -101,32 +129,5 @@ public class FirestoreHelper {
 
 }
 
-/*
-  public ArrayList<Bill> loadAllHistoryItemExtended() {
-        //TODO:: Add get request
-        bills = new ArrayList<>();
 
-
-        db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").orderBy("date", Query.Direction.DESCENDING)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                Bill bill = document.toObject(Bill.class);
-                                bills.add(bill);
-                            }
-                            infiniteScroller.populate(bills);
-
-                        } else {
-                            Log.w("History", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-
-        return bills;
-    }
- */
 

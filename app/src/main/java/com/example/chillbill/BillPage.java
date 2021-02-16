@@ -1,52 +1,47 @@
 package com.example.chillbill;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-
+import com.example.chillbill.helpers.FirestoreHelper;
 import com.example.chillbill.helpers.InfiniteScroller;
 import com.example.chillbill.helpers.Utils;
 import com.example.chillbill.model.Bill;
 import com.example.chillbill.model.Category;
 import com.example.chillbill.model.Product;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
 
 
-public class BillPage extends AppCompatActivity implements  FilterButtons.OnClickListener {
+public class BillPage extends AppCompatActivity implements FilterButtons.OnClickListener {
 
-    private final String ARG_PROD_PARAM_OUT = "PRODINFO";
-    private final String BILL_FOR_PROD = "BILL_FOR_PROD";
+    private static final String TAG = "ChillBill_BillPage";
+    private static final String ARG_PROD_PARAM_OUT = "PRODINFO";
+    private static final String BILL_FOR_PROD = "BILL_FOR_PROD";
+
+    private FirestoreHelper firestoreHelper;
     private LinearLayout linearLayout;
-    Bill bill;
-
-    FirebaseFirestore db;
-    private FirebaseAuth firebaseAuth;
     private InfiniteScroller<Product> infiniteScroller;
-    FilterButtons filterButtons;
+    private FilterButtons filterButtons;
+
+    private Bill bill;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bill_page);
         Intent intent = getIntent();
-
 
 
         // Initialize views
@@ -58,22 +53,30 @@ public class BillPage extends AppCompatActivity implements  FilterButtons.OnClic
         String ARG_HIST_PARAM_OUT = "HISTINFO";
         bill = (Bill) intent.getSerializableExtra(ARG_HIST_PARAM_OUT);
 
+
         BillPage that = this;
-        infiniteScroller = new InfiniteScroller<>(linearLayout, 24 + 8 + 24, new InfiniteScroller.SpecificOnClickListener() {
-            @Override
-            public void onClick(View v, Serializable s,int i) {
-                Intent intent = new Intent(that, ProductPropertiesEditor.class);
-                intent.putExtra(BILL_FOR_PROD, bill);
-                intent.putExtra(ARG_PROD_PARAM_OUT,i);
-                that.startActivity(intent);
-            }
-        }, ListElment::newInstance, this);
+        infiniteScroller = new InfiniteScroller<>(linearLayout, 24 + 8 + 24, (View v, Serializable s, int i) -> {
+            Intent intent1 = new Intent(that, ProductPropertiesEditor.class);
+            intent1.putExtra(BILL_FOR_PROD, bill);
+            intent1.putExtra(ARG_PROD_PARAM_OUT, i);
+            that.startActivity(intent1);
+        }, ListElement::newInstance, this);
 
 
         // Firebase
-        db = FirebaseFirestore.getInstance();
-        // googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
-        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        firestoreHelper = new FirestoreHelper(firebaseAuth, db, (DocumentSnapshot document) -> {
+            bill = document.toObject(Bill.class);
+            infiniteScroller.populate(bill.getProductList());
+        }, () -> {
+            // Not used, -> not implemented
+        }, e -> {
+            Log.w(TAG, "Error getting documents.", e.getCause());
+            Utils.toastError(that);
+        }, () -> {
+          // Not used, -> not implemented
+        });
 
 
         filterButtons = FilterButtons.newInstance();
@@ -90,27 +93,28 @@ public class BillPage extends AppCompatActivity implements  FilterButtons.OnClic
                 populateContainer(category);
             }
         });
-        filterButtons.setOnClickListener(this);
 
+
+
+        // Initial transactions
         linlay.removeAllViews();
         androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Fragment billfrag = HistoryItemExtended.newInstance(bill);
-
         transaction.add(linlay.getId(), billfrag);
         transaction.commit();
 
 
         FragmentTransaction transaction2 = getSupportFragmentManager().beginTransaction();
 
-        transaction2.replace(R.id.fragment2,filterButtons);
+        transaction2.replace(R.id.fragment2, filterButtons);
         transaction2.commit();
 
     }
 
 
-    public void populateContainer(Category category) {
-        ArrayList<Product> tmp = new ArrayList();
-        bill.getProductList().forEach(product -> {
+    private void populateContainer(Category category) {
+        ArrayList<Product> tmp = new ArrayList<>();
+        bill.getProductList().forEach((Product product) -> {
             if (product.getCategory() == category) {
                 tmp.add(product);
             }
@@ -119,20 +123,8 @@ public class BillPage extends AppCompatActivity implements  FilterButtons.OnClic
     }
 
 
-
-    public void refreshBill() {
-
-        BillPage that = this;
-        db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").document(bill.getId())
-                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                bill = documentSnapshot.toObject(Bill.class);
-                infiniteScroller.populate(bill.getProductList());
-            }
-        });
-
-
+    private void refreshBill() {
+        firestoreHelper.loadBill(bill.getId());
     }
 
     @Override
@@ -142,8 +134,7 @@ public class BillPage extends AppCompatActivity implements  FilterButtons.OnClic
         Intent intent = getIntent();
         bill = (Bill) intent.getSerializableExtra(ARG_HIST_PARAM_OUT);
         refreshBill();
-        filterButtons.refreshFilters();
-        filterButtons.setAllToWhite();
+        filterButtons.callOnResume();
     }
 
 
