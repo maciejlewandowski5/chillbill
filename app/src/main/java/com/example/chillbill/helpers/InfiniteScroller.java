@@ -40,7 +40,7 @@ public class InfiniteScroller<T extends Serializable> {
     }
 
     public <T extends Serializable> void populate(ArrayList<T> items) {
-
+        container.removeAllViews();
 
         int i = 0;
         for (T item : items) {

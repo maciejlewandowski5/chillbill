@@ -224,7 +224,7 @@ public class StartScreen extends AppCompatActivity {
             }
         }, new FirestoreHelper.OnTaskSuccessful() {
             @Override
-            public void OnTaskSuccessful() {
+            public void onTaskSuccessful() {
                 billsInfo[0] = new ArrayList<>();
             }
         });

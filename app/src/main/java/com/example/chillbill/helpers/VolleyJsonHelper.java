@@ -18,7 +18,7 @@ public class VolleyJsonHelper extends VolleyHelper<JSONArray> {
     public void getRecipesInfo(String title, Context context) {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "https://chillbill-bv4675ezoa-ey.a.run.app/api/recipes/get?keyword=" + title;
+        String url = super.getRecipesURL() + title;
         RequestQueue ExampleRequestQueue = Volley.newRequestQueue(context);
         JsonArrayRequest ExampleRequest = new JsonArrayRequest(Request.Method.GET, url, null, responseListener, errorListener);
         ExampleRequestQueue.add(ExampleRequest);

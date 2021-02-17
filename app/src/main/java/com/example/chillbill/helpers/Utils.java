@@ -34,12 +34,16 @@ import com.google.firebase.firestore.Query;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 public class Utils {
@@ -61,24 +65,24 @@ public class Utils {
     }
 
 
-
     /**
      * Uses {@link com.google.firebase.auth.FirebaseUser#getIdToken(boolean) getIdToken} under the hood to fetch idToken.
+     *
      * @param forceRefresh force refreshes the token. If false token will be valid for 1 hour and next calls will use cached value (no calls to Firebase)
      * @return idToken for current FirebaseUser
      * @throws IOException thrown when user is not logged in or fetched idToken is null
      */
-    public static String getIdToken(boolean forceRefresh) throws IOException{
+    public static String getIdToken(boolean forceRefresh) throws IOException {
         try {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if(user == null) {
-                throw  new Exception("User is not logged in");
+            if (user == null) {
+                throw new Exception("User is not logged in");
             } else {
                 Task<GetTokenResult> task = user.getIdToken(forceRefresh);
                 GetTokenResult tokenResult = Tasks.await(task);
                 String idToken = tokenResult.getToken();
 
-                if(idToken == null) {
+                if (idToken == null) {
                     throw new Exception("idToken is null");
                 } else {
                     return idToken;
@@ -89,14 +93,15 @@ public class Utils {
         }
     }
 
-    public static void toastError(Context context){
+    public static void toastError(Context context) {
         Toast.makeText(context, context.getResources().getString(R.string.SmgWrg), Toast.LENGTH_LONG).show();
     }
+
     public static void toastMessage(String message, Context context) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 
-    public static int[] getPrimaryColors(Fragment fragment){
+    public static int[] getPrimaryColors(Fragment fragment) {
         return new int[]{
                 ContextCompat.getColor(fragment.requireActivity(), R.color.purple),
                 ContextCompat.getColor(fragment.requireActivity(), R.color.yellow),
@@ -105,7 +110,8 @@ public class Utils {
                 ContextCompat.getColor(fragment.requireActivity(), R.color.blue)
         };
     }
-    public static int[] getSecondaryColors(Fragment fragment){
+
+    public static int[] getSecondaryColors(Fragment fragment) {
         return new int[]{
                 ContextCompat.getColor(fragment.requireActivity(), R.color.dark_purple),
                 ContextCompat.getColor(fragment.requireActivity(), R.color.dark_yellow),
@@ -121,8 +127,19 @@ public class Utils {
                 .toInstant());
     }
 
+    public static String formatPriceLocale(float price) {
+        return String.format(Locale.getDefault(), "%.2f", price);
+    }
 
-
+    public static float parsePriceLocale(String price, Context context) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.##", DecimalFormatSymbols.getInstance(Locale.getDefault()));
+        try {
+            return Objects.requireNonNull(decimalFormat.parse(price)).floatValue();
+        } catch (ParseException e) {
+            Utils.toastError(context);
+            return 0;
+        }
+    }
 
 
 }

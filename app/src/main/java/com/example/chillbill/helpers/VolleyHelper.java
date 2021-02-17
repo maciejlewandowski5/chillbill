@@ -26,16 +26,34 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import org.json.JSONArray;
 
+import java.util.Objects;
+
 import static android.content.ContentValues.TAG;
 
 public class VolleyHelper<T> {
 
+    private static final String URL = "https://chillbill-bv4675ezoa-ey.a.run.app/api";
+    private static final String PARSE_BILL = "/vision/parseBill?userImage=";
+    private static final String RECIPES = "/recipes/get?keyword=";
+    protected static final String ADD_VOTE = "/addVote";
+    protected static final String REMOVE_VOTE = "/removeVote";
+
+
     protected Response.Listener<T> responseListener;
     protected Response.ErrorListener errorListener;
+    protected FirebaseAuth firebaseAuth;
 
     public VolleyHelper(Response.Listener<T> responseListener, Response.ErrorListener errorListener) {
         this.responseListener = responseListener;
         this.errorListener = errorListener;
+        this.firebaseAuth = FirebaseAuth.getInstance();
+    }
+
+    protected String getParseBillURL(){
+        return  URL + PARSE_BILL + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();
+    }
+    protected String getRecipesURL(){
+        return  URL + RECIPES;
     }
 
 

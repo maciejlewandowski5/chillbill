@@ -130,9 +130,6 @@ public class BillPage extends AppCompatActivity implements FilterButtons.OnClick
     @Override
     protected void onResume() {
         super.onResume();
-        String ARG_HIST_PARAM_OUT = "HISTINFO";
-        Intent intent = getIntent();
-        bill = (Bill) intent.getSerializableExtra(ARG_HIST_PARAM_OUT);
         refreshBill();
         filterButtons.callOnResume();
     }
