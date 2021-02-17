@@ -54,12 +54,16 @@ public class ShopItemList extends Fragment {
         TextView nameTextView = root.findViewById(R.id.table_element_name);
         CheckBox checkBoxView = root.findViewById(R.id.checkBox);
         ConstraintLayout constraintLayout= root.findViewById(R.id.table_elment_container);
+        if(name.length()>=25){
+            name = name.substring(0,25) + "...";
+        }
+        name = name.replaceAll("(\\r\\n|\\r|\\n)"," ");
         nameTextView.setText(name);
 
         if (isEven) {
-            constraintLayout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
+            constraintLayout.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.white));
         } else {
-            constraintLayout.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.very_light_grey));
+            constraintLayout.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.very_light_grey));
         }
 
         if(checkBoxView.isChecked()){
@@ -68,15 +72,12 @@ public class ShopItemList extends Fragment {
             nameTextView.setPaintFlags(nameTextView.getPaintFlags() &(~ Paint.STRIKE_THRU_TEXT_FLAG));
         }
 
-        checkBoxView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    nameTextView.setPaintFlags(nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                }else{
-                    nameTextView.setPaintFlags(nameTextView.getPaintFlags() &(~ Paint.STRIKE_THRU_TEXT_FLAG));
+        checkBoxView.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                nameTextView.setPaintFlags(nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            }else{
+                nameTextView.setPaintFlags(nameTextView.getPaintFlags() &(~ Paint.STRIKE_THRU_TEXT_FLAG));
 
-                }
             }
         });
 

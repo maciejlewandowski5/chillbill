@@ -14,7 +14,7 @@ import com.example.chillbill.model.RecipeInformation;
 
 import java.util.ArrayList;
 
-public class Recepe extends AppCompatActivity {
+public class Recipe extends AppCompatActivity {
     RecipeInformation recipeInformation;
 
     @Override
@@ -22,10 +22,7 @@ public class Recepe extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recepe);
 
-
-        //
         LinearLayout linearLayout = findViewById(R.id.list_contaner);
-
         Intent intent = getIntent();
 
         String ARG_RECEP_PARAM_OUT = "RECEPINFO";
@@ -33,16 +30,13 @@ public class Recepe extends AppCompatActivity {
 
         if (recipeInformation != null) {
             Fragment foodItem =  FoodItem.newInstance(recipeInformation.getTitle(), recipeInformation.getImageURL());
-
             androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment5, foodItem);
             transaction.commit();
 
 
             transaction = getSupportFragmentManager().beginTransaction();
-
-
-            ArrayList<String> products = new ArrayList<>();
+            ArrayList<String> products;
             products = recipeInformation.getProducts();
 
             int i = 0;
@@ -53,9 +47,9 @@ public class Recepe extends AppCompatActivity {
             }
             transaction.commit();
 
-            TextView recepeText = findViewById(R.id.recepeText);
+            TextView recipeText = findViewById(R.id.recepeText);
 
-            recepeText.setText(recipeInformation.getShortDesc());
+            recipeText.setText(recipeInformation.getShortDesc());
         }
     }
 

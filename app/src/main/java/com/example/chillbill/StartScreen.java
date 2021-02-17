@@ -136,7 +136,7 @@ public class StartScreen extends AppCompatActivity {
         recipeInformationInfiniteScroller = new InfiniteScroller<>(recipesContainer, 88, new InfiniteScroller.SpecificOnClickListener() {
             @Override
             public void onClick(View v, Serializable s, int i) {
-                Intent intent = new Intent(that, Recepe.class);
+                Intent intent = new Intent(that, Recipe.class);
                 intent.putExtra(ARG_HIST_PARAM_OUT,s);
                 that.startActivity(intent);
             }

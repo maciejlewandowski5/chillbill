@@ -33,7 +33,7 @@
             android:name=".StatisticsActivity"
             android:exported="true" />
         <activity
-            android:name=".Recepe"
+            android:name=".Recipe"
             android:exported="true" />
         <activity
             android:name=".BillPage"
