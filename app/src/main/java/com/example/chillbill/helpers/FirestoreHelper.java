@@ -45,7 +45,7 @@ public class FirestoreHelper {
         documentReference.get()
                 .addOnSuccessListener((DocumentSnapshot documentSnapshot) -> {
                     onTaskSuccessful.OnTaskSuccessful();
-                    onGetDocument.onGetDocument(documentSnapshot);
+                    onGetDocument.onGetDocument(documentSnapshot.toObject(Bill.class));
                     onDocumentsProcessingFinished.onDocumentsProcessingFinished();
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -65,8 +65,12 @@ public class FirestoreHelper {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             onTaskSuccessful.OnTaskSuccessful();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                onGetDocument.onGetDocument(document);
+                            try{
+                                for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                    onGetDocument.onGetDocument(document.toObject(Bill.class));
+                                }
+                            }catch(NullPointerException e){
+                                onError.onError(task.getException());
                             }
                             onDocumentsProcessingFinished.onDocumentsProcessingFinished();
                         } else {
@@ -92,7 +96,7 @@ public class FirestoreHelper {
 
     }
 
-    public void loadBills(Date from, Date to){
+    public void loadBills(Date from, Date to) {
         Query query = db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills")
                 .whereGreaterThanOrEqualTo("date", from)
                 .whereLessThanOrEqualTo("date", to);
@@ -105,8 +109,7 @@ public class FirestoreHelper {
     }
 
     public interface OnGetDocument {
-        void onGetDocument(DocumentSnapshot document);
-
+        void onGetDocument(Bill bill);
     }
 
     public interface OnDocumentsProcessingFinished {
@@ -116,15 +119,6 @@ public class FirestoreHelper {
     public interface OnError {
         void onError(Exception e);
     }
-
-
-    public static Task<QuerySnapshot> getBills() {
-        FirebaseAuth fa = FirebaseAuth.getInstance();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection("Users").document(fa.getCurrentUser().getUid()).collection("Bills");
-        return reference.get();
-    }
-
 
 }
 

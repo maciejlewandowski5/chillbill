@@ -45,8 +45,7 @@ public class History extends AppCompatActivity implements FilterButtons.OnClickL
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        firestoreHelper = new FirestoreHelper(document -> {
-            Bill bill = document.toObject(Bill.class);
+        firestoreHelper = new FirestoreHelper(bill -> {
             billsInfo[0].add(bill);
         }, () -> infiniteScroller.populate(billsInfo[0]),
                 e -> Log.w("History", "Error getting documents.", e)

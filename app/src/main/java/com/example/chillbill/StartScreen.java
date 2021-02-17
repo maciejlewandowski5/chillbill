@@ -209,8 +209,7 @@ public class StartScreen extends AppCompatActivity {
 
         firestoreHelper = new FirestoreHelper(new FirestoreHelper.OnGetDocument() {
             @Override
-            public void onGetDocument(DocumentSnapshot document) {
-                Bill bill = document.toObject(Bill.class);
+            public void onGetDocument(Bill bill) {
                 billsInfo[0].add(bill);
             }
         }, new FirestoreHelper.OnDocumentsProcessingFinished() {

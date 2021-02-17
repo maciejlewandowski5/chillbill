@@ -55,8 +55,7 @@ public class BarChartFragment extends Fragment {
         BarChartFragment that = this;
 
         // For first data set
-        firestoreHelperMain = new FirestoreHelper(document -> {
-            Bill bill = document.toObject(Bill.class);
+        firestoreHelperMain = new FirestoreHelper(bill -> {
             for (int i = 0; i < Objects.requireNonNull(bill).getCategoryPercentage().size(); i++) {
                 dataSetMain[i] += (float) (bill.getCategoryPercentage().get(i) / 100) * bill.getTotalAmount();
             }
@@ -66,8 +65,7 @@ public class BarChartFragment extends Fragment {
         }, () -> dataSetMain = new float[5]);
 
         // For second data set
-        firestoreHelperSecondary = new FirestoreHelper(document -> {
-            Bill bill = document.toObject(Bill.class);
+        firestoreHelperSecondary = new FirestoreHelper(bill -> {
             for (int i = 0; i < Objects.requireNonNull(bill).getCategoryPercentage().size(); i++) {
                 dataSetSecondary[i] += (float) (bill.getCategoryPercentage().get(i) / 100) * bill.getTotalAmount();
             }

@@ -46,8 +46,7 @@ public class PieChartFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PieChartFragment that = this;
-        firestoreHelper = new FirestoreHelper(document -> {
-            Bill bill = document.toObject(Bill.class);
+        firestoreHelper = new FirestoreHelper(bill -> {
             for (int i = 0; i < (bill != null ? bill.getCategoryPercentage().size() : 0); i++) {
                 dataSet[i] += (float) (bill.getCategoryPercentage().get(i) / 100) * bill.getTotalAmount();
             }
