@@ -24,6 +24,8 @@ import java.util.Date;
 
 public class PieChartFragment extends Fragment {
 
+    private static final String TAG = "ChillBill_PieCharFragment";
+
     private PieChart pieChart;
 
     private int[] colors;
@@ -49,7 +51,7 @@ public class PieChartFragment extends Fragment {
             for (int i = 0; i < (bill != null ? bill.getCategoryPercentage().size() : 0); i++) {
                 dataSet[i] += (float) (bill.getCategoryPercentage().get(i) / 100) * bill.getTotalAmount();
             }
-        }, this::setupPieChart, e -> Log.w("History", "Error getting documents.", e), () -> {
+        }, this::setupPieChart, e -> Log.w(TAG, "Error getting documents.", e), () -> {
             dataSet = new float[5];
             Utils.toastError(that.getContext());
         });

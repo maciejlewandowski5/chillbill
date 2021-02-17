@@ -59,7 +59,6 @@ public class InfiniteScroller<T extends Serializable> {
                         android.R.anim.slide_out_right);
             }
 
-            System.out.println(item);
             ConstraintLayout constraintLayout = new ConstraintLayout(app);
             Fragment fragment = factory.newInstance(item, i);
 

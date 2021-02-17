@@ -1,14 +1,12 @@
 package com.example.chillbill;
 
 import android.os.Bundle;
-
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
 
 import com.example.chillbill.helpers.FirestoreHelper;
 import com.example.chillbill.helpers.Utils;
@@ -18,14 +16,16 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 
 public class BarChartFragment extends Fragment {
+
+    private static final String TAG = "ChillBill_BarCharFragment";
 
     BarChart barChart;
 
@@ -35,7 +35,11 @@ public class BarChartFragment extends Fragment {
     float[] dataSetMain;
     float[] dataSetSecondary;
 
-    FirestoreHelper firestoreHelper;
+    FirestoreHelper firestoreHelperMain;
+    FirestoreHelper firestoreHelperSecondary;
+
+    Date start;
+    Date end;
 
     public BarChartFragment() {
         // Required empty public constructor
@@ -49,33 +53,32 @@ public class BarChartFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BarChartFragment that = this;
-        firestoreHelper = new FirestoreHelper(new FirestoreHelper.OnGetDocument() {
-            @Override
-            public void onGetDocument(DocumentSnapshot document) {
-                Bill bill = document.toObject(Bill.class);
-                for (int i = 0; i < bill.getCategoryPercentage().size(); i++) {
-                    dataSetMain[i] += (float) (bill.getCategoryPercentage().get(i)/100) * bill.getTotalAmount();
-                }
+
+        // For first data set
+        firestoreHelperMain = new FirestoreHelper(document -> {
+            Bill bill = document.toObject(Bill.class);
+            for (int i = 0; i < Objects.requireNonNull(bill).getCategoryPercentage().size(); i++) {
+                dataSetMain[i] += (float) (bill.getCategoryPercentage().get(i) / 100) * bill.getTotalAmount();
             }
-        }, new FirestoreHelper.OnDocumentsProcessingFinished() {
-            @Override
-            public void onDocumentsProcessingFinished() {
-                if(dataSetSecondary != null && dataSetMain != null) {
-                    setupBarChart();
-                }
+        }, () -> firestoreHelperSecondary.loadBills(start, end), e -> {
+            Log.w(TAG, "Error getting documents.", e);
+            Utils.toastError(that.getContext());
+        }, () -> dataSetMain = new float[5]);
+
+        // For second data set
+        firestoreHelperSecondary = new FirestoreHelper(document -> {
+            Bill bill = document.toObject(Bill.class);
+            for (int i = 0; i < Objects.requireNonNull(bill).getCategoryPercentage().size(); i++) {
+                dataSetSecondary[i] += (float) (bill.getCategoryPercentage().get(i) / 100) * bill.getTotalAmount();
             }
-        }, new FirestoreHelper.OnError() {
-            @Override
-            public void onError(Exception e) {
-                Log.w("History", "Error getting documents.", e);
-                Utils.toastError(that.getContext());
+        }, () -> {
+            if (dataSetSecondary != null && dataSetMain != null) {
+                setupBarChart();
             }
-        }, new FirestoreHelper.OnTaskSuccessful() {
-            @Override
-            public void OnTaskSuccessful() {
-                dataSetMain = new float[5];
-            }
-        });
+        }, e -> {
+            Log.w(TAG, "Error getting documents.", e);
+            Utils.toastError(that.getContext());
+        }, () -> dataSetSecondary = new float[5]);
     }
 
     @Override
@@ -89,15 +92,15 @@ public class BarChartFragment extends Fragment {
         secondaryColors = Utils.getSecondaryColors(this);
 
         // Set
-        Date end = new Date();
-        Date start = Utils.getFirstDayOfTheMonth(end);
-        firestoreHelper.loadBills(start,end);
+        end = new Date();
 
         Calendar cal = Calendar.getInstance();
-        cal.setTime(start);
+        cal.setTime(Utils.getFirstDayOfTheMonth(end));
         cal.add(Calendar.DATE, -1);
-        Date startSecondary = Utils.getFirstDayOfTheMonth(cal.getTime());
-        firestoreHelper.loadBills(startSecondary,end);
+        start = Utils.getFirstDayOfTheMonth(cal.getTime());
+
+        firestoreHelperMain.loadBills(Utils.getFirstDayOfTheMonth(end), end);
+        firestoreHelperSecondary.loadBills(start, end);
 
         return view;
     }
