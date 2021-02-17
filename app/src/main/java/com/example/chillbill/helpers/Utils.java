@@ -96,13 +96,22 @@ public class Utils {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 
-    public static int[] getColors(Fragment fragment){
+    public static int[] getPrimaryColors(Fragment fragment){
         return new int[]{
-                ContextCompat.getColor(fragment.getActivity(), R.color.purple),
-                ContextCompat.getColor(fragment.getActivity(), R.color.yellow),
-                ContextCompat.getColor(fragment.getActivity(), R.color.green),
-                ContextCompat.getColor(fragment.getActivity(), R.color.orange),
-                ContextCompat.getColor(fragment.getActivity(), R.color.blue)
+                ContextCompat.getColor(fragment.requireActivity(), R.color.purple),
+                ContextCompat.getColor(fragment.requireActivity(), R.color.yellow),
+                ContextCompat.getColor(fragment.requireActivity(), R.color.green),
+                ContextCompat.getColor(fragment.requireActivity(), R.color.orange),
+                ContextCompat.getColor(fragment.requireActivity(), R.color.blue)
+        };
+    }
+    public static int[] getSecondaryColors(Fragment fragment){
+        return new int[]{
+                ContextCompat.getColor(fragment.requireActivity(), R.color.dark_purple),
+                ContextCompat.getColor(fragment.requireActivity(), R.color.dark_yellow),
+                ContextCompat.getColor(fragment.requireActivity(), R.color.dark_green),
+                ContextCompat.getColor(fragment.requireActivity(), R.color.dark_orange),
+                ContextCompat.getColor(fragment.requireActivity(), R.color.dark_blue)
         };
     }
 

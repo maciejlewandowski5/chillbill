@@ -37,23 +37,22 @@ public class PieChartFragment extends Fragment {
 
 
     public static PieChartFragment newInstance() {
-        PieChartFragment fragment = new PieChartFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+        return new PieChartFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            firestoreHelper = new FirestoreHelper(document -> {
-                Bill bill = document.toObject(Bill.class);
-                for (int i = 0; i < (bill != null ? bill.getCategoryPercentage().size() : 0); i++) {
-                    dataSet[i] += (float) (bill.getCategoryPercentage().get(i) / 100) * bill.getTotalAmount();
-                }
-            }, this::setupPieChart, e -> Log.w("History", "Error getting documents.", e), () -> dataSet = new float[5]);
-        }
+        PieChartFragment that = this;
+        firestoreHelper = new FirestoreHelper(document -> {
+            Bill bill = document.toObject(Bill.class);
+            for (int i = 0; i < (bill != null ? bill.getCategoryPercentage().size() : 0); i++) {
+                dataSet[i] += (float) (bill.getCategoryPercentage().get(i) / 100) * bill.getTotalAmount();
+            }
+        }, this::setupPieChart, e -> Log.w("History", "Error getting documents.", e), () -> {
+            dataSet = new float[5];
+            Utils.toastError(that.getContext());
+        });
     }
 
     @Override
@@ -63,7 +62,7 @@ public class PieChartFragment extends Fragment {
 
         // Initialise
         pieChart = view.findViewById(R.id.pie_chart);
-        colors = Utils.getColors(this);
+        colors = Utils.getPrimaryColors(this);
         LocalDate endLoc = LocalDate.now();
         Date start = Utils.getFirstDayOfTheMonth(Utils.localDateToDate(endLoc.minusMonths(1)));
 

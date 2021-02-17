@@ -125,10 +125,6 @@ public class FirestoreHelper {
         return reference.get();
     }
 
-    public Query getBillsInRange(Date start,Date  end){
-        return db.collection("Users").document(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid()).collection("Bills").orderBy("date", Query.Direction.DESCENDING);
-
-    }
 
 }
 

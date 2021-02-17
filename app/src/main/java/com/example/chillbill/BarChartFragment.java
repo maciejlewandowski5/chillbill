@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,7 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,99 +27,77 @@ import java.util.Date;
 
 public class BarChartFragment extends Fragment {
 
-
-
+    BarChart barChart;
 
     private int[] mainColors;
     private int[] secondaryColors;
-    BarChart barChart;
-    float[] datasetMain;
-    float[] datasetSecondary;
+
+    float[] dataSetMain;
+    float[] dataSetSecondary;
+
+    FirestoreHelper firestoreHelper;
 
     public BarChartFragment() {
         // Required empty public constructor
     }
 
     public static BarChartFragment newInstance() {
-        BarChartFragment fragment = new BarChartFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
+        return new BarChartFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
+        BarChartFragment that = this;
+        firestoreHelper = new FirestoreHelper(new FirestoreHelper.OnGetDocument() {
+            @Override
+            public void onGetDocument(DocumentSnapshot document) {
+                Bill bill = document.toObject(Bill.class);
+                for (int i = 0; i < bill.getCategoryPercentage().size(); i++) {
+                    dataSetMain[i] += (float) (bill.getCategoryPercentage().get(i)/100) * bill.getTotalAmount();
+                }
+            }
+        }, new FirestoreHelper.OnDocumentsProcessingFinished() {
+            @Override
+            public void onDocumentsProcessingFinished() {
+                if(dataSetSecondary != null && dataSetMain != null) {
+                    setupBarChart();
+                }
+            }
+        }, new FirestoreHelper.OnError() {
+            @Override
+            public void onError(Exception e) {
+                Log.w("History", "Error getting documents.", e);
+                Utils.toastError(that.getContext());
+            }
+        }, new FirestoreHelper.OnTaskSuccessful() {
+            @Override
+            public void OnTaskSuccessful() {
+                dataSetMain = new float[5];
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_bar_chart, container, false);
 
+        // Initialize
         barChart = view.findViewById(R.id.barChart);
-        mainColors = new int[]{
-                ContextCompat.getColor(getActivity(), R.color.purple),
-                ContextCompat.getColor(getActivity(), R.color.yellow),
-                ContextCompat.getColor(getActivity(), R.color.green),
-                ContextCompat.getColor(getActivity(), R.color.orange),
-                ContextCompat.getColor(getActivity(), R.color.blue)
-        };
-        secondaryColors = new int[]{
-                ContextCompat.getColor(getActivity(), R.color.dark_purple),
-                ContextCompat.getColor(getActivity(), R.color.dark_yellow),
-                ContextCompat.getColor(getActivity(), R.color.dark_green),
-                ContextCompat.getColor(getActivity(), R.color.dark_orange),
-                ContextCompat.getColor(getActivity(), R.color.dark_blue)
-        };
+        mainColors = Utils.getPrimaryColors(this);
+        secondaryColors = Utils.getSecondaryColors(this);
 
+        // Set
         Date end = new Date();
         Date start = Utils.getFirstDayOfTheMonth(end);
-       /* FirestoreHelper.getBillsInRange(start, end).addOnCompleteListener(task -> {
-            if(task.isSuccessful()) {
-                datasetMain = new float[5];
-                QuerySnapshot qs = task.getResult();
-                for (QueryDocumentSnapshot ds : qs) {
-                    Bill bill = ds.toObject(Bill.class);
-                    for (int i = 0; i < bill.getCategoryPercentage().size(); i++) {
-                        datasetMain[i] += (float) (bill.getCategoryPercentage().get(i)/100) * bill.getTotalAmount();
-                    }
-                }
-                if(datasetSecondary != null) {
-                    setupBarChart();
-                }
-            }
-        });
-
-        */
+        firestoreHelper.loadBills(start,end);
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(start);
         cal.add(Calendar.DATE, -1);
         Date startSecondary = Utils.getFirstDayOfTheMonth(cal.getTime());
-        /*FirestoreHelper.getBillsInRange(startSecondary, start).addOnCompleteListener(task -> {
-            if(task.isSuccessful()) {
-                datasetSecondary = new float[5];
-                QuerySnapshot qs = task.getResult();
-                for (QueryDocumentSnapshot ds : qs) {
-                    Bill bill = ds.toObject(Bill.class);
-                    for (int i = 0; i < bill.getCategoryPercentage().size(); i++) {
-                        datasetSecondary[i] += (float) (bill.getCategoryPercentage().get(i)/100) * bill.getTotalAmount();
-                    }
-                }
-                if(datasetMain != null) {
-                    setupBarChart();
-                }
-            }
-        });
-
-         */
-
-
+        firestoreHelper.loadBills(startSecondary,end);
 
         return view;
     }
@@ -127,9 +105,9 @@ public class BarChartFragment extends Fragment {
     private void setupBarChart() {
         ArrayList<BarEntry> currentEntries = new ArrayList<>();
         ArrayList<BarEntry> oldEntries = new ArrayList<>();
-        for (int i = 0; i < datasetMain.length; i++) {
-            currentEntries.add(new BarEntry(i, datasetMain[i]));
-            oldEntries.add(new BarEntry(i, datasetSecondary[i]));
+        for (int i = 0; i < dataSetMain.length; i++) {
+            currentEntries.add(new BarEntry(i, dataSetMain[i]));
+            oldEntries.add(new BarEntry(i, dataSetSecondary[i]));
         }
 
         BarDataSet set1 = new BarDataSet(currentEntries, "");
