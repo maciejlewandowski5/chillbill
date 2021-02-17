@@ -5,13 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,11 +18,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -33,20 +29,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.chillbill.helpers.FirestoreHelper;
 import com.example.chillbill.helpers.InfiniteScroller;
 
 
 import com.example.chillbill.helpers.ListenableInput;
-import com.example.chillbill.helpers.VolleyHelper;
 import com.example.chillbill.helpers.VolleyJsonHelper;
 import com.example.chillbill.helpers.VolleyStringHelper;
 import com.example.chillbill.model.Bill;
@@ -61,13 +50,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,7 +64,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
 
 
 public class StartScreen extends AppCompatActivity {
@@ -223,7 +207,7 @@ public class StartScreen extends AppCompatActivity {
 
         final ArrayList<Bill>[] billsInfo = new ArrayList[]{new ArrayList<>()};
 
-        firestoreHelper = new FirestoreHelper(firebaseAuth, db, new FirestoreHelper.OnGetDocument() {
+        firestoreHelper = new FirestoreHelper(new FirestoreHelper.OnGetDocument() {
             @Override
             public void onGetDocument(DocumentSnapshot document) {
                 Bill bill = document.toObject(Bill.class);
@@ -310,7 +294,7 @@ public class StartScreen extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         historyContainer.removeAllViews();
-        firestoreHelper.loadHistoryItems(NAM_OF_LATEST_HIST_ITEMS);
+        firestoreHelper.loadBills(NAM_OF_LATEST_HIST_ITEMS);
     }
 
 

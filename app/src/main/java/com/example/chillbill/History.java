@@ -45,13 +45,12 @@ public class History extends AppCompatActivity implements FilterButtons.OnClickL
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        firestoreHelper = new FirestoreHelper(firebaseAuth, db, document -> {
+        firestoreHelper = new FirestoreHelper(document -> {
             Bill bill = document.toObject(Bill.class);
             billsInfo[0].add(bill);
         }, () -> infiniteScroller.populate(billsInfo[0]),
                 e -> Log.w("History", "Error getting documents.", e)
                 , () -> billsInfo[0] = new ArrayList<>());
-
 
 
         // Initialize views
@@ -120,7 +119,7 @@ public class History extends AppCompatActivity implements FilterButtons.OnClickL
     protected void onResume() {
         super.onResume();
         linearLayout.removeAllViews();
-        firestoreHelper.loadHistoryItems();
+        firestoreHelper.loadBills();
         filterButtons.callOnResume();
     }
 

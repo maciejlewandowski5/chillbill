@@ -79,7 +79,7 @@ public class BarChartFragment extends Fragment {
 
         Date end = new Date();
         Date start = Utils.getFirstDayOfTheMonth(end);
-        FirestoreHelper.getBillsInRange(start, end).addOnCompleteListener(task -> {
+       /* FirestoreHelper.getBillsInRange(start, end).addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
                 datasetMain = new float[5];
                 QuerySnapshot qs = task.getResult();
@@ -95,11 +95,13 @@ public class BarChartFragment extends Fragment {
             }
         });
 
+        */
+
         Calendar cal = Calendar.getInstance();
         cal.setTime(start);
         cal.add(Calendar.DATE, -1);
         Date startSecondary = Utils.getFirstDayOfTheMonth(cal.getTime());
-        FirestoreHelper.getBillsInRange(startSecondary, start).addOnCompleteListener(task -> {
+        /*FirestoreHelper.getBillsInRange(startSecondary, start).addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
                 datasetSecondary = new float[5];
                 QuerySnapshot qs = task.getResult();
@@ -114,6 +116,8 @@ public class BarChartFragment extends Fragment {
                 }
             }
         });
+
+         */
 
 
 

@@ -30,9 +30,11 @@ public class FirestoreHelper {
     OnError onError;
     OnTaskSuccessful onTaskSuccessful;
 
-    public FirestoreHelper(FirebaseAuth firebaseAuth, FirebaseFirestore db, OnGetDocument onGetDocument, OnDocumentsProcessingFinished onDocumentsProcessingFinished, OnError onError, OnTaskSuccessful onTaskSuccessful) {
-        this.firebaseAuth = firebaseAuth;
-        this.db = db;
+    public FirestoreHelper(OnGetDocument onGetDocument, OnDocumentsProcessingFinished onDocumentsProcessingFinished, OnError onError, OnTaskSuccessful onTaskSuccessful) {
+        FirebaseAuth fa = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        this.firebaseAuth = FirebaseAuth.getInstance();
+        this.db = FirebaseFirestore.getInstance();
         this.onGetDocument = onGetDocument;
         this.onDocumentsProcessingFinished = onDocumentsProcessingFinished;
         this.onError = onError;
@@ -66,7 +68,6 @@ public class FirestoreHelper {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 onGetDocument.onGetDocument(document);
                             }
-
                             onDocumentsProcessingFinished.onDocumentsProcessingFinished();
                         } else {
                             onError.onError(task.getException());
@@ -75,12 +76,12 @@ public class FirestoreHelper {
                 });
     }
 
-    public void loadHistoryItems(int limit) {
+    public void loadBills(int limit) {
         Query query = db.collection("Users").document(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid()).collection("Bills").orderBy("date", Query.Direction.DESCENDING).limit(limit);
         get(query);
     }
 
-    public void loadHistoryItems() {
+    public void loadBills() {
         Query query = db.collection("Users").document(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid()).collection("Bills").orderBy("date", Query.Direction.DESCENDING);
         get(query);
     }
@@ -89,7 +90,13 @@ public class FirestoreHelper {
         DocumentReference documentReference = db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").document(billId);
         get(documentReference);
 
+    }
 
+    public void loadBills(Date from, Date to){
+        Query query = db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills")
+                .whereGreaterThanOrEqualTo("date", from)
+                .whereLessThanOrEqualTo("date", to);
+        get(query);
     }
 
 
@@ -110,21 +117,17 @@ public class FirestoreHelper {
         void onError(Exception e);
     }
 
-    public static Task<QuerySnapshot> getBillsInRange(Date from, Date to) {
-        FirebaseAuth fa = FirebaseAuth.getInstance();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        return db.collection("Users").document(fa.getCurrentUser().getUid()).collection("Bills")
-                .whereGreaterThanOrEqualTo("date", from)
-                .whereLessThanOrEqualTo("date", to)
-                .get();
-    }
 
     public static Task<QuerySnapshot> getBills() {
         FirebaseAuth fa = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference reference = db.collection("Users").document(fa.getCurrentUser().getUid()).collection("Bills");
         return reference.get();
+    }
+
+    public Query getBillsInRange(Date start,Date  end){
+        return db.collection("Users").document(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid()).collection("Bills").orderBy("date", Query.Direction.DESCENDING);
+
     }
 
 }

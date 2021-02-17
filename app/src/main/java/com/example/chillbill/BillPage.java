@@ -66,7 +66,7 @@ public class BillPage extends AppCompatActivity implements FilterButtons.OnClick
         // Firebase
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firestoreHelper = new FirestoreHelper(firebaseAuth, db, (DocumentSnapshot document) -> {
+        firestoreHelper = new FirestoreHelper((DocumentSnapshot document) -> {
             bill = document.toObject(Bill.class);
             infiniteScroller.populate(bill.getProductList());
         }, () -> {

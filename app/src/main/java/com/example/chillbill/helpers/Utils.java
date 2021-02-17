@@ -1,6 +1,7 @@
 package com.example.chillbill.helpers;
 
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -28,14 +29,18 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.firestore.Query;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 public class Utils {
 
@@ -91,15 +96,23 @@ public class Utils {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 
-    public static int[] getColors(){
-        colors = new int[]{
-                ContextCompat.getColor(getActivity(), R.color.purple),
-                ContextCompat.getColor(getActivity(), R.color.yellow),
-                ContextCompat.getColor(getActivity(), R.color.green),
-                ContextCompat.getColor(getActivity(), R.color.orange),
-                ContextCompat.getColor(getActivity(), R.color.blue)
+    public static int[] getColors(Fragment fragment){
+        return new int[]{
+                ContextCompat.getColor(fragment.getActivity(), R.color.purple),
+                ContextCompat.getColor(fragment.getActivity(), R.color.yellow),
+                ContextCompat.getColor(fragment.getActivity(), R.color.green),
+                ContextCompat.getColor(fragment.getActivity(), R.color.orange),
+                ContextCompat.getColor(fragment.getActivity(), R.color.blue)
         };
     }
+
+    public static Date localDateToDate(LocalDate dateToConvert) {
+        return java.util.Date.from(dateToConvert.atStartOfDay()
+                .atZone(ZoneId.systemDefault())
+                .toInstant());
+    }
+
+
 
 
 
