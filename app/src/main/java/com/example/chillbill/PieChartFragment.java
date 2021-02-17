@@ -30,13 +30,10 @@ import java.util.Date;
 
 public class PieChartFragment extends Fragment {
 
-
-
     private PieChart pieChart;
 
     int[] colors;
-    float[] dataset;
-
+    float[] dataSet;
 
     public PieChartFragment() {
         // Required empty public constructor
@@ -46,7 +43,6 @@ public class PieChartFragment extends Fragment {
     public static PieChartFragment newInstance() {
         PieChartFragment fragment = new PieChartFragment();
         Bundle args = new Bundle();
-
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,12 +73,12 @@ public class PieChartFragment extends Fragment {
         Date start = Utils.getFirstDayOfTheMonth(convertToDateViaInstant(endloc.minusMonths(1)));
         FirestoreHelper.getBillsInRange(start, convertToDateViaInstant(endloc)).addOnCompleteListener(task -> {
             if(task.isSuccessful()) {
-                dataset = new float[5];
+                dataSet = new float[5];
                 QuerySnapshot qs = task.getResult();
                 for (QueryDocumentSnapshot ds : qs) {
                     Bill bill = ds.toObject(Bill.class);
                     for (int i = 0; i < bill.getCategoryPercentage().size(); i++) {
-                        dataset[i] += (float) (bill.getCategoryPercentage().get(i)/100) * bill.getTotalAmount();
+                        dataSet[i] += (float) (bill.getCategoryPercentage().get(i)/100) * bill.getTotalAmount();
                     }
                 }
                 setupPieChart();
@@ -101,8 +97,8 @@ public class PieChartFragment extends Fragment {
         //Sample data
         //populate list of entries
         ArrayList<PieEntry> pieEntries = new ArrayList<>();
-        for (int i = 0; i < dataset.length; i++) {
-            pieEntries.add(new PieEntry(dataset[i]));
+        for (int i = 0; i < dataSet.length; i++) {
+            pieEntries.add(new PieEntry(dataSet[i]));
         }
         //configure chart
         PieDataSet dataSet = new PieDataSet(pieEntries, "");

@@ -13,11 +13,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.chillbill.HistoryItem;
+import com.example.chillbill.MainActivity;
 import com.example.chillbill.R;
 import com.example.chillbill.StartScreen;
 import com.example.chillbill.model.Category;
@@ -84,6 +86,19 @@ public class Utils {
 
     public static void toastError(Context context){
         Toast.makeText(context, context.getResources().getString(R.string.SmgWrg), Toast.LENGTH_LONG).show();
+    }
+    public static void toastMessage(String message, Context context) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    }
+
+    public static int[] getColors(){
+        colors = new int[]{
+                ContextCompat.getColor(getActivity(), R.color.purple),
+                ContextCompat.getColor(getActivity(), R.color.yellow),
+                ContextCompat.getColor(getActivity(), R.color.green),
+                ContextCompat.getColor(getActivity(), R.color.orange),
+                ContextCompat.getColor(getActivity(), R.color.blue)
+        };
     }
 
 

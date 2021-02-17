@@ -1,53 +1,38 @@
 package com.example.chillbill;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import android.Manifest;
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import android.transition.Explode;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
-import android.view.Window;
-import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.chillbill.helpers.Utils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
-
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-import static android.app.ActivityOptions.makeSceneTransitionAnimation;
-
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "ChillBill_MainActivity";
     private static final int RC_SIGN_IN = 1001;
 
-    GoogleSignInClient googleSignInClient;
+    private GoogleSignInClient googleSignInClient;
 
     private FirebaseAuth firebaseAuth;
-    View sharedTransition;
-    View rectangle;
-    View circle;
-    SignInButton signInButton;
+    private View sharedTransition;
+    private SignInButton signInButton;
 
 
     @Override
@@ -56,18 +41,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         signInButton = findViewById(R.id.google_signin);
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signInUsingGoogle();
-            }
-        });
+        signInButton.setOnClickListener(v -> signInUsingGoogle());
 
         configureGoogleClient();
-
         sharedTransition = findViewById(R.id.imageView5);
-        rectangle = findViewById(R.id.imageView);
-        circle = findViewById(R.id.imageView2);
 
     }
 
@@ -89,36 +66,38 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        MainActivity that = this;
 
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                showToastMessage("Google Sign in Succeeded");
+                Utils.toastMessage("Firebase Authentication failed:" + task.getException(),that);
+                assert account != null;
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 Log.w(TAG, "Google sign in failed", e);
-                showToastMessage("Google Sign in Failed " + e);
+                Utils.toastMessage("Firebase Authentication failed:" + task.getException(),that);
             }
         }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        MainActivity that = this;
+
         Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                    Log.d(TAG, "signInWithCredential:success: currentUser: " + user.getEmail());
-                    showToastMessage("Firebase Authentication Succeeded ");
-                    launchStartActivity(user);
-                } else {
-                    Log.w(TAG, "signInWithCredential:failure", task.getException());
-                    showToastMessage("Firebase Authentication failed:" + task.getException());
-                }
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                assert user != null;
+                Log.d(TAG, "signInWithCredential:success: currentUser: " + user.getEmail());
+                Utils.toastMessage("Firebase Authentication failed:" + task.getException(),that);
+                launchStartActivity(user);
+            } else {
+                Log.w(TAG, "signInWithCredential:failure", task.getException());
+                Utils.toastMessage("Firebase Authentication failed:" + task.getException(),that);
             }
         });
 
@@ -127,8 +106,6 @@ public class MainActivity extends AppCompatActivity {
     private void launchStartActivity(FirebaseUser user) {
         if (user != null) {
             Intent intent = new Intent(getApplicationContext(), StartScreen.class);
-            // create the transition animation - the images in the layouts
-            // of both activities are defined with android:transitionName="robot"
             ActivityOptions options = ActivityOptions
                     .makeSceneTransitionAnimation(this, Pair.create(sharedTransition, "cart"),
                             Pair.create(signInButton,"button"));
@@ -136,11 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
-    private void showToastMessage(String message) {
-        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
-    }
-
 
     @Override
     public void onBackPressed() {
