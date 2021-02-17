@@ -76,6 +76,10 @@ public class BillPage extends AppCompatActivity implements FilterButtons.OnClick
             Utils.toastError(that);
         }, () -> {
           // Not used, -> not implemented
+        }, () -> {
+
+        }, () -> {
+
         });
 
 

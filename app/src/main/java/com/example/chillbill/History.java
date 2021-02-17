@@ -49,7 +49,11 @@ public class History extends AppCompatActivity implements FilterButtons.OnClickL
             billsInfo[0].add(bill);
         }, () -> infiniteScroller.populate(billsInfo[0]),
                 e -> Log.w("History", "Error getting documents.", e)
-                , () -> billsInfo[0] = new ArrayList<>());
+                , () -> billsInfo[0] = new ArrayList<>(), () -> {
+
+        }, () -> {
+
+        });
 
 
         // Initialize views

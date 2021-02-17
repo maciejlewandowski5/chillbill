@@ -53,6 +53,10 @@ public class PieChartFragment extends Fragment {
         }, this::setupPieChart, e -> Log.w(TAG, "Error getting documents.", e), () -> {
             dataSet = new float[5];
             Utils.toastError(that.getContext());
+        }, () -> {
+
+        }, () -> {
+
         });
     }
 

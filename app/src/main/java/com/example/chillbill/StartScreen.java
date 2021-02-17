@@ -203,7 +203,7 @@ public class StartScreen extends AppCompatActivity {
                 addBill.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.INVISIBLE);
             }
-        },firebaseAuth,this);
+        },this);
 
         final ArrayList<Bill>[] billsInfo = new ArrayList[]{new ArrayList<>()};
 
@@ -227,6 +227,10 @@ public class StartScreen extends AppCompatActivity {
             public void onTaskSuccessful() {
                 billsInfo[0] = new ArrayList<>();
             }
+        }, () -> {
+
+        }, () -> {
+
         });
 
         // Populate menu

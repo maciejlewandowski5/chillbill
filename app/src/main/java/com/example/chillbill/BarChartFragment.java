@@ -62,7 +62,11 @@ public class BarChartFragment extends Fragment {
         }, () -> firestoreHelperSecondary.loadBills(start, end), e -> {
             Log.w(TAG, "Error getting documents.", e);
             Utils.toastError(that.getContext());
-        }, () -> dataSetMain = new float[5]);
+        }, () -> dataSetMain = new float[5], () -> {
+
+        }, () -> {
+
+        });
 
         // For second data set
         firestoreHelperSecondary = new FirestoreHelper(bill -> {
@@ -76,7 +80,11 @@ public class BarChartFragment extends Fragment {
         }, e -> {
             Log.w(TAG, "Error getting documents.", e);
             Utils.toastError(that.getContext());
-        }, () -> dataSetSecondary = new float[5]);
+        }, () -> dataSetSecondary = new float[5], () -> {
+
+        }, () -> {
+
+        });
     }
 
     @Override
