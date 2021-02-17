@@ -1,5 +1,6 @@
 package com.example.chillbill;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.chillbill.helpers.HistoryItemHelper;
 import com.example.chillbill.helpers.Utils;
 import com.example.chillbill.model.Bill;
 
@@ -23,27 +25,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.example.chillbill.helpers.HistoryItemHelper.SERIALIZABLE;
+
 
 public class HistoryItemExtended extends Fragment {
 
-
-    private static final float BAR_WIDTH_DP = 338.f;
-    private static final float BAR_HEIGHT_DP = 5.f;
-    private static final String SERIALIZABLE = "billHistItem";
+    HistoryItemHelper historyItemHelper;
     private static final String NO_JAR = "##noJar";
 
-    private String name;
-    private float price;
     private Date date;
     private String jar;
-    private ArrayList<Double> categoryWidth;
 
-    ArrayList<ProgressBar> progressBars;
 
     public static HistoryItemExtended newInstance(Serializable... bill) {
         HistoryItemExtended fragment = new HistoryItemExtended();
         Bundle args = new Bundle();
-        args.putSerializable(SERIALIZABLE, bill[0]);
+        args.putSerializable(HistoryItemHelper.SERIALIZABLE, bill[0]);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,13 +53,13 @@ public class HistoryItemExtended extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        categoryWidth = new ArrayList<>();
+        historyItemHelper = new HistoryItemHelper();
         if (getArguments() != null) {
-            Bill bill = (Bill) getArguments().getSerializable(SERIALIZABLE);
-            name = bill.getShopName();
-            price = bill.getTotalAmount();
+            Bill bill = (Bill) getArguments().getSerializable(HistoryItemHelper.SERIALIZABLE);
+            historyItemHelper.setName(bill.getShopName());
+            historyItemHelper.setPrice(bill.getTotalAmount());
             for (double percent : bill.getCategoryPercentage()) {
-                categoryWidth.add(BAR_WIDTH_DP * (percent) / 100.0f*2);
+                historyItemHelper.getCategoryWidth().add(HistoryItemHelper.BAR_WIDTH_DP * (percent) / 100.0f*2);
             }
             date = bill.getDate();
             if (date == null) {
@@ -70,50 +67,41 @@ public class HistoryItemExtended extends Fragment {
             }
             jar = bill.getSavingsJar();
         }
-        trimLength();
-        progressBars = new ArrayList<>();
+        historyItemHelper.trimLength();
     }
 
-    private void trimLength() {
-        for (int i = 0; i < categoryWidth.size(); i++) {
-            if (categoryWidth.get(i) == 0) {
-                categoryWidth.set(i, 1.0d);
-            }
-        }
+    public ArrayList<ProgressBar> initializeProgressBars(View rootView){
+        ArrayList<ProgressBar> progressBars = new ArrayList<>();
+        progressBars.add(rootView.findViewById(R.id.progressBar5));
+        progressBars.add(rootView.findViewById(R.id.progressBar4));
+        progressBars.add(rootView.findViewById(R.id.progressBar2));
+        progressBars.add(rootView.findViewById(R.id.progressBar3));
+        progressBars.add(rootView.findViewById(R.id.progressBar7));
+        return progressBars;
     }
 
     // 268dp is total width of all progress bars
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
 
-        View RootView = inflater.inflate(R.layout.fragment_history_item__extended, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_history_item__extended, container, false);
         // Initialize views
-        progressBars.add(RootView.findViewById(R.id.progressBar115));
-        progressBars.add(RootView.findViewById(R.id.progressBar114));
-        progressBars.add(RootView.findViewById(R.id.progressBar113));
-        progressBars.add(RootView.findViewById(R.id.progressBar112));
-        progressBars.add(RootView.findViewById(R.id.progressBar111));
+        historyItemHelper.setProgressBars(initializeProgressBars(rootView));
 
-        TextView priceTextView = RootView.findViewById(R.id.price);
-        TextView titleTextView = RootView.findViewById(R.id.shop_name);
-
+        TextView priceTextView = rootView.findViewById(R.id.price);
+        TextView titleTextView = rootView.findViewById(R.id.shop_name);
+        ConstraintLayout constraintLayout = rootView.findViewById(R.id.history_item_extended_container);
 
         // Set values to views
-        ConstraintLayout constraintLayout = RootView.findViewById(R.id.history_item_extended_container);
-        if (progressBars.size() > 0 && progressBars.size() == categoryWidth.size()) {
-            attachConstraints(progressBars.get(0), constraintLayout, categoryWidth.get(0).floatValue());
-            for (int i = 1; i < progressBars.size(); i++) {
-                attachConstraints(progressBars.get(i), progressBars.get(i - 1), constraintLayout, categoryWidth.get(i).floatValue());
-            }
-        }
+        historyItemHelper.modelProgressBars(rootView,constraintLayout);
+        priceTextView.setText(String.format(Locale.getDefault(),"%.2f", historyItemHelper.getPrice()));
+        titleTextView.setText(historyItemHelper.getName());
 
-        priceTextView.setText(String.format("%.2f", price));
-        titleTextView.setText(name);
-
-        TextView categoryTextView = RootView.findViewById(R.id.category_history_item);
-        TextView dateTextView = RootView.findViewById(R.id.date_history_item);
+        TextView categoryTextView = rootView.findViewById(R.id.category_history_item);
+        TextView dateTextView = rootView.findViewById(R.id.date_history_item);
 
         if (jar == null) {
             jar = NO_JAR;
@@ -129,28 +117,9 @@ public class HistoryItemExtended extends Fragment {
         }
         dateTextView.setText(formatter.format(date));
 
-        return RootView;
+        return rootView;
     }
 
-    private ConstraintSet prepareConstraintSet(ProgressBar progressBar, ConstraintLayout constraintLayout, float widthPx) {
-        progressBar.setLayoutParams(new ConstraintLayout.LayoutParams((int) widthPx, Utils.dpToPx(BAR_HEIGHT_DP, getContext())));
-        ConstraintSet constrainSet = new ConstraintSet();
-        constrainSet.clone(constraintLayout);
-        constrainSet.connect(progressBar.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-        return constrainSet;
-    }
-
-    private void attachConstraints(ProgressBar progressBar, ConstraintLayout constraintLayout, float widthPx) {
-        ConstraintSet constraintSet = prepareConstraintSet(progressBar, constraintLayout, widthPx);
-        constraintSet.connect(progressBar.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START);
-        constraintSet.applyTo(constraintLayout);
-    }
-
-    private void attachConstraints(ProgressBar progressBar, ProgressBar parentProgressBar, ConstraintLayout constraintLayout, float widthPx) {
-        ConstraintSet constraintSet = prepareConstraintSet(progressBar, constraintLayout, widthPx);
-        constraintSet.connect(progressBar.getId(), ConstraintSet.START, parentProgressBar.getId(), ConstraintSet.END);
-        constraintSet.applyTo(constraintLayout);
-    }
 
     @Override
     public void onResume() {

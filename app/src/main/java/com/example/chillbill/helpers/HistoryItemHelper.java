@@ -23,12 +23,12 @@ public class HistoryItemHelper {
 
     ArrayList<ProgressBar> progressBars;
 
-
-
     public HistoryItemHelper() {
+        name = " ";
+        price = 0;
+        categoryWidth = new ArrayList<>();
+        progressBars = new ArrayList<>();
     }
-
-
 
     public String getName() {
         return name;
@@ -42,9 +42,6 @@ public class HistoryItemHelper {
         return categoryWidth;
     }
 
-    public ArrayList<ProgressBar> getProgressBars() {
-        return progressBars;
-    }
 
     public void setName(String name) {
         this.name = name;
@@ -62,12 +59,6 @@ public class HistoryItemHelper {
         this.progressBars = progressBars;
     }
 
-    public HistoryItemHelper(String name, float price, ArrayList<Double> categoryWidth, ArrayList<ProgressBar> progressBars) {
-        this.name = name;
-        this.price = price;
-        this.categoryWidth = categoryWidth;
-        this.progressBars = progressBars;
-    }
 
     public void trimLength() {
         for (int i = 0; i < categoryWidth.size(); i++) {
@@ -77,15 +68,6 @@ public class HistoryItemHelper {
         }
     }
 
-    public void initializeProgressBars(View rootView){
-        // Initialize views
-        progressBars.add(rootView.findViewById(R.id.progressBar5));
-        progressBars.add(rootView.findViewById(R.id.progressBar4));
-        progressBars.add(rootView.findViewById(R.id.progressBar2));
-        progressBars.add(rootView.findViewById(R.id.progressBar3));
-        progressBars.add(rootView.findViewById(R.id.progressBar7));
-
-    }
 
     public ConstraintSet prepareConstraintSet(ProgressBar progressBar, ConstraintLayout constraintLayout, float widthPx, Context context) {
         progressBar.setLayoutParams(new ConstraintLayout.LayoutParams((int) widthPx, Utils.dpToPx(BAR_HEIGHT_DP, context)));
@@ -95,24 +77,24 @@ public class HistoryItemHelper {
         return constrainSet;
     }
 
-    public void attachConstraints(ProgressBar progressBar, ConstraintLayout constraintLayout, float widthPx,Context context) {
-        ConstraintSet constraintSet = prepareConstraintSet(progressBar, constraintLayout, widthPx,context);
+    public void attachConstraints(ProgressBar progressBar, ConstraintLayout constraintLayout, float widthPx, Context context) {
+        ConstraintSet constraintSet = prepareConstraintSet(progressBar, constraintLayout, widthPx, context);
         constraintSet.connect(progressBar.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START);
         constraintSet.applyTo(constraintLayout);
     }
 
-    public void attachConstraints(ProgressBar progressBar, ProgressBar parentProgressBar, ConstraintLayout constraintLayout, float widthPx,Context context) {
-        ConstraintSet constraintSet = prepareConstraintSet(progressBar, constraintLayout, widthPx,context);
+    public void attachConstraints(ProgressBar progressBar, ProgressBar parentProgressBar, ConstraintLayout constraintLayout, float widthPx, Context context) {
+        ConstraintSet constraintSet = prepareConstraintSet(progressBar, constraintLayout, widthPx, context);
         constraintSet.connect(progressBar.getId(), ConstraintSet.START, parentProgressBar.getId(), ConstraintSet.END);
         constraintSet.applyTo(constraintLayout);
     }
 
-    public void setProgressBars(View root){
-        ConstraintLayout constraintLayout = root.findViewById(R.id.constrainViewHistoryFragment);
-
-        attachConstraints(progressBars.get(0), constraintLayout, categoryWidth.get(0).floatValue(),root.getContext());
-        for (int i = 1; i < progressBars.size(); i++) {
-            attachConstraints(progressBars.get(i), progressBars.get(i - 1), constraintLayout, categoryWidth.get(i).floatValue(),root.getContext());
+    public void modelProgressBars(View root, ConstraintLayout constraintLayout) {
+        if (progressBars.size() != 0 && categoryWidth.size() == progressBars.size()) {
+            attachConstraints(progressBars.get(0), constraintLayout, categoryWidth.get(0).floatValue(), root.getContext());
+            for (int i = 1; i < progressBars.size(); i++) {
+                attachConstraints(progressBars.get(i), progressBars.get(i - 1), constraintLayout, categoryWidth.get(i).floatValue(), root.getContext());
+            }
         }
     }
 

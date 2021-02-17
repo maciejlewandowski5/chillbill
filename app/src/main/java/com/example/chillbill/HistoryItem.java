@@ -19,6 +19,7 @@ import com.example.chillbill.model.Bill;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class HistoryItem extends Fragment {
 
@@ -42,8 +43,6 @@ public class HistoryItem extends Fragment {
         super.onCreate(savedInstanceState);
 
         historyItemHelper = new HistoryItemHelper();
-
-        historyItemHelper.setCategoryWidth(new ArrayList<Double>());
         if (getArguments() != null) {
             Bill bill = (Bill) getArguments().getSerializable(HistoryItemHelper.SERIALIZABLE);
             historyItemHelper.setName(bill.getShopName());
@@ -53,10 +52,17 @@ public class HistoryItem extends Fragment {
             }
         }
         historyItemHelper.trimLength();
-
-        historyItemHelper.setProgressBars(new ArrayList<>());
     }
 
+    public ArrayList<ProgressBar> initializeProgressBars(View rootView){
+        ArrayList<ProgressBar> progressBars = new ArrayList<>();
+        progressBars.add(rootView.findViewById(R.id.progressBar5));
+        progressBars.add(rootView.findViewById(R.id.progressBar4));
+        progressBars.add(rootView.findViewById(R.id.progressBar2));
+        progressBars.add(rootView.findViewById(R.id.progressBar3));
+        progressBars.add(rootView.findViewById(R.id.progressBar7));
+        return progressBars;
+    }
 
     // 268dp is total width of all progress bars
     @SuppressLint("DefaultLocale") // For displaying price
@@ -66,15 +72,15 @@ public class HistoryItem extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_history_item, container, false);
 
         // Initialize views
-        historyItemHelper.initializeProgressBars(rootView);
+        historyItemHelper.setProgressBars(initializeProgressBars(rootView));
 
         TextView priceTextView = rootView.findViewById(R.id.price);
         TextView titleTextView = rootView.findViewById(R.id.shop_name);
+        ConstraintLayout constraintLayout = rootView.findViewById(R.id.constrainViewHistoryFragment);
 
         // Set values to views
-        ConstraintLayout constraintLayout = rootView.findViewById(R.id.constrainViewHistoryFragment);
-        historyItemHelper.setProgressBars(rootView);
-        priceTextView.setText(String.format("%.2f", historyItemHelper.getPrice()));
+        historyItemHelper.modelProgressBars(rootView,constraintLayout);
+        priceTextView.setText(String.format(Locale.getDefault(),"%.2f", historyItemHelper.getPrice()));
         titleTextView.setText(historyItemHelper.getName());
 
         return rootView;
