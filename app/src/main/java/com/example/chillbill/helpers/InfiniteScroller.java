@@ -1,10 +1,11 @@
 package com.example.chillbill.helpers;
 
 import android.graphics.Color;
+import android.os.Handler;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.Interpolator;
-import android.view.animation.TranslateAnimation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -21,11 +22,11 @@ import java.util.ArrayList;
 public class InfiniteScroller<T extends Serializable> {
 
     LinearLayout container;
-    //Height of one element in dp;
-    int height;
+    int height;     //Height of one element in dp;
     SpecificOnClickListener onClickListener;
     AbstractFactory factory;
     AppCompatActivity app;
+    ArrayList<T> items;
 
     public InfiniteScroller(LinearLayout container, int height, SpecificOnClickListener onClickListener, AbstractFactory factory, AppCompatActivity app) {
         this.container = container;
@@ -33,15 +34,32 @@ public class InfiniteScroller<T extends Serializable> {
         this.onClickListener = onClickListener;
         this.factory = factory;
         this.app = app;
+        items = new ArrayList<T>();
+
     }
 
-    public void clear() {
-        container.removeAllViews();
+    private void clean(){
+        System.out.println("Clean was called");
+        Animation anim = AnimationUtils.makeOutAnimation(app.getApplicationContext(),true);
+        anim.setInterpolator(new AccelerateInterpolator());
+        anim.setDuration(100);
+        anim.setFillAfter(true);
+        new Handler().postDelayed(new Runnable() {
+            public void run() {
+                container.clearAnimation();
+                container.removeAllViews();
+                //Extra work goes here
+                populateWithItems();
+            }
+        }, anim.getDuration()+10);
+        container.startAnimation(anim);
+
+
+
+        //container.removeAllViews();
     }
 
-    public <T extends Serializable> void populate(ArrayList<T> items) {
-        container.removeAllViews();
-
+    private void populateWithItems(){
         int i = 0;
         for (T item : items) {
 
@@ -86,7 +104,12 @@ public class InfiniteScroller<T extends Serializable> {
             i++;
             transaction.commit();
         }
-
+    }
+    public void populate(ArrayList<T> items) {
+        this.items = new ArrayList<>();
+        this.items = items;
+        System.out.println("populate was called");
+            clean();
     }
 
 

@@ -77,9 +77,9 @@ public class BillPage extends AppCompatActivity implements FilterButtons.OnClick
         }, () -> {
           // Not used, -> not implemented
         }, () -> {
-
+            // Not used, -> not implemented
         }, () -> {
-
+            // Not used, -> not implemented
         });
 
 
