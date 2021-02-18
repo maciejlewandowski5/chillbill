@@ -12,6 +12,7 @@ import androidx.core.content.FileProvider;
 
 import com.android.volley.toolbox.StringRequest;
 import com.example.chillbill.StartScreen;
+import com.example.chillbill.StartScreenHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -92,7 +93,7 @@ public class ImageHelper {
         return currentPhoto;
     }
 
-    public void sendToStorage(Uri file,VolleyStringHelper stringReq) {
+    public void sendToStorage(Uri file, VolleyStringHelper stringReq, StartScreenHelper startScreenHelper) {
         StorageReference riversRef = mStorageRef.child("/" + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid() + "/" + file.hashCode());
         Uri finalFile = file;
         riversRef.putFile(file).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -103,7 +104,7 @@ public class ImageHelper {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                ((StartScreen)activity).setProgressBarInvisible();
+                startScreenHelper.setProgressBarInvisible();
                 Utils.toastError(activity.getApplicationContext());
             }
         });
