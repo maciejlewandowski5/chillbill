@@ -38,5 +38,11 @@
     <string name="product_edit">Edycja produktu</string>
     <string name="SmgWrg">Something went wrong, try again later.</string>
     <string name="Expenses">Wydatki</string>
+    <string name="future_feature">Ta funkcja będzie dostępna w przyszłości.</string>
+    <string name="camera_permission_granted">Przyznano uprawnienia aparatowi</string>
+    <string name="camera_permissons_denied">Odmówiono uprawnień do aparatu</string>
+    <string name="you_signed_out">Wylogowaliśmy Cię</string>
+    <string name="you_logged_in">Zalogowaliśmy Cie</string>
+    <string name="login_failed">Problemy z logowaniem, spróbuj później</string>
 
 </resources>

@@ -14,6 +14,10 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.example.chillbill.helpers.Utils;
+
+import okio.Utf8;
+
 
 public class ShopItemList extends Fragment {
 
@@ -54,11 +58,8 @@ public class ShopItemList extends Fragment {
         TextView nameTextView = root.findViewById(R.id.table_element_name);
         CheckBox checkBoxView = root.findViewById(R.id.checkBox);
         ConstraintLayout constraintLayout= root.findViewById(R.id.table_elment_container);
-        if(name.length()>=25){
-            name = name.substring(0,25) + "...";
-        }
-        name = name.replaceAll("(\\r\\n|\\r|\\n)"," ");
-        nameTextView.setText(name);
+
+        nameTextView.setText(Utils.trim(name));
 
         if (isEven) {
             constraintLayout.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.white));
@@ -80,9 +81,6 @@ public class ShopItemList extends Fragment {
 
             }
         });
-
-
-
         return root;
     }
 }

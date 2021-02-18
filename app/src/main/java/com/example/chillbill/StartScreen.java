@@ -1,272 +1,215 @@
 package com.example.chillbill;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.FragmentContainerView;
-import androidx.fragment.app.FragmentTransaction;
-
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentContainerView;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.example.chillbill.helpers.AccountHelper;
 import com.example.chillbill.helpers.FirestoreHelper;
+import com.example.chillbill.helpers.ImageHelper;
 import com.example.chillbill.helpers.InfiniteScroller;
-
-
 import com.example.chillbill.helpers.ListenableInput;
+import com.example.chillbill.helpers.Utils;
 import com.example.chillbill.helpers.VolleyJsonHelper;
 import com.example.chillbill.helpers.VolleyStringHelper;
 import com.example.chillbill.model.Bill;
 import com.example.chillbill.model.RecipeInformation;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Date;
 
 
 public class StartScreen extends AppCompatActivity {
 
 
-    private static final String TAG = "s";
-
-    private static final int NAM_OF_LATEST_HIST_ITEMS = 3;
+    private static final String TAG = "ChillBill_StartScreen";
+    private static final int NUMBER_OF_LATEST_HIST_ITEMS = 3;
     private static final int CAMERA_REQUEST = 1888;
-    private static final int MY_CAMERA_REQUEST_CODE = 100;
-    private static final int MY_CAMERA_PERMISSION_CODE = 100;
-    LinearLayout recipesContainer;
-    LinearLayout historyContainer;
-    ArrayList<RecipeInformation> recipeInformations;
-    private StorageReference mStorageRef;
+    private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int CAMERA_PERMISSION_CODE = 100;
+    private static final String ARG_HIST_PARAM_OUT = "HISTINFO";
+    private static final int BILL_HIST_ITEM_HEIGHT = 12 + 51;
+    private static final int RECIPE_ITEM_HEIGHT = 88;
 
-    private final String ARG_RECEP_PARAM_OUT = "RECEPINFO";
-    private final String ARG_HIST_PARAM_OUT = "HISTINFO";
-
-    private FirebaseAuth firebaseAuth;
-    private GoogleSignInClient googleSignInClient;
-    private FirebaseFirestore db;
-
+    private LinearLayout recipesContainer;
     private ProgressBar progressBar;
     private Button addBill;
-    PopupMenu menu;
+    private PopupMenu menu;
 
-
-    int[] sampleImages = {R.drawable.image_1, R.drawable.image_2, R.drawable.image_3};
-
-    String currentPhotoPath;
-    File currentPhoto;
     InfiniteScroller<Bill> billScroller;
     InfiniteScroller<RecipeInformation> recipeInformationInfiniteScroller;
     VolleyJsonHelper jasonReq;
     VolleyStringHelper stringReq;
     FirestoreHelper firestoreHelper;
+    FirestoreHelper newBillManager;
+    ImageHelper imageHelper;
+    AccountHelper accountHelper;
+
+
+    private ArrayList<RecipeInformation> recipesInformation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_screen);
 
-        // Firebase
-        mStorageRef = FirebaseStorage.getInstance().getReference();
-        db = FirebaseFirestore.getInstance();
-        googleSignInClient = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
-        firebaseAuth = FirebaseAuth.getInstance();
+        // Initialize variables
+        recipesInformation = new ArrayList<>();
+        final ArrayList<Bill>[] billsInfo = new ArrayList[]{new ArrayList<>()};
 
         // Initialize views
         recipesContainer = findViewById(R.id.recipes_container);
-        historyContainer = findViewById(R.id.linearLayout10);
+        LinearLayout historyContainer = findViewById(R.id.linearLayout10);
         progressBar = findViewById(R.id.progress_bar);
         addBill = findViewById(R.id.add_bill);
         ListenableInput textView = new ListenableInput(findViewById(R.id.textInputEditText));
         FragmentContainerView pieChart = findViewById(R.id.pieChartFragmentStart);
-        PopupMenu menu = new PopupMenu(this, addBill);
+        menu = new PopupMenu(this, addBill);
         pieChart.removeAllViews();
 
+
+        // Infinite scrollers
         StartScreen that = this;
-        billScroller = new InfiniteScroller<>(historyContainer, 12 + 51, new InfiniteScroller.SpecificOnClickListener() {
-            @Override
-            public void onClick(View v, Serializable s, int i) {
-                Intent intent = new Intent(that, BillPage.class);
-                intent.putExtra(ARG_HIST_PARAM_OUT,s);
-                startActivity(intent);
-            }
+        billScroller = new InfiniteScroller<>(historyContainer, BILL_HIST_ITEM_HEIGHT, (v, s, i) -> {
+            Intent intent = new Intent(that, BillPage.class);
+            intent.putExtra(ARG_HIST_PARAM_OUT, s);
+            startActivity(intent);
         }, HistoryItem::newInstance, this);
 
-        recipeInformationInfiniteScroller = new InfiniteScroller<>(recipesContainer, 88, new InfiniteScroller.SpecificOnClickListener() {
-            @Override
-            public void onClick(View v, Serializable s, int i) {
-                Intent intent = new Intent(that, Recipe.class);
-                intent.putExtra(ARG_HIST_PARAM_OUT,s);
-                that.startActivity(intent);
-            }
+        recipeInformationInfiniteScroller = new InfiniteScroller<>(recipesContainer, RECIPE_ITEM_HEIGHT, (v, s, i) -> {
+            Intent intent = new Intent(that, Recipe.class);
+            intent.putExtra(ARG_HIST_PARAM_OUT, s);
+            that.startActivity(intent);
         }, FoodItem::newInstance, this);
 
-        jasonReq = new VolleyJsonHelper(new Response.Listener<JSONArray>() {
+
+        // FireStore helpers
+        newBillManager = new FirestoreHelper(new FirestoreHelper.FirestoreHelperListener() {
             @Override
-            public void onResponse(JSONArray response) {
-                for (int i = 0; i < response.length(); i++) {
-                    try {
-                        RecipeInformation recipeInformation = RecipeInformation.instantiate(new JSONObject(response.getString(i)));
-                        recipeInformations.add(recipeInformation);
-                    } catch (JSONException e) {
-                        Log.w("History", "Error getting documents.", e.getCause());
-                    }
-                }
-                recipesContainer.removeAllViews();
-                recipeInformationInfiniteScroller.populate(recipeInformations);
+            public void onError(Exception e) {
+                Log.w(TAG, "Error getting documents.", e);
+                Utils.toastError(that);
             }
 
-        }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                recipesContainer.removeAllViews();
-                Log.w("History", "Error getting documents.", error.getCause());
-                Toast.makeText(that, "Something went wrong, try again later.", Toast.LENGTH_LONG).show();
+            public void onGetDocument(Bill bill) {
+                Intent intent = new Intent(that, BillPage.class);
+                intent.putExtra(ARG_HIST_PARAM_OUT, bill);
+                that.startActivity(intent);
+            }
+
+            @Override
+            public void onDocumentsProcessingFinished() {
+                setProgressBarInvisible();
             }
         });
 
-        stringReq = new VolleyStringHelper(new Response.Listener<String>() {
+
+        firestoreHelper = new FirestoreHelper(new FirestoreHelper.FirestoreHelperListener() {
             @Override
-            public void onResponse(String response) {
-                db.collection("Users").document(firebaseAuth.getCurrentUser().getUid()).collection("Bills").document(response)
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    Bill bill = task.getResult().toObject(Bill.class);
-
-                                    Intent intent = new Intent(that, BillPage.class);
-                                    intent.putExtra(ARG_HIST_PARAM_OUT, bill);
-                                    that.startActivity(intent);
-                                    addBill.setClickable(true);
-                                    addBill.setVisibility(View.VISIBLE);
-                                    progressBar.setVisibility(View.INVISIBLE);
-
-                                } else {
-                                    Log.w(TAG, "Error getting documents.", task.getException());
-                                    Toast.makeText(that, "Something went wrong, try again later.", Toast.LENGTH_LONG).show();
-                                    addBill.setClickable(true);
-                                    addBill.setVisibility(View.VISIBLE);
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                }
-                            }
-                        });
-
+            public void onError(Exception e) {
+                Log.w(TAG, "Error getting documents.", e);
+                Utils.toastError(that);
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(that, "Something went wrong, try again later.", Toast.LENGTH_LONG).show();
-                addBill.setClickable(true);
-                addBill.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.INVISIBLE);
-            }
-        },this);
 
-        final ArrayList<Bill>[] billsInfo = new ArrayList[]{new ArrayList<>()};
-
-        firestoreHelper = new FirestoreHelper(new FirestoreHelper.OnGetDocument() {
-            @Override
-            public void onGetDocument(Bill bill) {
-                billsInfo[0].add(bill);
-            }
-        }, new FirestoreHelper.OnDocumentsProcessingFinished() {
             @Override
             public void onDocumentsProcessingFinished() {
                 billScroller.populate(billsInfo[0]);
             }
-        }, new FirestoreHelper.OnError() {
+
             @Override
-            public void onError(Exception e) {
-                Log.w("History", "Error getting documents.", e);
+            public void onGetDocument(Bill bill) {
+                billsInfo[0].add(bill);
             }
-        }, new FirestoreHelper.OnTaskSuccessful() {
+
             @Override
             public void onTaskSuccessful() {
                 billsInfo[0] = new ArrayList<>();
             }
-        }, () -> {
-
-        }, () -> {
-
         });
+
+
+        // Volley helpers
+        jasonReq = new VolleyJsonHelper(response -> {
+            for (int i = 0; i < response.length(); i++) {
+                try {
+                    RecipeInformation recipeInformation = RecipeInformation.instantiate(new JSONObject(response.getString(i)));
+                    recipesInformation.add(recipeInformation);
+                } catch (JSONException e) {
+                    Log.w(TAG, "Error getting documents.", e.getCause());
+                    Utils.toastError(that);
+                }
+            }
+            recipeInformationInfiniteScroller.populate(recipesInformation);
+        }, error -> {
+            recipesContainer.removeAllViews();
+            Log.w(TAG, "Error getting documents.", error.getCause());
+            Utils.toastError(that);
+        });
+
+        stringReq = new VolleyStringHelper(response -> newBillManager.loadBill(response),
+                error -> {
+                    Utils.toastError(that);
+                    setProgressBarInvisible();
+                }, this);
+
+        // Text views
+        textView.setOnTypingEndsListener((v, actionId, event) -> {
+            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            recipesContainer.removeAllViews();
+            progressBar = new ProgressBar(that, null, android.R.attr.progressBarStyleLarge);
+            recipesContainer.addView(progressBar);
+            recipesInformation = new ArrayList<>();
+
+            jasonReq.getRecipesInfo(v.getText().toString(), that);
+            return false;
+        });
+
+        // ImageHelper
+
+        imageHelper = new ImageHelper(this::setProgressBarVisible, this::setProgressBarVisible, this);
+
+        accountHelper = new AccountHelper(this);
 
         // Populate menu
         menu.getMenu().add(R.string.add_manually);
         menu.getMenu().add(R.string.take_from_galery);
         menu.getMenu().add(R.string.take_picture);
 
+        // Initial configuration
         setProgressBarInvisible();
+        Utils.checkCameraPermission(this, CAMERA_REQUEST_CODE);
+        jasonReq.getRecipesInfo("naleśniki", this);
 
-        checkCameraPersmission();
-
-        recipeInformations = new ArrayList<>();
-        jasonReq.getRecipesInfo("naleśniki",this);
-
-        // Set listeners
-        textView.setOnTypingEndsListener(new ListenableInput.OnTypingEndsListener() {
-            @Override
-            public boolean onTypingEnds(TextView v, int actionId, KeyEvent event) {
-                InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                recipesContainer.removeAllViews();
-                progressBar = new ProgressBar(that, null, android.R.attr.progressBarStyleLarge);
-                recipesContainer.addView(progressBar);
-                recipeInformations = new ArrayList<>();
-
-                jasonReq.getRecipesInfo(v.getText().toString(),that);
-                return false;
-            }
-        });
-
+        // Perform transactions
         PieChartFragment pieChartFragment = PieChartFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,android.R.anim.bounce_interpolator,android.R.anim.bounce_interpolator);
+        transaction.setCustomAnimations(
+                android.R.anim.fade_in,
+                android.R.anim.fade_out,
+                android.R.anim.bounce_interpolator,
+                android.R.anim.bounce_interpolator);
         transaction.add(R.id.pieChartFragmentStart, pieChartFragment);
         transaction.commit();
-
 
 
     }
@@ -281,104 +224,44 @@ public class StartScreen extends AppCompatActivity {
         addBill.setVisibility(View.INVISIBLE);
     }
 
-    public void checkCameraPersmission(){
-        //Camera permissons
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_CAMERA_REQUEST_CODE);
-        }
-    }
-
-
-
-
 
     @Override
     protected void onResume() {
         super.onResume();
-        historyContainer.removeAllViews();
-        firestoreHelper.loadBills(NAM_OF_LATEST_HIST_ITEMS);
+        firestoreHelper.loadBills(NUMBER_OF_LATEST_HIST_ITEMS);
     }
 
-
-    private File createImageFile() throws IOException {
-        // Date format used for storage, no need to localize it.
-        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        currentPhotoPath = image.getAbsolutePath();
-        currentPhoto = image;
-        return image;
-    }
 
     public void dispatchTakePictureIntent(View view) {
-
-        StartScreen that = this;
-
-
         menu.setOnMenuItemClickListener(item -> {
             if (item.getTitle().toString().equals(getResources().getString(R.string.add_manually))) {
-
                 // TODO: Create module for manual bill adding;
-
-            } else if (item.getTitle().toString().equals(getResources().getString(R.string.take_from_galery))) {
-                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(pickPhoto, 1);
                 setProgressBarVisible();
-
+                Utils.toastMessage(getString(R.string.future_feature), this);
+                setProgressBarInvisible();
+            } else if (item.getTitle().toString().equals(getResources().getString(R.string.take_from_galery))) {
+                imageHelper.startGallery();
             } else {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                // Ensure that there's a camera activity to handle the intent
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    // Create the File where the photo should go
-                    File photoFile = null;
-                    try {
-                        photoFile = createImageFile();
-                    } catch (IOException ex) {
-                        Toast.makeText(that, "Something went wrong, try again later.", Toast.LENGTH_LONG).show();
-                    }
-                    // Continue only if the File was successfully created
-                    if (photoFile != null) {
-                        Uri photoURI = FileProvider.getUriForFile(that,
-                                "com.example.android.fileprovider",
-                                photoFile);
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                        startActivityForResult(takePictureIntent, 0);
-                        setProgressBarVisible();
-                    }
-                }
-
+                imageHelper.startCamera();
             }
-
             return false;
         });
-
         menu.show();
-
     }
-
 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_CAMERA_PERMISSION_CODE) {
+        if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+                Utils.toastMessage(getString(R.string.camera_permission_granted), this);
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
             } else {
-                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+                Utils.toastMessage(getString(R.string.camera_permissons_denied), this);
                 addBill.setClickable(true);
-                addBill.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.INVISIBLE);
+                setProgressBarInvisible();
             }
         }
     }
@@ -386,52 +269,21 @@ public class StartScreen extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-
-        switch (requestCode) {
-            case 0: // taking picture with camera
-                if (resultCode == RESULT_OK) {
-                    Uri file = Uri.fromFile(currentPhoto);
-                    StorageReference riversRef = mStorageRef.child("/" + firebaseAuth.getCurrentUser().getUid() + "/" + file.hashCode());
-                    riversRef.putFile(file).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // Get a URL to the uploaded content
-                            stringReq.requestBillParsing(String.valueOf(file.hashCode()));
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            addBill.setClickable(true);
-                            addBill.setVisibility(View.VISIBLE);
-                            progressBar.setVisibility(View.INVISIBLE);
-                        }
-                    });
-
+        StartScreen that = this;
+        if (resultCode == RESULT_OK) {
+            Uri file = Uri.EMPTY;
+            if (requestCode == 0) { // taking picture with camera
+                try {
+                    file = Uri.fromFile(imageHelper.getCurrentPhoto());
+                } catch (FileNotFoundException e) {
+                    Utils.toastError(that);
+                    setProgressBarInvisible();
+                    return;
                 }
-                break;
-            case 1: // selecting from gallery
-                if (resultCode == RESULT_OK) {
-                    Uri file = data.getData();
-                    StorageReference riversRef = mStorageRef.child("/" + firebaseAuth.getCurrentUser().getUid() + "/" + file.hashCode());
-
-                    riversRef.putFile(file)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    stringReq.requestBillParsing(String.valueOf(file.hashCode()));
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    addBill.setClickable(true);
-                                    addBill.setVisibility(View.VISIBLE);
-                                    progressBar.setVisibility(View.INVISIBLE);
-                                }
-                            });
-                }
-                break;
+            } else if (requestCode == 1) { // selecting from gallery
+                file = data.getData();
+            }
+            imageHelper.sendToStorage(file, stringReq);
         }
     }
 
@@ -440,6 +292,7 @@ public class StartScreen extends AppCompatActivity {
         Intent intent = new Intent(this, History.class);
         startActivity(intent);
     }
+
     public void startChartsPage(View view) {
         Intent intent = new Intent(this, StatisticsActivity.class);
         startActivity(intent);
@@ -447,31 +300,15 @@ public class StartScreen extends AppCompatActivity {
 
 
     public void logOut(View view) {
-        StartScreen that = this;
         PopupMenu menu = new PopupMenu(this, view);
-
         menu.getMenu().add(R.string.log_out);
-
-        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getTitle().toString().equals(getResources().getString(R.string.log_out))) {
-                    firebaseAuth.signOut();
-                    googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Log.w(TAG, "Signed out of google");
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            Toast.makeText(getApplicationContext(), "You Signed out", Toast.LENGTH_LONG).show();
-                            startActivity(intent);
-                        }
-                    });
-                }
-                return false;
+        menu.setOnMenuItemClickListener(item -> {
+            if (item.getTitle().toString().equals(getResources().getString(R.string.log_out))) {
+                accountHelper.signOut(TAG);
             }
+            return false;
         });
         menu.show();
-
     }
 
 
