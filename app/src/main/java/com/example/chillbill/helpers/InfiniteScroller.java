@@ -39,24 +39,18 @@ public class InfiniteScroller<T extends Serializable> {
     }
 
     private void clean(){
-        System.out.println("Clean was called");
         Animation anim = AnimationUtils.makeOutAnimation(app.getApplicationContext(),true);
         anim.setInterpolator(new AccelerateInterpolator());
         anim.setDuration(100);
         anim.setFillAfter(true);
-        new Handler().postDelayed(new Runnable() {
+        new Handler().postDelayed(new Runnable() { // Not with Animation listner becouse it is not realible for many objects
             public void run() {
                 container.clearAnimation();
                 container.removeAllViews();
-                //Extra work goes here
                 populateWithItems();
             }
         }, anim.getDuration()+10);
         container.startAnimation(anim);
-
-
-
-        //container.removeAllViews();
     }
 
     private void populateWithItems(){
@@ -108,7 +102,6 @@ public class InfiniteScroller<T extends Serializable> {
     public void populate(ArrayList<T> items) {
         this.items = new ArrayList<>();
         this.items = items;
-        System.out.println("populate was called");
             clean();
     }
 

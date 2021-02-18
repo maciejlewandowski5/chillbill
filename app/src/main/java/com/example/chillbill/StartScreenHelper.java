@@ -90,11 +90,11 @@ public class StartScreenHelper {
     }
 
     private void initializeImageHelper(){
-        accountHelper = new AccountHelper(startScreen);
+        imageHelper = new ImageHelper(this::setProgressBarVisible, this::setProgressBarVisible, startScreen);
     }
 
     private void initializeAccountHelper(){
-        imageHelper = new ImageHelper(this::setProgressBarInvisible, this::setProgressBarInvisible, startScreen);
+        accountHelper = new AccountHelper(startScreen);
     }
 
     private void initializeVariables() {
